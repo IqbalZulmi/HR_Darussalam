@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
+use App\Models\Pegawai;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,7 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(3)->create();
+        Pegawai::factory(3)->create();
+        Admin::factory(1)->create();
+
+        // User::factory(3)->create();
 
         // User::factory()->create([
         //     'name' => 'Test User',
