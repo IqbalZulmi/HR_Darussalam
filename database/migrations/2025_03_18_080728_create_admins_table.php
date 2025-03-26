@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_tempat_bekerja');
             $table->foreign('id_tempat_bekerja')->references('id')->on('tempat_bekerja')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

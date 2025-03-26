@@ -16,6 +16,7 @@ class Admin extends Model
         'id_user',
         'id_tempat_bekerja',
         'nama',
+        'foto',
     ];
 
     public function user()

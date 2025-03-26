@@ -30,13 +30,13 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)){
             $user = Auth::user();
             $request->session()->regenerate();
-            if ($user->roles === 'pengurus'){
-                return redirect()->route('pengurus.dashboard')->with([
-                    'notifikasi' => 'Selamat Datang ' . $user->name,
+            if ($user->roles === 'admin'){
+                return redirect()->route('admin.dashboard.page')->with([
+                    'notifikasi' => 'Selamat Datang ' . $user->roles,
                     'type' => 'success'
                 ]);
-            }elseif($user->roles === 'superadmin'){
-                return redirect()->route('superadmin.dashboard')->with([
+            }elseif($user->roles === 'pegawai'){
+                return redirect()->route('pegawai.dashboard.page')->with([
                     'notifikasi' => 'Selamat Datang ' . $user->roles,
                     'type' => 'success'
                 ]);

@@ -12,7 +12,7 @@
                             <div class="d-flex justify-content-center py-4">
                                 <a href="index.html" class="logo d-flex align-items-center w-auto">
                                     <img src="{{ asset('assets/img/logo.png') }}" alt="">
-                                    <span class="d-none d-lg-block">Marga Goh Batam</span>
+                                    <span class="d-none d-lg-block">HR DARUSSALAM</span>
                                 </a>
                             </div><!-- End Logo -->
 
@@ -62,7 +62,7 @@
                                             </div>
                                         </div>
                                         <div class="col-12">
-                                            <button class="btn btn-primary w-100" type="submit">Login</button>
+                                            <button class="btn btn-main w-100" type="submit">Login</button>
                                         </div>
                                     </form>
 
