@@ -61,11 +61,11 @@ class Pegawai extends Model
 
     public function jabatan()
     {
-        return $this->belongsTo(TempatBekerja::class, 'id_jabatan');
+        return $this->belongsTo(Jabatan::class, 'id_jabatan');
     }
 
     public function golongan()
     {
-        return $this->belongsTo(TempatBekerja::class, 'id_golongan');
+        return $this->belongsTo(Golongan::class, 'id_golongan');
     }
 }

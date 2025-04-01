@@ -22,6 +22,15 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profile/update', [AdminController::class, 'update'])->name('profile.update');
     });
 
+    //pegawai pages
+    Route::middleware(['CheckRoles:pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
+        Route::get('/dashboard', [Dashboard::class, 'showPegawaiDashboard'])->name('dashboard.page');
+
+        // Profile routes
+        // Route::get('/profile', [AdminController::class, 'show'])->name('profile.page');
+        // Route::put('/profile/update', [AdminController::class, 'update'])->name('profile.update');
+    });
+
     Route::put('/user/change-password',([UserController::class,'updatePassword']))->name('password.update');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
