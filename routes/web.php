@@ -3,7 +3,9 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\UserController;
+use App\Models\Pegawai;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,6 +19,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['CheckRoles:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [Dashboard::class, 'showAdminDashboard'])->name('dashboard.page');
 
+        //Kelola Pegawai route
+        Route::apiResource('/kelola/pegawai', PegawaiController::class);
+
         // Profile routes
         Route::get('/profile', [AdminController::class, 'show'])->name('profile.page');
         Route::put('/profile/update', [AdminController::class, 'update'])->name('profile.update');
@@ -27,8 +32,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [Dashboard::class, 'showPegawaiDashboard'])->name('dashboard.page');
 
         // Profile routes
-        // Route::get('/profile', [AdminController::class, 'show'])->name('profile.page');
-        // Route::put('/profile/update', [AdminController::class, 'update'])->name('profile.update');
+        Route::get('/profile', [PegawaiController::class, 'showProfile'])->name('profile.page');
+        Route::put('/profile/update', [PegawaiController::class, 'updateProfile'])->name('profile.update');
     });
 
     Route::put('/user/change-password',([UserController::class,'updatePassword']))->name('password.update');

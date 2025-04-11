@@ -35,7 +35,7 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.profile.page') }}">
+                        <a class="dropdown-item d-flex align-items-center" href="{{ route(Auth::user()->roles .'.profile.page') }}">
                             <i class="bi bi-gear"></i>
                             <span>Account Settings</span>
                         </a>
