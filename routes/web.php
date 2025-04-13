@@ -21,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
 
         //Kelola Pegawai route
         Route::apiResource('/kelola/pegawai', PegawaiController::class);
+        Route::delete('/kelola/mass-delete/pegawai', [PegawaiController::class, 'hapusMassal'])->name('pegawai.mass.delete');
 
         // Profile routes
         Route::get('/profile', [AdminController::class, 'show'])->name('profile.page');
