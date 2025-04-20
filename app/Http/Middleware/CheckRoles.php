@@ -16,10 +16,22 @@ class CheckRoles
      */
     public function handle(Request $request, Closure $next, $roles): Response
     {
-        if (!Auth::check() || Auth::user()->roles != $roles){
+        if (!Auth::check()) {
+            return redirect()->route('login')->with([
+                'notifikasi' => 'Silakan login terlebih dahulu!',
+                'type' => 'warning',
+            ]);
+        }
+
+        $user = Auth::user();
+
+        // Pecah role jika lebih dari satu (admin|pegawai)
+        $roleArray = explode('|', $roles);
+
+        if (!$user->hasAnyRole($roleArray)) {
             return redirect()->back()->with([
-                'notifikasi' => 'Anda tidak memiliki akses. Silakan login terlebih dahulu!',
-                'type' => 'warning'
+                'notifikasi' => 'Anda tidak memiliki akses ke halaman ini!',
+                'type' => 'warning',
             ]);
         }
 

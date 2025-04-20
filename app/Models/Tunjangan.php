@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class tunjangan extends Model
+class Tunjangan extends Model
 {
     /** @use HasFactory<\Database\Factories\TunjanganFactory> */
     use HasFactory;

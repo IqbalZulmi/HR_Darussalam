@@ -21,7 +21,7 @@ class PegawaiFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_user' => User::factory(), // Membuat user baru secara otomatis
+            'id_user' =>$this->faker->randomElement(['1', '2','3']), // Membuat user baru secara otomatis
             'id_tempat_bekerja' => TempatBekerja::factory(), // Membuat tempat_bekerja baru
             'id_jabatan' => Jabatan::factory(), // Membuat jabatan baru
             'id_golongan' => Golongan::factory(), // Membuat golongan baru

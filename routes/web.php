@@ -24,7 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('users/{id}/assign_permisson',[UserController::class,'assignPermission'])->name('user.assign.permissions.update');
 
     //admin pages
-    Route::middleware(['CheckRoles:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['CheckRoles:kepala hrd'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [Dashboard::class, 'showAdminDashboard'])->name('dashboard.page');
 
         //Kelola Pegawai route

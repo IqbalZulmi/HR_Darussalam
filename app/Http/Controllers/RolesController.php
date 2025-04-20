@@ -35,7 +35,7 @@ class RolesController extends Controller
 
 
         // Kirim data ke view
-        return view('roles', [
+        return view('roles-and-permissions.roles', [
             'roles' => $roles,
             'permissions' => $permissions,
             'nama_permissions' => $nama_permission,

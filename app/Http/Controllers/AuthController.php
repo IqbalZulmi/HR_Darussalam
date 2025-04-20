@@ -30,22 +30,30 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)){
             $user = Auth::user();
             $request->session()->regenerate();
-            if ($user->roles === 'admin'){
-                return redirect()->route('admin.dashboard.page')->with([
-                    'notifikasi' => 'Selamat Datang ' . $user->roles,
-                    'type' => 'success'
-                ]);
-            }elseif($user->roles === 'pegawai'){
-                return redirect()->route('pegawai.dashboard.page')->with([
-                    'notifikasi' => 'Selamat Datang ' . $user->roles,
-                    'type' => 'success'
-                ]);
+            switch (true) {
+                case $user->hasRole('kepala hrd'):
+                    // dd($user);
+                    return redirect()->route('role.index')->with([
+                        'notifikasi' => 'Selamat Datang Admin',
+                        'type' => 'success',
+                    ]);
+                case $user->hasRole('tenaga pendidik'):
+                    return redirect()->route('pegawai.dashboard.page')->with([
+                        'notifikasi' => 'Selamat Datang Pegawai',
+                        'type' => 'success',
+                    ]);
+                // Tambahkan case lain jika kamu punya role tambahan
+                default:
+                    return redirect()->route('home')->with([
+                        'notifikasi' => 'Selamat Datang!',
+                        'type' => 'success',
+                    ]);
             }
         }
 
         return redirect()->back()->withInput()->with([
-            'notifikasi' => 'Login Failed !',
-            'type' => 'error'
+            'notifikasi' => 'Login Failed!',
+            'type' => 'error',
         ]);
     }
 

@@ -1,7 +1,7 @@
 @php
     $photoPath = asset('assets/img/profile-img.jpg');
     $user = Auth::user();
-    $userRole = $user->roles;
+    $userRole =  $user->getRoleNames();
     $userPhoto = $user->$userRole->foto ?? null;
 @endphp
 <!-- ======= Header ======= -->
@@ -22,7 +22,7 @@
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                     <img src="{{ $userPhoto ? asset('storage/'.$userPhoto) : $photoPath }}" alt="Profile" class="rounded-circle">
-                    <span class="d-none d-md-block dropdown-toggle ps-2 text-capitalize">{{ $user->$userRole->nama }}</span>
+                    <span class="d-none d-md-block dropdown-toggle ps-2 text-capitalize">{{ $user->name }}</span>
                 </a><!-- End Profile Iamge Icon -->
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -35,7 +35,7 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="{{ route(Auth::user()->roles .'.profile.page') }}">
+                        <a class="dropdown-item d-flex align-items-center" href="{{ route('pegawai.profile.page') }}">
                             <i class="bi bi-gear"></i>
                             <span>Account Settings</span>
                         </a>

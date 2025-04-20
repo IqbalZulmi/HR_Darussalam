@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Admin;
+use App\Models\Golongan;
+use App\Models\Jabatan;
 use App\Models\Pegawai;
-use App\Models\User;
+use App\Models\TempatBekerja;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,23 +17,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RolesSeeder::class, // ini otomatis jalanin PermissionSeeder juga
-            PermissionSeeder::class, // ini otomatis jalanin PermissionSeeder juga
+            RolesSeeder::class,
+            PermissionSeeder::class,
+            UsersSeeder::class,
         ]);
 
-        Pegawai::factory(3)->create()->each(function ($user) {
-            $user->assignRole('tenaga pendidik');
-        });
-        
-        Admin::factory(1)->create()->each(function ($user) {
-            $user->assignRole('kepala hrd');
-        });;
-
-        // User::factory(3)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        Pegawai::factory(3)->create();
+        // TempatBekerja::factory(2)->create();
+        // Golongan::factory(2)->create();
+        // Jabatan::factory(2)->create();
     }
 }
