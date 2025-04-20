@@ -4,6 +4,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Models\Pegawai;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +17,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::apiResource('/role', RolesController::class);
+    Route::apiResource('/permission', PermissionController::class);
+    Route::get('users/assign',[UserController::class,'assignIndex'])->name('user.assign.index');
+    Route::put('users/{id}/assign_roles',[UserController::class,'assignRoles'])->name('user.assign.roles.update');
+    Route::put('users/{id}/assign_permisson',[UserController::class,'assignPermission'])->name('user.assign.permissions.update');
+
     //admin pages
     Route::middleware(['CheckRoles:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [Dashboard::class, 'showAdminDashboard'])->name('dashboard.page');

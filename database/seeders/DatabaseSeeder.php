@@ -15,8 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Pegawai::factory(3)->create();
-        Admin::factory(1)->create();
+        $this->call([
+            RolesSeeder::class, // ini otomatis jalanin PermissionSeeder juga
+            PermissionSeeder::class, // ini otomatis jalanin PermissionSeeder juga
+        ]);
+
+        Pegawai::factory(3)->create()->each(function ($user) {
+            $user->assignRole('tenaga pendidik');
+        });
+        
+        Admin::factory(1)->create()->each(function ($user) {
+            $user->assignRole('kepala hrd');
+        });;
 
         // User::factory(3)->create();
 
