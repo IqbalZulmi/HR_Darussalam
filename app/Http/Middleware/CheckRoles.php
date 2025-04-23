@@ -14,7 +14,7 @@ class CheckRoles
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $roles): Response
+    public function handle(Request $request, Closure $next, $rolesOrPermissions): Response
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with([
@@ -25,13 +25,14 @@ class CheckRoles
 
         $user = Auth::user();
 
-        // Pecah role jika lebih dari satu (admin|pegawai)
-        $roleArray = explode('|', $roles);
+         // Support multiple role|permission seperti: kepala hrd|staff hrd|verifikasi cuti
+        $items = explode('|', $rolesOrPermissions);
 
-        if (!$user->hasAnyRole($roleArray)) {
+        // Cek apakah user memiliki salah satu role ATAU permission
+        if (!$user->hasAnyRole($items) && !$user->hasAnyPermission($items)) {
             return redirect()->back()->with([
-                'notifikasi' => 'Anda tidak memiliki akses ke halaman ini!',
-                'type' => 'warning',
+                'notifikasi' => 'Anda tidak memiliki akses yang sesuai!',
+                'type' => 'warning'
             ]);
         }
 

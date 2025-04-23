@@ -1,7 +1,7 @@
 @php
     $photoPath = asset('assets/img/profile-img.jpg');
     $user = Auth::user();
-    $userRole =  $user->getRoleNames();
+    $userRole =  Auth::user()->getRoleNames()->implode(', ');
     $userPhoto = $user->$userRole->foto ?? null;
 @endphp
 <!-- ======= Header ======= -->
@@ -33,13 +33,14 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="{{ route('pegawai.profile.page') }}">
-                            <i class="bi bi-gear"></i>
-                            <span>Account Settings</span>
-                        </a>
-                    </li>
+                    @can('manajemen_profil.read')
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.page') }}">
+                                <i class="bi bi-gear"></i>
+                                <span>Account Settings</span>
+                            </a>
+                        </li>
+                    @endcan
                     <li>
                         <hr class="dropdown-divider">
                     </li>

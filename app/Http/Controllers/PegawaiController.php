@@ -20,7 +20,7 @@ class PegawaiController extends Controller
      */
     public function index()
     {
-        $pegawai = Pegawai::where('id_tempat_bekerja',Auth::user()->admin->id_tempat_bekerja)->orderByDesc('created_at')->get();
+        $pegawai = Pegawai::orderByDesc('created_at')->get();
         $jabatan = Jabatan::all();
         $tempat_bekerja = TempatBekerja::all();
         $golongan = Golongan::all();

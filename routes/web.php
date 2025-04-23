@@ -17,34 +17,69 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::apiResource('/role', RolesController::class);
-    Route::apiResource('/permission', PermissionController::class);
-    Route::get('users/assign',[UserController::class,'assignIndex'])->name('user.assign.index');
-    Route::put('users/{id}/assign_roles',[UserController::class,'assignRoles'])->name('user.assign.roles.update');
-    Route::put('users/{id}/assign_permisson',[UserController::class,'assignPermission'])->name('user.assign.permissions.update');
 
-    //admin pages
-    Route::middleware(['CheckRoles:kepala hrd'])->prefix('admin')->name('admin.')->group(function () {
+    //roles route
+    Route::prefix('role')->name('role.')->group(function(){
+        Route::get('/',[RolesController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_role.read')
+        ->name('index');
+        Route::post('/',[RolesController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_role.create')
+        ->name('store');
+        Route::put('/{id_role}',[RolesController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_role.update')
+        ->name('update');
+        Route::delete('/{id_role}',[RolesController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_role.destroy')
+        ->name('destroy');
+    });
+
+    //permission route
+    Route::prefix('permission')->name('permission.')->group(function(){
+        Route::get('/',[PermissionController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_hak_akses.read')
+        ->name('index');
+        Route::post('/',[PermissionController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_hak_akses.create')
+        ->name('store');
+        Route::put('/{id_permission}',[PermissionController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_hak_akses.update')
+        ->name('update');
+        Route::delete('/mass-delete',[PermissionController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_hak_akses.delete')
+        ->name('destroy');
+    });
+
+    //user assign route
+    Route::prefix('users')->name('user.assign.')->group(function(){
+        Route::get('assign', [UserController::class, 'assignIndex'])->middleware('Check_Roles_or_Permissions:manajemen_hak_akses_user.read')
+        ->name('index');
+
+        Route::middleware('Check_Roles_or_Permissions:manajemen_hak_akses_user.update')->group(function () {
+            Route::put('{id}/assign-roles', [UserController::class, 'assignRoles'])
+            ->name('roles.update');
+            Route::put('{id}/assign-permisson', [UserController::class, 'assignPermission'])
+            ->name('permissions.update');
+        });
+    });
+
+    // Profile routes
+    Route::prefix('profile')->name('profile.')->group(function(){
+        Route::get('/', [AdminController::class, 'show'])->middleware('Check_Roles_or_Permissions:manajemen_profil.read')
+        ->name('page');
+        Route::middleware('Check_Roles_or_Permissions:manajemen_profil.update')->group(function(){
+            Route::put('/update', [AdminController::class, 'update'])
+            ->name('update');
+            Route::put('/change-password',([UserController::class,'updatePassword']))
+            ->name('password.update');
+        });
+    });
+
+    //HRD pages
+    Route::prefix('hrd')->name('hrd.')->group(function () {
         Route::get('/dashboard', [Dashboard::class, 'showAdminDashboard'])->name('dashboard.page');
 
-        //Kelola Pegawai route
+        // Kelola Pegawai route
         Route::apiResource('/kelola/pegawai', PegawaiController::class);
         Route::delete('/kelola/mass-delete/pegawai', [PegawaiController::class, 'hapusMassal'])->name('pegawai.mass.delete');
-
-        // Profile routes
-        Route::get('/profile', [AdminController::class, 'show'])->name('profile.page');
-        Route::put('/profile/update', [AdminController::class, 'update'])->name('profile.update');
     });
 
     //pegawai pages
-    Route::middleware(['CheckRoles:pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
+    Route::prefix('pegawai')->name('pegawai.')->group(function () {
         Route::get('/dashboard', [Dashboard::class, 'showPegawaiDashboard'])->name('dashboard.page');
-
-        // Profile routes
-        Route::get('/profile', [PegawaiController::class, 'showProfile'])->name('profile.page');
-        Route::put('/profile/update', [PegawaiController::class, 'updateProfile'])->name('profile.update');
     });
 
-    Route::put('/user/change-password',([UserController::class,'updatePassword']))->name('password.update');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

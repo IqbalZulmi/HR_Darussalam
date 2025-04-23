@@ -132,7 +132,7 @@
             <h1 class="text-capitalize">Kelola Pegawai</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route(Auth::user()->roles.'.dashboard.page') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('hrd.dashboard.page') }}">Home</a></li>
                     <li class="breadcrumb-item active text-capitalize">
                         {{ ucwords(str_replace('/', ' / ', Request::path())) }}
                     </li>
@@ -240,7 +240,7 @@
     </main><!-- End #main -->
 
     {{-- tambah modal --}}
-    <div class="modal fade" id="tambahModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="tambahModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -248,7 +248,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('admin.pegawai.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('hrd.pegawai.store') }}" method="post" enctype="multipart/form-data">
                         @csrf @method('post')
                         <div class="container-fluid">
                             <div class="row gy-2">
@@ -367,7 +367,7 @@
                 </div>
         </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- hapus modal --}}
     <div class="modal fade" id="hapusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -378,7 +378,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('admin.pegawai.mass.delete') }}" method="post">
+                    <form action="{{ route('hrd.pegawai.mass.delete') }}" method="post">
                         @csrf @method('delete')
                         <div class="container-fluid">
                             <input type="hidden" name="id" id="hapusId">
@@ -398,7 +398,7 @@
 
     @foreach ($dataPegawai as $index => $data )
     {{-- edit modal --}}
-        <div class="modal fade" id="editModal{{ $index+1 }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        {{-- <div class="modal fade" id="editModal{{ $index+1 }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -526,7 +526,7 @@
                     </div>
             </div>
             </div>
-        </div>
+        </div> --}}
     @endforeach
 
     @include('components.footer')

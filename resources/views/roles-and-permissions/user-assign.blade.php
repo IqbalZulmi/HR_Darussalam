@@ -157,7 +157,7 @@
                                             Select all
                                         </label>
                                     </div>
-                                    @forelse($nama_permissions as $module)
+                                    @forelse($permissions as $module => $actions)
                                         <div class="col-6">
                                             <div class="fw-bold">
                                                 {{ ucwords(str_replace('_', ' ', $module)) }}
@@ -219,7 +219,7 @@
                                             </div>
                                             @foreach($roles as $role)
                                                 <div>
-                                                    <input type="checkbox" name="roles[]" class="form-check-input permission-checkbox" value="{{ $role->id }}"  {{ $data->roles->contains($role->id) ? 'checked' : '' }}>
+                                                    <input type="checkbox" name="roles[]" class="form-check-input permission-checkbox" value="{{ $role->name }}"  {{ $data->roles->contains($role->id) ? 'checked' : '' }}>
                                                     <label class="form-check-label text-capitalize" for="checkDefault">
                                                         {{ $role->name }}
                                                     </label>

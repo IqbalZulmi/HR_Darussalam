@@ -149,7 +149,7 @@
                                         Select all
                                     </label>
                                 </div>
-                                @forelse($nama_permissions as $module)
+                                @forelse($permissions as $module => $actions)
                                     <div class="col-6">
                                         <div class="fw-bold">
                                             {{ ucwords(str_replace('_', ' ', $module)) }}
@@ -192,7 +192,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('role.update',['role' => $data->id]) }}" method="POST">
+                        <form action="{{ route('role.update',['id_role' => $data->id]) }}" method="POST">
                             @csrf @method('put')
                             <div class="container-fluid">
                                 <div class="row gy-2">
@@ -213,7 +213,7 @@
                                             Select all
                                         </label>
                                     </div>
-                                    @forelse($nama_permissions as $module)
+                                    @forelse($permissions as $module => $actions)
                                         <div class="col-6">
                                             <div class="fw-bold">
                                                 {{ ucwords(str_replace('_', ' ', $module)) }}
@@ -253,7 +253,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('role.destroy',['role' => $data->id]) }}" method="post">
+                        <form action="{{ route('role.destroy',['id_role' => $data->id]) }}" method="post">
                             @csrf @method('delete')
                             <div class="container-fluid">
                                 <input type="hidden" name="id" id="hapusId">

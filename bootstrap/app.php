@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn (Request $request) => route('login.page'));
         $middleware->alias([
-            'CheckRoles' => CheckRoles::class,
+            'Check_Roles_or_Permissions' => CheckRoles::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -43,6 +43,10 @@ h6 {
   font-family: "Nunito", sans-serif;
 }
 
+.second-color{
+    color: var(--second-color);
+}
+
 .btn.btn-main{
     background-color: var(--second-color);
     border-color: var(--second-color);

@@ -14,7 +14,10 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $modules = [
-            'user_management',
+            'manajemen_role',
+            'manajemen_hak_akses',
+            'manajemen_hak_akses_user',
+            'manajemen_user',
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];
