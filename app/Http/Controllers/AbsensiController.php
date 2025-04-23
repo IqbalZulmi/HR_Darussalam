@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class AbsensiController extends Controller
 {
+    public function showRekapTodayPage(){
+        return view('admin.kelola-absensi-today',[
+
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */

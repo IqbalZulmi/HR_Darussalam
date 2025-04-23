@@ -1,13 +1,13 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
-use App\Models\Pegawai;
 use Illuminate\Support\Facades\Route;
 
 
@@ -69,7 +69,13 @@ Route::middleware(['auth'])->group(function () {
 
     //HRD pages
     Route::prefix('hrd')->name('hrd.')->group(function () {
-        Route::get('/dashboard', [Dashboard::class, 'showAdminDashboard'])->name('dashboard.page');
+        Route::get('/dashboard', [DashboardController::class, 'showAdminDashboard'])->name('dashboard.page');
+
+        //rekap absensi route
+        Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
+            Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
+            ->name('today.page');
+        });
 
         // Kelola Pegawai route
         Route::apiResource('/kelola/pegawai', PegawaiController::class);
@@ -78,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
 
     //pegawai pages
     Route::prefix('pegawai')->name('pegawai.')->group(function () {
-        Route::get('/dashboard', [Dashboard::class, 'showPegawaiDashboard'])->name('dashboard.page');
+        Route::get('/dashboard', [DashboardController::class, 'showPegawaiDashboard'])->name('dashboard.page');
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

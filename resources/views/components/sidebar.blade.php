@@ -10,14 +10,9 @@
                     <span>Dashboard</span>
                 </a>
             </li><!-- End Dashboard Nav -->
+
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.pegawai.index') }}">
-                    <i class="bi bi-clipboard-check"></i>
-                    <span>Rekap Absensi</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.pegawai.index') }}">
+                <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.today.page') }}">
                     <i class="bi bi-calendar-event"></i>
                     <span>Verifikasi Cuti</span>
                 </a>
@@ -50,6 +45,15 @@
                 </a>
             </li>
         @endhasanyrole
+
+        @can('manajemen_rekap_absensi.read')
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.today.page') }}">
+                <i class="bi bi-clipboard-check"></i>
+                <span>Absensi Hari ini</span>
+            </a>
+        </li>
+        @endcan
 
         @can('manajemen_user.read')
                 <li class="nav-item">

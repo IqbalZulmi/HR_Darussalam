@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Dashboard extends Controller
+class DashboardController extends Controller
 {
     public function showAdminDashboard(){
         return view('admin.dashboard');
