@@ -10,13 +10,6 @@
                     <span>Dashboard</span>
                 </a>
             </li><!-- End Dashboard Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.today.page') }}">
-                    <i class="bi bi-calendar-event"></i>
-                    <span>Verifikasi Cuti</span>
-                </a>
-            </li>
         @endhasanyrole
 
         @hasanyrole(['tenaga pendidik','kepala sekolah','kepala departemen'])
@@ -53,6 +46,15 @@
                 <span>Absensi Hari ini</span>
             </a>
         </li>
+        @endcan
+
+        @can('manajemen_verifikasi_cuti.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('hrd.verifikasi.cuti.page') ? '' : ' collapsed' }}" href="{{ route('hrd.verifikasi.cuti.page') }}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Verifikasi Cuti</span>
+                </a>
+            </li>
         @endcan
 
         @can('manajemen_user.read')

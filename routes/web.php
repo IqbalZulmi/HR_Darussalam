@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PermissionController;
@@ -75,6 +76,12 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
             Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
             ->name('today.page');
+        });
+
+        //verifikasi cuti route
+        Route::prefix('verifikasi-cuti')->name('verifikasi.cuti.')->group(function(){
+            Route::get('/', [CutiController::class, 'showVerifikasiCutiPage'])->middleware('Check_Roles_or_Permissions:manajemen_verifikasi_cuti.read')
+            ->name('page');
         });
 
         // Kelola Pegawai route
