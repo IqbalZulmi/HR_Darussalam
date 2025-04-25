@@ -169,7 +169,9 @@ class PegawaiController extends Controller
      */
     public function edit(Pegawai $pegawai)
     {
-        //
+        return view('admin.edit-pegawai-profile',[
+            
+        ]);
     }
 
     /**
