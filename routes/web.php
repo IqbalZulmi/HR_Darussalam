@@ -76,6 +76,8 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
             Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
             ->name('today.page');
+            Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])
+            ->name('pribadi.page');
         });
 
         //verifikasi cuti route
@@ -105,6 +107,11 @@ Route::middleware(['auth'])->group(function () {
     //pegawai pages
     Route::prefix('pegawai')->name('pegawai.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'showPegawaiDashboard'])->name('dashboard.page');
+
+        Route::prefix('pengajuan/cuti')->name('pengajuan.cuti.')->group(function(){
+            Route::get('/', [CutiController::class, 'showPengajuanCutiPage'])
+            ->name('page');
+        });
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -9,6 +9,12 @@ class CutiController extends Controller
 {
     public function showVerifikasiCutiPage(){
         return view('admin.kelola-verifikasi-cuti',[
+
+        ]);
+    }
+
+    public function showPengajuanCutiPage(){
+        return view('pegawai.pengajuan-cuti',[
             
         ]);
     }
