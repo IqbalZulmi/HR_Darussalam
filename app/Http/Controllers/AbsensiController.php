@@ -13,6 +13,12 @@ class AbsensiController extends Controller
         ]);
     }
 
+    public function showRekapPribadiPage(){
+        return view('pegawai.rekap-absensi-pribadi',[
+            
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -51,7 +57,7 @@ class AbsensiController extends Controller
     public function edit(absensi $absensi)
     {
         return view('admin.rekap-absen-pegawai',[
-            
+
         ]);
     }
 
