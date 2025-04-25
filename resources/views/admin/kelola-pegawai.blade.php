@@ -146,17 +146,22 @@
                     <div class="card recent-sales overflow-auto">
                         <div class="card-body">
                             <h5 class="card-title">Kelola Pegawai</h5>
-                            <div class="d-flex flex-column flex-md-row justify-content-start mb-2">
-                                <div class="me-md-2 mb-2">
-                                    <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                                        <i class="bi bi-plus-circle-fill"></i> Tambah Baru
-                                    </button>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex flex-column flex-md-row justify-content-start mb-2">
+                                    <div class="me-md-2 mb-2 mb-md-0">
+                                        <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                                            <i class="bi bi-plus-circle-fill"></i> Tambah Baru
+                                        </button>
+                                    </div>
+                                    <div class="me-md-2 mb-2 mb-md-0">
+                                        <button class="btn btn-danger" id="btnHapus">
+                                            <i class="bi bi-trash"></i> Hapus Pilihan
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="me-md-2 mb-2">
-                                    <button class="btn btn-danger" id="btnHapus">
-                                        <i class="bi bi-trash"></i> Hapus Pilihan
-                                    </button>
-                                </div>
+                                <a class="btn btn-main" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                                    Filter <i class="bi bi-filter-right"></i>
+                                </a>
                             </div>
                             <table class="table table-striped table-hover border table-bordered align-middle">
                                 <thead>
@@ -195,18 +200,13 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $index+1 }}">
-                                                                <i class="bi bi-pencil-square"></i> Edit Profil
+                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.edit.page',['pegawai' => '1']) }}">
+                                                                <i class="bi bi-pencil-square"></i> Detail Profil
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="#">
-                                                                <i class="bi bi-calendar-check"></i> Absensi
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#">
-                                                                <i class="bi bi-cash-stack"></i> Penggajian
+                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.rekap.absen.page',['pegawai' => '1']) }}">
+                                                                <i class="bi bi-calendar-check"></i>Rekap Absensi
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -239,8 +239,101 @@
 
     </main><!-- End #main -->
 
+    {{-- filter offcanvas --}}
+    <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Filter Tabel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="d-flex justify-content-start align-items-start flex-wrap gap-3">
+                <div class="collapse-group">
+                    <a class="text-dark" data-bs-toggle="collapse" href="#kecamatan" role="button">
+                        Kecamatan <i class="bi bi-chevron-compact-down"></i>
+                    </a>
+                    <div class="collapse" id="kecamatan">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkDefault">
+                                Default checkbox
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkChecked">
+                                Checked checkbox
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse-group">
+                    <a class="text-dark" data-bs-toggle="collapse" href="#golonganDarah" role="button">
+                        Golongan Darah <i class="bi bi-chevron-compact-down"></i>
+                    </a>
+                    <div class="collapse" id="golonganDarah">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkDefault">
+                                Default checkbox
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkChecked">
+                                Checked checkbox
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse-group">
+                    <a class="text-dark" data-bs-toggle="collapse" href="#rentangUsia" role="button">
+                        Rentang Usia <i class="bi bi-chevron-compact-down"></i>
+                    </a>
+                    <div class="collapse" id="rentangUsia">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkDefault">
+                                Default checkbox
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkChecked">
+                                Checked checkbox
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse-group">
+                    <a class="text-dark" data-bs-toggle="collapse" href="#golonganPegawai" role="button">
+                        Golongan Pegawai <i class="bi bi-chevron-compact-down"></i>
+                    </a>
+                    <div class="collapse" id="golonganPegawai">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkDefault">
+                                Default checkbox
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="">
+                            <label class="form-check-label" for="checkChecked">
+                                Checked checkbox
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-end">
+                <button class="btn btn-main">
+                    Telusuri <i class="bi bi-caret-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     {{-- tambah modal --}}
-    {{-- <div class="modal fade" id="tambahModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -248,7 +341,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('hrd.pegawai.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('hrd.kelola.pegawai.store') }}" method="post" enctype="multipart/form-data">
                         @csrf @method('post')
                         <div class="container-fluid">
                             <div class="row gy-2">
@@ -259,132 +352,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-12">
-                                    <label for="">Kata Sandi</label>
-                                    <input name="password" type="password" class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}" required>
-                                    @error('password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Tempat Bekerja</label>
-                                    <select name="id_tempat_bekerja" class="form-select" @error('id_tempat_bekerja') is-invalid @enderror>
-                                        @forelse ($dataTempatBekerja as $index => $tempatBekerja )
-                                            <option value="{{ $tempatBekerja->id }}" @if (Auth::user()->admin->id_tempat_bekerja == $tempatBekerja->id) selected @endif>{{ $tempatBekerja->nama_tempat_bekerja }}</option>
-                                        @empty
-                                            <option value="">Tidak ada data tempat bekerja yang ditemukan</option>
-                                        @endforelse
-                                    </select>
-                                    @error('id_tempat_bekerja')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Jabatan</label>
-                                    <select name="id_jabatan" class="form-select" @error('id_jabatan') is-invalid @enderror>
-                                        @forelse ($dataJabatan as $index => $jabatan )
-                                            <option value="{{ $jabatan->id }}">{{ $jabatan->nama_jabatan }}</option>
-                                        @empty
-                                            <option value="">Tidak ada data jabatan yang ditemukan</option>
-                                        @endforelse
-                                    </select>
-                                    @error('id_jabatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Golongan</label>
-                                    <select name="id_golongan" class="form-select" @error('id_golongan') is-invalid @enderror>
-                                        @forelse ($dataGolongan as $index => $golongan )
-                                            <option value="{{ $golongan->id }}">{{ $golongan->nama_golongan }}</option>
-                                        @empty
-                                            <option value="">Tidak ada data jabatan yang ditemukan</option>
-                                        @endforelse
-                                    </select>
-                                    @error('id_golongan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Nama</label>
-                                    <input name="nama" type="text" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" required>
-                                    @error('nama')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Alamat</label>
-                                    <textarea name="alamat" class="form-control" @error('alamat') is-invalid @enderror></textarea>
-                                    @error('alamat')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">No Telepon</label>
-                                    <input name="no_telepon" type="text" class="form-control @error('no_telepon') is-invalid @enderror" value="{{ old('no_telepon') }}" required>
-                                    @error('no_telepon')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Tanggal Lahir</label>
-                                    <input name="tanggal_lahir" type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir') }}" required>
-                                    @error('tanggal_lahir')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Tanggal Masuk</label>
-                                    <input name="tanggal_masuk" type="date" class="form-control @error('tanggal_masuk') is-invalid @enderror" value="{{ old('tanggal_masuk') }}" required>
-                                    @error('tanggal_masuk')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Gender</label>
-                                    <select name="gender" class="form-select">
-                                        <option value="pria">pria</option>
-                                        <option value="wanita">wanita</option>
-                                    </select>
-                                    @error('gender')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="">Foto</label>
-                                    <input name="foto" type="file" class="form-control @error('foto') is-invalid @enderror" value="{{ old('foto') }}">
-                                    @error('foto')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
                             </div>
-                        </div>
-                    </div>
-                <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-main">Simpan</button>
-                    </form>
-                </div>
-        </div>
-        </div>
-    </div> --}}
-
-    {{-- hapus modal --}}
-    <div class="modal fade" id="hapusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Hapus Pegawai</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('hrd.pegawai.mass.delete') }}" method="post">
-                        @csrf @method('delete')
-                        <div class="container-fluid">
-                            <input type="hidden" name="id" id="hapusId">
-                            <h4 class="text-capitalize">
-                                Apakah anda yakin ingin <span class="text-danger">menghapus data</span> yang dipilih ?</span>
-                            </h4>
                         </div>
                     </div>
                 <div class="modal-footer">
@@ -396,138 +364,31 @@
         </div>
     </div>
 
-    @foreach ($dataPegawai as $index => $data )
-    {{-- edit modal --}}
-        {{-- <div class="modal fade" id="editModal{{ $index+1 }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5">Edit Pegawai</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{{ route('admin.pegawai.update',['pegawai' => $data->id_user]) }}" method="POST" enctype="multipart/form-data">
-                            @csrf @method('put')
-                            <div class="container-fluid">
-                                <div class="row gy-2">
-                                    <input type="hidden" name="old_email" value="{{ $data->user->email }}">
-                                    <div class="col-12">
-                                        <label for="">Email</label>
-                                        <input name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email',$data->user->email) }}" required>
-                                        @error('email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Tempat Bekerja</label>
-                                        <select name="id_tempat_bekerja" class="form-select" @error('id_tempat_bekerja') is-invalid @enderror>
-                                            @forelse ($dataTempatBekerja as $index => $tempatBekerja )
-                                                <option value="{{ $tempatBekerja->id }}" @if ($data->id_tempat_bekerja == $tempatBekerja->id) selected @endif>{{ $tempatBekerja->nama_tempat_bekerja }}</option>
-                                            @empty
-                                                <option value="">Tidak ada data tempat bekerja yang ditemukan</option>
-                                            @endforelse
-                                        </select>
-                                        @error('id_tempat_bekerja')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Jabatan</label>
-                                        <select name="id_jabatan" class="form-select" @error('id_jabatan') is-invalid @enderror>
-                                            @forelse ($dataJabatan as $index => $jabatan )
-                                                <option value="{{ $jabatan->id }}" @if ($data->id_jabatan == $jabatan->id) selected @endif>{{ $jabatan->nama_jabatan }}</option>
-                                            @empty
-                                                <option value="">Tidak ada data jabatan yang ditemukan</option>
-                                            @endforelse
-                                        </select>
-                                        @error('id_jabatan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Golongan</label>
-                                        <select name="id_golongan" class="form-select" @error('id_golongan') is-invalid @enderror>
-                                            @forelse ($dataGolongan as $index => $golongan )
-                                                <option value="{{ $golongan->id }}" @if ($data->id_golongan == $golongan->id) selected @endif>{{ $golongan->nama_golongan }}</option>
-                                            @empty
-                                                <option value="">Tidak ada data jabatan yang ditemukan</option>
-                                            @endforelse
-                                        </select>
-                                        @error('id_golongan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Kata Sandi</label>
-                                        <input name="password" type="password" class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}">
-                                        @error('password')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Nama</label>
-                                        <input name="nama" type="text" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama',$data->nama) }}" required>
-                                        @error('nama')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Alamat</label>
-                                        <textarea name="alamat" class="form-control" @error('alamat') is-invalid @enderror>{{ $data->alamat }}</textarea>
-                                        @error('alamat')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">No Telepon</label>
-                                        <input name="no_telepon" type="text" class="form-control @error('no_telepon') is-invalid @enderror" value="{{ old('no_telepon',$data->no_telepon) }}" required>
-                                        @error('no_telepon')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Tanggal Lahir</label>
-                                        <input name="tanggal_lahir" type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir',$data->tanggal_lahir) }}" required>
-                                        @error('tanggal_lahir')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Gender</label>
-                                        <select name="gender" class="form-select">
-                                            <option value="pria"@if ($data->id == 'pria') selected @endif>pria</option>
-                                            <option value="wanita"@if ($data->id =='wanita') selected @endif>wanita</option>
-                                        </select>
-                                        @error('gender')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Foto</label>
-                                        <input name="foto" type="file" class="form-control @error('foto') is-invalid @enderror" value="{{ old('foto',$data->foto) }}">
-                                        @error('foto')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="">Tanggal Masuk</label>
-                                        <input name="tanggal_masuk" type="date" class="form-control @error('tanggal_masuk') is-invalid @enderror" value="{{ old('tanggal_masuk',$data->tanggal_masuk) }}" required>
-                                        @error('tanggal_masuk')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
+    {{-- hapus modal --}}
+    <div class="modal fade" id="hapusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Hapus Pegawai</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('hrd.kelola.pegawai.mass.delete') }}" method="post">
+                        @csrf @method('delete')
+                        <div class="container-fluid">
+                            <input type="hidden" name="id" id="hapusId">
+                            <h4 class="text-capitalize">
+                                Apakah anda yakin ingin <span class="text-danger fw-bold">menghapus data</span> yang dipilih ?</span>
+                            </h4>
                         </div>
-                    <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-main">Simpan</button>
-                        </form>
                     </div>
-            </div>
-            </div>
-        </div> --}}
-    @endforeach
-
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-main">Simpan</button>
+                    </form>
+                </div>
+        </div>
+        </div>
+    </div>
     @include('components.footer')
 @endsection

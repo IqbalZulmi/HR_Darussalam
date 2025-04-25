@@ -59,7 +59,7 @@
 
         @can('manajemen_user.read')
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('hrd.pegawai.index') ? '' : ' collapsed' }}" href="{{ route('hrd.pegawai.index') }}">
+                    <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.index') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.index') }}">
                         <i class="bi bi-people"></i>
                         <span>Pegawai</span>
                     </a>

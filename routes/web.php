@@ -85,8 +85,21 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Kelola Pegawai route
-        Route::apiResource('/kelola/pegawai', PegawaiController::class);
-        Route::delete('/kelola/mass-delete/pegawai', [PegawaiController::class, 'hapusMassal'])->name('pegawai.mass.delete');
+        Route::prefix('kelola/pegawai')->name('kelola.pegawai.')->group(function(){
+            Route::get('/',[PegawaiController::class,'index'])
+            ->name('index');
+            Route::get('/{pegawai}/profile',[PegawaiController::class,'edit'])
+            ->name('edit.page');
+            Route::get('/{pegawai}/rekap-absen',[AbsensiController::class,'edit'])
+            ->name('rekap.absen.page');
+            Route::post('/',[PegawaiController::class,'store'])
+            ->name('store');
+            Route::put('/{pegawai}',[PegawaiController::class,'update'])
+            ->name('update');
+            Route::delete('/kelola/mass-delete/pegawai', [PegawaiController::class, 'hapusMassal'])
+            ->name('mass.delete');
+        });
+
     });
 
     //pegawai pages
