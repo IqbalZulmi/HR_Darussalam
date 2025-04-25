@@ -50,7 +50,9 @@ class AbsensiController extends Controller
      */
     public function edit(absensi $absensi)
     {
-        //
+        return view('admin.rekap-absen-pegawai',[
+            
+        ]);
     }
 
     /**
