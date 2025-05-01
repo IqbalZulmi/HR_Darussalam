@@ -17,20 +17,22 @@ class UsersSeeder extends Seeder
         // Data user dan role yang ingin di-assign
         $users = [
             [
-                'name' => 'Kepala HRD',
-                'email' => 'kepala.hrd@example.com',
+                'email' => 'superadmin@gmail.com',
                 'password' => bcrypt('password'),
-                'role' => 'Kepala HRD',
+                'role' => 'superadmin',
             ],
             [
-                'name' => 'Tenaga Pendidik',
-                'email' => 'tenaga.pendidik@example.com',
+                'email' => 'kepalahrd@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'kepala hrd',
+            ],
+            [
+                'email' => 'tendik@gmail.com',
                 'password' => bcrypt('password'),
                 'role' => 'Tenaga Pendidik',
             ],
             [
-                'name' => 'Kepala Yayasan',
-                'email' => 'kepala.yayasan@example.com',
+                'email' => 'kepalayayasan@gmail.com',
                 'password' => bcrypt('password'),
                 'role' => 'Kepala Yayasan',
             ],
@@ -38,7 +40,6 @@ class UsersSeeder extends Seeder
 
         foreach ($users as $data) {
             $user = User::firstOrCreate([
-                'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => $data['password'],
             ]);

@@ -5,22 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Absensi extends Model
+class OrangTua extends Model
 {
-    /** @use HasFactory<\Database\Factories\AbsensiFactory> */
+    /** @use HasFactory<\Database\Factories\OrangTuaFactory> */
     use HasFactory;
-
-    protected $table = 'absensis';
 
     protected $fillable = [
         'id_user',
-        'tanggal',
-        'jam_masuk',
-        'jam_keluar',
-        'status',
-        'keterangan',
+        'nama_ayah',
+        'pekerjaan_ayah',
+        'nama_ibu',
+        'pekerjaan_ibu',
+        'alamat_orang_tua',
     ];
 
+    /**
+     * Relasi ke user
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');

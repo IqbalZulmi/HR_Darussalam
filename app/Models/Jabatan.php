@@ -10,16 +10,11 @@ class Jabatan extends Model
     /** @use HasFactory<\Database\Factories\JabatanFactory> */
     use HasFactory;
 
-    protected $table = 'jabatans';
-    protected $primaryKey = 'id';
-
     protected $fillable = [
         'nama_jabatan',
     ];
 
-
-    public function pegawai()
-    {
-        return $this->hasMany(Pegawai::class, 'id_jabatan');
+    public function profile(){
+        return $this->hasMany(Profile::class,'id_jabatan');
     }
 }

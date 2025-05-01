@@ -2,19 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Jabatan;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
-class RolesSeeder extends Seeder
+class JabatanSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $roles = [
-            'superadmin',
+        $jabatans = [
             'kepala yayasan',
             'kepala hrd',
             'staff hrd',
@@ -23,8 +22,10 @@ class RolesSeeder extends Seeder
             'tenaga pendidik',
         ];
 
-        foreach ($roles as $roleName) {
-            Role::firstOrCreate(['name' => $roleName]);
+        foreach ($jabatans as $nama) {
+            Jabatan::create([
+                'nama_jabatan' => $nama,
+            ]);
         }
     }
 }

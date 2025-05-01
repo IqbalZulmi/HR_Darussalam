@@ -5,20 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Absensi extends Model
+class PengajuanCuti extends Model
 {
-    /** @use HasFactory<\Database\Factories\AbsensiFactory> */
+    /** @use HasFactory<\Database\Factories\PengajuanCutiFactory> */
     use HasFactory;
 
-    protected $table = 'absensis';
+    protected $table = 'pengajuan_cutis';
 
     protected $fillable = [
         'id_user',
-        'tanggal',
-        'jam_masuk',
-        'jam_keluar',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'tipe_cuti',
         'status',
-        'keterangan',
+        'alasan_pendukung',
+        'file_pendukung',
+        'komentar',
     ];
 
     public function user()

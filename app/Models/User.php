@@ -19,7 +19,6 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
     ];
@@ -47,11 +46,36 @@ class User extends Authenticatable
         ];
     }
 
-    public function pegawai(){
-        return $this->hasOne(Pegawai::class,'id_user');
+    public function kepalaDept(){
+        return $this->hasMany(Departemen::class, 'id_kepala_departemen');
     }
 
-    public function admin(){
-        return $this->hasOne(admin::class,'id_user');
+    public function profile(){
+        return $this->hasOne(Profile::class, 'id_user');
     }
+
+    public function orangTua(){
+        return $this->hasOne(OrangTua::class, 'id_user');
+    }
+
+    public function keluarga(){
+        return $this->hasMany(Keluarga::class, 'id_user');
+    }
+
+    public function sosialMedia(){
+        return $this->hasMany(UserSosialMedia::class, 'id_user');
+    }
+
+    public function absensi(){
+        return $this->hasMany(Absensi::class, 'id_user');
+    }
+
+    public function pengajuanCuti(){
+        return $this->hasMany(PengajuanCuti::class, 'id_user');
+    }
+
+    public function evaluasi(){
+        return $this->hasMany(Evaluasi::class, 'id_user');
+    }
+
 }

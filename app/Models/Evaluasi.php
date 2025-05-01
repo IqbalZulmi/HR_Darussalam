@@ -7,25 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Evaluasi extends Model
 {
+    /** @use HasFactory<\Database\Factories\EvaluasiFactory> */
     use HasFactory;
 
-    protected $table = 'evaluasi';
-    protected $primaryKey = 'id';
+    protected $table = 'evaluasis';
 
+    // Kolom yang dapat diisi massal
     protected $fillable = [
-        'id_pegawai',
-        'id_admin',
+        'id_user',
         'nilai',
         'komentar',
     ];
 
-    public function pegawai()
+    // Relasi dengan model User
+    public function user()
     {
-        return $this->belongsTo(Pegawai::class, 'id_pegawai');
-    }
-
-    public function admin()
-    {
-        return $this->belongsTo(Admin::class, 'id_admin');
+        return $this->belongsTo(User::class, 'id_user');
     }
 }
