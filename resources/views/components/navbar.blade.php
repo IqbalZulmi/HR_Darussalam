@@ -2,7 +2,7 @@
     $photoPath = asset('assets/img/profile-img.jpg');
     $user = Auth::user();
     $userRole =  Auth::user()->getRoleNames()->implode(', ');
-    $userPhoto = $user->profile->foto ?? null;
+    $userPhoto = $user->profilePribadi->foto ?? null;
 @endphp
 <!-- ======= Header ======= -->
 <header id="header" class="header fixed-top d-flex align-items-center">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -13,6 +14,8 @@ class ProfileController extends Controller
     public function showProfilePage(){
         $user = Auth::user();
 
+        $lamaPengabdian = Carbon::parse($user->profilePekerjaan->tanggal_masuk)->diffForHumans(null, true);
+
         $jsonKota = File::get(resource_path('json/kota-indonesia.json'));
         $dataKotaJson = json_decode($jsonKota, true);
 
@@ -21,6 +24,7 @@ class ProfileController extends Controller
 
         return view('general.profile',[
             'data'=>$user,
+            'lamaPengabdian' => $lamaPengabdian,
             'allKota' => $dataKotaJson,
             'allKecamatan' => $dataKecamatanJson,
         ]);
@@ -109,7 +113,7 @@ class ProfileController extends Controller
             $user->save();
 
             if ($request->hasFile('foto')) {
-                $old_foto = $user->profile->foto ?? null;
+                $old_foto = $user->profilePribadi->foto ?? null;
                 if (!empty($old_foto) && is_file('storage/'.$old_foto)) {
                     unlink('storage/'.$old_foto);
                 }
@@ -117,7 +121,7 @@ class ProfileController extends Controller
                 $foto = $request->file('foto')->store('profile_img','public');
 
             }else{
-                $foto = $user->profile->foto;
+                $foto = $user->profilePribadi->foto;
             }
 
             // Update Profile
@@ -139,8 +143,7 @@ class ProfileController extends Controller
                 $profileData['foto'] = $foto;
             }
 
-            $user->profile()->updateOrCreate(['id_user' => $user->id], $profileData);
-
+            $user->profilePribadi()->updateOrCreate(['id_user' => $user->id], $profileData);
 
             // Update OrangTua
             $user->orangTua()->updateOrCreate(
