@@ -15,8 +15,8 @@ class Departemen extends Model
         'nama_departemen',
     ];
 
-    public function profile(){
-        return $this->hasMany(Profile::class,'id_departemen');
+    public function profilePekerjaan(){
+        return $this->hasMany(ProfilePekerjaan::class,'id_departemen');
     }
 
     public function kepala()

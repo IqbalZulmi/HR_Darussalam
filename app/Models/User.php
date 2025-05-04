@@ -50,8 +50,12 @@ class User extends Authenticatable
         return $this->hasMany(Departemen::class, 'id_kepala_departemen');
     }
 
-    public function profile(){
-        return $this->hasOne(Profile::class, 'id_user');
+    public function profilePribadi(){
+        return $this->hasOne(ProfilePribadi::class, 'id_user');
+    }
+
+    public function profilePekerjaan(){
+        return $this->hasOne(ProfilePekerjaan::class, 'id_user');
     }
 
     public function orangTua(){

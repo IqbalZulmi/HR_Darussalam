@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Departemen;
 use App\Models\Jabatan;
 use App\Models\Profile;
+use App\Models\ProfilePekerjaan;
+use App\Models\ProfilePribadi;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -28,12 +30,9 @@ class ProfileSeeder extends Seeder
         }
 
         foreach (User::all() as $user) {
-            Profile::create([
+            ProfilePribadi::create([
                 'id_user' => $user->id,
-                'id_departemen' => $departemens->random()->id,
-                'id_jabatan' => $jabatans->random()->id,
                 'nomor_induk_kependudukan' => mt_rand(1000000000000000, 9999999999999999),
-                'nomor_induk_karyawan' => strtoupper(Str::random(6)),
                 'nama_lengkap' => $user->email,
                 'tempat_lahir' => 'Batam',
                 'tanggal_lahir' => now()->subYears(rand(22, 40))->subDays(rand(1, 365)),
@@ -45,6 +44,15 @@ class ProfileSeeder extends Seeder
                 'alamat_lengkap' => 'Jl. Pendidikan No. ' . rand(1, 100),
                 'no_hp' => '08' . rand(1111111111, 9999999999),
                 'foto' => null,
+            ]);
+
+            ProfilePekerjaan::create([
+                'id_user' => $user->id,
+                'id_departemen' => $departemens->random()->id,
+                'id_jabatan' => $jabatans->random()->id,
+                'nomor_induk_karyawan' => strtoupper(Str::random(6)),
+                'tanggal_masuk' => now()->subYears(rand(22, 40))->subDays(rand(1, 365)),
+                'status' => collect(['aktif', 'nonaktif', 'kontrak', 'tetap', 'magang', 'honorer', 'pensiun', 'cuti', 'skorsing'])->random(),
             ]);
         }
     }
