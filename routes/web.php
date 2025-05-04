@@ -5,8 +5,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -58,14 +60,20 @@ Route::middleware(['auth'])->group(function () {
 
     // Profile routes
     Route::prefix('profile')->name('profile.')->group(function(){
-        Route::get('/', [AdminController::class, 'show'])->middleware('Check_Roles_or_Permissions:manajemen_profil.read')
+        Route::get('/', [ProfileController::class, 'showProfilePage'])->middleware('Check_Roles_or_Permissions:manajemen_profil.read')
         ->name('page');
         Route::middleware('Check_Roles_or_Permissions:manajemen_profil.update')->group(function(){
-            Route::put('/update', [AdminController::class, 'update'])
+            Route::put('/update', [ProfileController::class, 'update'])->middleware('Check_Roles_or_Permissions:manajemen_profil.update')
             ->name('update');
-            Route::put('/change-password',([UserController::class,'updatePassword']))
+            Route::put('/change-password',([UserController::class,'updatePassword']))->middleware('Check_Roles_or_Permissions:manajemen_profil.update')
             ->name('password.update');
         });
+    });
+
+    //keluarga route
+    Route::prefix('keluarga/')->name('keluarga.')->group(function(){
+        Route::delete('/{id_keluarga}/delete',[KeluargaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_profil.delete')
+        ->name('destroy');
     });
 
     //HRD pages
@@ -88,7 +96,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Kelola Pegawai route
         Route::prefix('kelola/pegawai')->name('kelola.pegawai.')->group(function(){
-            Route::get('/',[PegawaiController::class,'index'])
+            Route::get('/',[UserController::class,'showKelolaPegawaiPage'])
             ->name('index');
             Route::get('/{pegawai}/profile',[PegawaiController::class,'edit'])
             ->name('edit.page');

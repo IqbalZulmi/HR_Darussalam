@@ -31,7 +31,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $request->session()->regenerate();
             switch (true) {
-                case $user->hasAnyRole(['staff hrd','kepala hrd','kepala yayasan']):
+                case $user->hasAnyRole(['staff hrd','kepala hrd','kepala yayasan','superadmin']):
                     // dd($user);
                     return redirect()->route('hrd.dashboard.page')->with([
                         'notifikasi' => 'Selamat Datang Admin',
@@ -44,7 +44,7 @@ class AuthController extends Controller
                     ]);
                 // Tambahkan case lain jika kamu punya role tambahan
                 default:
-                    return redirect()->route('role.index')->with([
+                    return redirect()->route('pegawai.dashboard.page')->with([
                         'notifikasi' => 'Selamat Datang!',
                         'type' => 'success',
                     ]);
