@@ -10,9 +10,7 @@ class KeluargaController extends Controller
 {
     public function destroy($id_keluarga)
     {
-        $keluarga = Keluarga::where('id', $id_keluarga)
-                            ->where('id_user', Auth::user()->id)
-                            ->first();
+        $keluarga = Keluarga::where('id', $id_keluarga)->first();
 
         if (!$keluarga) {
             return redirect()->back()->with([

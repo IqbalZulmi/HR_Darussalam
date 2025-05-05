@@ -172,27 +172,27 @@
                                         <th scope="col">Tanggal Masuk</th>
                                         <th scope="col">Tahun Pengabdian</th>
                                         <th scope="col">Email</th>
-                                        <th scope="col">Gol.</th>
+                                        <th scope="col">status</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($dataPegawai as $index => $data )
                                         <tr>
-                                            <td>{{ $data->id_user }}</td>
-                                            <td>{{ $data->nama }}</td>
-                                            <td>{{ $data->jabatan->nama_jabatan }}</td>
-                                            <td>{{ $data->tanggal_masuk }}</td>
+                                            <td>{{ $data->id }}</td>
+                                            <td>{{ $data->profilePribadi->nama_lengkap }}</td>
+                                            <td>{{ $data->profilePekerjaan->jabatan->nama_jabatan }}</td>
+                                            <td>{{ $data->profilePekerjaan->tanggal_masuk }}</td>
                                             @php
-                                                $selisih = \Carbon\Carbon::parse($data->tanggal_masuk)->diff(\Carbon\Carbon::now());
+                                                $selisih = \Carbon\Carbon::parse($data->profilePekerjaan->tanggal_masuk)->diff(\Carbon\Carbon::now());
 
                                                 // Ambil tahun dan bulan
                                                 $tahun = $selisih->y;
                                                 $bulan = $selisih->m;
                                             @endphp
                                             <td>{{ $tahun }} tahun {{ $bulan }} bulan</td>
-                                            <td>{{ $data->user->email }}</td>
-                                            <td>{{ $data->golongan->nama_golongan }}</td>
+                                            <td>{{ $data->email }}</td>
+                                            <td>{{ $data->profilePekerjaan->status }}</td>
                                             <td>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn rounded-3" data-bs-toggle="dropdown" aria-expanded="false">
@@ -200,12 +200,12 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.edit.page',['pegawai' => '1']) }}">
+                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
                                                                 <i class="bi bi-pencil-square"></i> Detail Profil
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.rekap.absen.page',['pegawai' => '1']) }}">
+                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.rekap.absen.page',['id_pegawai' => $data->id]) }}">
                                                                 <i class="bi bi-calendar-check"></i>Rekap Absensi
                                                             </a>
                                                         </li>
@@ -346,10 +346,108 @@
                         <div class="container-fluid">
                             <div class="row gy-2">
                                 <div class="col-12">
-                                    <label for="">Email</label>
-                                    <input name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                                    <label for="" class="form-label">Email</label>
+                                    <input name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email" required>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Password</label>
+                                    <input name="password" type="password" class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}" placeholder="Masukkan password" required>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Nama Lengkap</label>
+                                    <input name="nama_lengkap" type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" value="{{ old('nama_lengkap') }}" placeholder="Masukkan nama lengkap" required>
+                                    @error('nama_lengkap')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Nomor Induk Kependudukan</label>
+                                    <input name="nomor_induk_kependudukan" type="text" class="form-control @error('nomor_induk_kependudukan') is-invalid @enderror" value="{{ old('nomor_induk_kependudukan') }}" placeholder="Masukkan NIK" required>
+                                    @error('nomor_induk_kependudukan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Nomor Induk Karyawan</label>
+                                    <input name="nomor_induk_karyawan" type="text" class="form-control @error('nomor_induk_karyawan') is-invalid @enderror" value="{{ old('nomor_induk_karyawan') }}" placeholder="Masukkan NIK Karyawan" required>
+                                    @error('nomor_induk_karyawan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Tanggal Bergabung</label>
+                                    <input name="tanggal_masuk" type="date" class="form-control @error('tanggal_masuk') is-invalid @enderror" value="{{ old('tanggal_masuk') }}" placeholder="Pilih tanggal bergabung" required>
+                                    @error('tanggal_masuk')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Jabatan</label>
+                                    <select name="jabatan" class="form-select @error('jabatan') is-invalid @enderror" required>
+                                        @foreach ($dataJabatan as $jabatan )
+                                            <option value="{{ $jabatan->id }}">{{ $jabatan->nama_jabatan }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('jabatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Departemen</label>
+                                    <select name="departemen" class="form-select @error('departemen') is-invalid @enderror" required>
+                                        @foreach ($dataDepartemen as $departemen )
+                                            <option value="{{ $departemen->id }}">{{ $departemen->nama_departemen }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('departemen')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Status</label>
+                                    <select name="status_karyawan" class="form-select @error('status_karyawan') is-invalid @enderror" required>
+                                        <option value="" disabled selected>Pilih status karyawan</option>
+                                        <option value="aktif" {{ old('status_karyawan') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="nonaktif" {{ old('status_karyawan') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                        <option value="kontrak" {{ old('status_karyawan') == 'kontrak' ? 'selected' : '' }}>Kontrak</option>
+                                        <option value="tetap" {{ old('status_karyawan') == 'tetap' ? 'selected' : '' }}>Tetap</option>
+                                        <option value="magang" {{ old('status_karyawan') == 'magang' ? 'selected' : '' }}>Magang</option>
+                                        <option value="honorer" {{ old('status_karyawan') == 'honorer' ? 'selected' : '' }}>Honorer</option>
+                                        <option value="pensiun" {{ old('status_karyawan') == 'pensiun' ? 'selected' : '' }}>Pensiun</option>
+                                        <option value="cuti" {{ old('status_karyawan') == 'cuti' ? 'selected' : '' }}>Cuti</option>
+                                        <option value="skorsing" {{ old('status_karyawan') == 'skorsing' ? 'selected' : '' }}>Skorsing</option>
+                                    </select>
+                                    @error('status_karyawan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="" class="form-label">Role</label>
+                                    @foreach($dataRoles as $role)
+                                        <div class="form-check">
+                                            <input type="checkbox" name="roles[]" class="form-check-input @error('roles') is-invalid @enderror" value="{{ $role->name }}">
+                                            <label class="form-check-label text-capitalize" for="checkDefault">
+                                                {{ $role->name }}
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                    @error('roles')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>

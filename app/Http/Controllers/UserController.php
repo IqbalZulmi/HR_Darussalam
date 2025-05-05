@@ -2,15 +2,435 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Departemen;
+use App\Models\Jabatan;
+use App\Models\ProfilePekerjaan;
+use App\Models\ProfilePribadi;
+use App\Models\SosialMedia;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function showKelolaPegawaiPage(){
+        $pegawai = User::whereDoesntHave('roles', function ($query) {
+            $query->whereIn('name', ['superadmin', 'kepala yayasan']);
+        })->orderByDesc('created_at')->get();
+
+        $jabatan = Jabatan::all();
+
+        $departemen = Departemen::all();
+
+        $roles = Role::all();
+
+        return view('admin.kelola-pegawai',[
+            'dataPegawai' => $pegawai,
+            'dataJabatan' => $jabatan,
+            'dataDepartemen' => $departemen,
+            'dataRoles' => $roles,
+        ]);
+    }
+
+    public function tambahPegawai(Request $request){
+        $validatedData = $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'nama_lengkap' => 'required|string|max:255',
+            'nomor_induk_kependudukan' => 'required|numeric|unique:profile_pribadi,nomor_induk_kependudukan',
+            'nomor_induk_karyawan' => 'required|string|unique:profile_pekerjaans,nomor_induk_karyawan',
+            'tanggal_masuk' => 'required|date',
+            'jabatan' => 'required',
+            'departemen' => 'required',
+            'status_karyawan' => 'required',
+            'roles' => 'required|array',
+        ],[
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan.',
+
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal harus terdiri dari :min karakter.',
+
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nama_lengkap.string' => 'Nama lengkap harus berupa teks.',
+            'nama_lengkap.max' => 'Nama lengkap maksimal :max karakter.',
+
+            'nomor_induk_kependudukan.required' => 'NIK wajib diisi.',
+            'nomor_induk_kependudukan.numeric' => 'NIK harus berupa angka.',
+            'nomor_induk_kependudukan.unique' => 'NIK sudah terdaftar.',
+
+            'nomor_induk_karyawan.required' => 'Nomor induk karyawan wajib diisi.',
+            'nomor_induk_karyawan.string' => 'Nomor induk karyawan harus berupa teks.',
+            'nomor_induk_karyawan.unique' => 'Nomor induk karyawan sudah terdaftar.',
+
+            'tanggal_masuk.required' => 'Tanggal masuk wajib diisi.',
+            'tanggal_masuk.date' => 'Tanggal masuk harus berupa tanggal yang valid.',
+
+            'jabatan.required' => 'Jabatan wajib dipilih.',
+            'departemen.required' => 'Departemen wajib dipilih.',
+            'status_karyawan.required' => 'Status karyawan wajib dipilih.',
+
+            'roles.required' => 'Roles wajib dipilih.',
+            'roles.array' => 'Format peran (roles) tidak valid.',
+        ]);
+
+        try{
+            DB::beginTransaction();
+
+            $user = User::create([
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            ProfilePribadi::create([
+                'id_user' => $user->id,
+                'nama_lengkap' => $request->nama_lengkap,
+                'nomor_induk_kependudukan' => $request->nomor_induk_kependudukan,
+            ]);
+
+            ProfilePekerjaan::create([
+                'id_user' => $user->id,
+                'id_jabatan' => $request->jabatan,
+                'id_departemen' => $request->departemen,
+                'nomor_induk_karyawan' => $request->nomor_induk_karyawan,
+                'tanggal_masuk' => $request->tanggal_masuk,
+                'status' => $request->status_karyawan,
+            ]);
+
+            $user->syncRoles($request->roles);
+
+            DB::commit();
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Berhasil menambah data',
+                'type' => 'success',
+            ]);
+
+        }catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal menambah data' ,
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    public function hapusMassalPegawai(Request $request)
+    {
+        $ids = explode(',', $request->id); // Sesuai input name di form
+
+        try {
+            $deleted = User::whereIn('id', $ids)->delete();
+
+            if ($deleted === 0) {
+                return redirect()->back()->with([
+                    'notifikasi' => 'Tidak ada data yang dihapus!',
+                    'type' => 'warning',
+                ]);
+            }
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Berhasil menghapus ' . $deleted . ' data.',
+                'type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal menghapus data!',
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    public function showEditPegawaiPage($id_pegawai){
+        $pegawai = User::where('id',$id_pegawai)->firstOrFail();
+        $departemen = Departemen::all();
+        $jabatan = jabatan::all();
+        $sosialMedia = SosialMedia::all();
+
+        $lamaPengabdian = Carbon::parse($pegawai->profilePekerjaan->tanggal_masuk)->diffForHumans(null, true);
+
+        $jsonKota = File::get(resource_path('json/kota-indonesia.json'));
+        $dataKotaJson = json_decode($jsonKota, true);
+
+        $jsonKecamatan = File::get(resource_path('json/kecamatan-indonesia.json'));
+        $dataKecamatanJson = json_decode($jsonKecamatan, true);
+
+        return view('admin.edit-pegawai-profile',[
+            'data' => $pegawai,
+            'dataDepartemen' => $departemen,
+            'dataJabatan' => $jabatan,
+            'dataSosialMedia' => $sosialMedia,
+            'lamaPengabdian' => $lamaPengabdian,
+            'allKota' => $dataKotaJson,
+            'allKecamatan' => $dataKecamatanJson,
+        ]);
+    }
+
+    public function updatePegawaiProfile(Request $request,$id_pegawai){
+        $validatedData= $request->validate([
+            //validasi user
+            'email' => 'required|unique:users,email,'. $request->old_email .',email|email:dns' ,
+
+            //validasi profile kerja
+            'departemen' => 'required|exists:departemens,id',
+            'jabatan' => 'required|exists:jabatans,id',
+            'nomor_induk_karyawan' => 'required|string|max:100',
+            'tanggal_masuk' => 'required|date',
+            'status_karyawan' => 'required|in:aktif,nonaktif,kontrak,tetap,magang,honorer,pensiun,cuti,skorsing',
+
+            // Validasi untuk profile
+            'nomor_induk_kependudukan' => 'required',
+            'nama_lengkap' => 'required|string|max:255',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'jenis_kelamin' => 'nullable|in:pria,wanita',
+            'golongan_darah' => 'nullable',
+            'status_pernikahan' => 'nullable',
+            'npwp' => 'nullable',
+            'kecamatan' => 'nullable',
+            'alamat_lengkap' => 'nullable|string',
+            'no_hp' => 'nullable|regex:/^[0-9]+$/|min:10|max:15',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+
+            // Validasi untuk orang tua
+            'nama_ayah' => 'nullable|string',
+            'pekerjaan_ayah' => 'nullable|string',
+            'nama_ibu' => 'nullable|string',
+            'pekerjaan_ibu' => 'nullable|string',
+            'alamat_orang_tua' => 'nullable|string',
+
+            // Validasi untuk keluarga (array)
+            'id_keluarga.*' => 'nullable|exists:keluargas,id',
+            'nama.*' => 'required|string',
+            'hubungan.*' => 'required|string',
+            'tanggal_lahir_keluarga.*' => 'required|date',
+            'pekerjaan.*' => 'required|string',
+
+            // validasi user sosmed
+            'id_platform.*' => 'required|exists:sosial_media,id',
+            'username.*' => 'required|string|max:255',
+            'link.*' => 'required|url|max:255',
+        ], [
+            // Pesan error kustom
+
+            // Email
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Email tidak valid, pastikan formatnya benar.',
+            'email.unique' => 'Email yang Anda masukkan sudah terdaftar. Coba gunakan email lain.',
+
+            //profile kerja
+            'departemen.required' => 'Departemen wajib dipilih.',
+            'departemen.exists' => 'Departemen yang dipilih tidak valid.',
+            'jabatan.required' => 'Jabatan wajib dipilih.',
+            'jabatan.exists' => 'Jabatan yang dipilih tidak valid.',
+            'nomor_induk_karyawan.required' => 'Nomor Induk Karyawan wajib diisi.',
+            'nomor_induk_karyawan.string' => 'Nomor Induk Karyawan harus berupa teks.',
+            'nomor_induk_karyawan.max' => 'Nomor Induk Karyawan maksimal 100 karakter.',
+            'tanggal_masuk.required' => 'Tanggal Masuk wajib diisi.',
+            'tanggal_masuk.date' => 'Format Tanggal Masuk tidak valid.',
+            'status_karyawan.required' => 'Status Karyawan wajib dipilih.',
+            'status_karyawan.in' => 'Status Karyawan yang dipilih tidak valid.',
+
+            // No HP
+            'no_hp.regex' => 'Nomor HP hanya boleh terdiri dari angka.',
+            'no_hp.min' => 'Nomor HP harus terdiri dari minimal 10 digit.',
+            'no_hp.max' => 'Nomor HP tidak boleh lebih dari 15 digit.',
+
+            // Profile - Nama lengkap dan nomor induk kependudukan
+            'nomor_induk_kependudukan.required' => 'Nomor Induk Kependudukan wajib diisi.',
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nama_lengkap.string' => 'Nama lengkap harus berupa huruf.',
+            'nama_lengkap.max' => 'Nama lengkap tidak boleh lebih dari 255 karakter.',
+
+            // Profile - Tempat lahir, Tanggal lahir, Jenis kelamin
+            'tempat_lahir.string' => 'Tempat lahir harus berupa teks.',
+            'tanggal_lahir.date' => 'Tanggal lahir harus dalam format yang valid.',
+            'jenis_kelamin.in' => 'Jenis kelamin harus berupa salah satu dari: pria, wanita.',
+
+            // Orang Tua
+            'nama_ayah.string' => 'Nama ayah harus berupa teks.',
+            'pekerjaan_ayah.string' => 'Pekerjaan ayah harus berupa teks.',
+            'nama_ibu.string' => 'Nama ibu harus berupa teks.',
+            'pekerjaan_ibu.string' => 'Pekerjaan ibu harus berupa teks.',
+            'alamat_orang_tua.string' => 'Alamat orang tua harus berupa teks.',
+
+            // Keluarga
+            'id_keluarga.*.exists' => 'ID keluarga tidak valid.',
+            'nama.*.required' => 'Nama anggota keluarga wajib diisi.',
+            'nama.*.string' => 'Nama anggota keluarga harus berupa teks.',
+            'hubungan.*.required' => 'Hubungan keluarga wajib diisi untuk setiap anggota.',
+            'hubungan.*.string' => 'Hubungan keluarga harus berupa teks.',
+            'tanggal_lahir_keluarga.*.required' => 'Tanggal lahir keluarga wajib diisi untuk setiap anggota.',
+            'tanggal_lahir_keluarga.*.date' => 'Tanggal lahir keluarga harus dalam format yang valid.',
+            'pekerjaan.*.required' => 'Pekerjaan wajib diisi untuk setiap anggota.',
+            'pekerjaan.*.string' => 'Pekerjaan keluarga harus berupa teks.',
+
+            //sosmed
+            'id_platform.*.required' => 'Platform wajib dipilih.',
+            'id_platform.*.exists' => 'Platform yang dipilih tidak valid.',
+            'username.*.required' => 'Username wajib diisi.',
+            'username.*.max' => 'Username terlalu panjang.',
+            'link.*.required' => 'Link sosial media wajib diisi.',
+            'link.*.url' => 'Link sosial media harus berupa URL yang valid.',
+            'link.*.max' => 'Link sosial media terlalu panjang.',
+        ]);
+
+        try{
+            DB::beginTransaction();
+
+            $user = User::where('id',$id_pegawai)->firstOrFail();
+            $user->email = $request->email;
+            $user->save();
+
+            //update profile kerja
+            $user->profilePekerjaan()->update([
+                'id_user' => $user->id,
+                'id_departemen' => $request->departemen,
+                'id_jabatan' => $request->jabatan,
+                'nomor_induk_karyawan' => $request->nomor_induk_karyawan,
+                'tanggal_masuk' => $request->tanggal_masuk,
+                'status' => $request->status_karyawan,
+            ]);
+
+            if ($request->hasFile('foto')) {
+                $old_foto = $user->profilePribadi->foto ?? null;
+                if (!empty($old_foto) && is_file('storage/'.$old_foto)) {
+                    unlink('storage/'.$old_foto);
+                }
+                // Store the photo in the public/profile_img directory
+                $foto = $request->file('foto')->store('profile_img','public');
+
+            }else{
+                $foto = $user->profilePribadi->foto;
+            }
+
+            // Update Profile pribadi
+            $profileData = $request->only([
+                'nomor_induk_kependudukan',
+                'nama_lengkap',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'jenis_kelamin',
+                'golongan_darah',
+                'status_pernikahan',
+                'npwp',
+                'kecamatan',
+                'alamat_lengkap',
+                'no_hp',
+            ]);
+
+            if ($foto) {
+                $profileData['foto'] = $foto;
+            }
+
+            $user->profilePribadi()->updateOrCreate(['id_user' => $user->id], $profileData);
+
+            // Update OrangTua
+            $user->orangTua()->updateOrCreate(
+                ['id_user' => $user->id],
+                $request->only([
+                    'nama_ayah',
+                    'pekerjaan_ayah',
+                    'nama_ibu',
+                    'pekerjaan_ibu',
+                    'alamat_orang_tua',
+                ])
+            );
+
+            // Update or Create Keluarga (bisa hapus, update, atau tambah)
+            $id_keluarga = $request->input('id_keluarga', []);
+            $nama = $request->input('nama', []);
+            $hubungan = $request->input('hubungan', []);
+            $tanggal_lahir = $request->input('tanggal_lahir_keluarga', []);
+            $pekerjaan = $request->input('pekerjaan', []);
+
+            for ($i = 0; $i < count($nama); $i++) {
+                $id = $id_keluarga[$i] ?? null;
+
+                $user->keluarga()->updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'id_user' => $user->id,
+                        'nama' => $nama[$i],
+                        'hubungan' => $hubungan[$i],
+                        'tanggal_lahir' => $tanggal_lahir[$i],
+                        'pekerjaan' => $pekerjaan[$i],
+                    ]
+                );
+            }
+
+
+            //update or create user sosial media
+            $id_user_sosmed = $request->input('id_user_sosmed', []);
+            $id_platform = $request->input('id_platform', []);
+            $username = $request->input('username', []);
+            $link = $request->input('link', []);
+
+            for ($i = 0; $i < count($id_platform); $i++) {
+                $id = $id_user_sosmed[$i] ?? null;
+
+                $user->userSosialMedia()->updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'id_user' => $user->id,
+                        'id_platform' => $id_platform[$i],
+                        'username' => $username[$i],
+                        'link' => $link[$i],
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Berhasil mengubah data',
+                'type' => 'success',
+            ]);
+        }catch (\Exception $e) {
+
+            DB::rollback();
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal mengubah data'.$e ,
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    public function updatePasswordPegawai(Request $request,$id_pegawai){
+        $validatedData = $request->validate([
+            'password_baru' => 'required|min:8',
+            'konf_password' => 'required|same:password_baru',
+        ], [
+            'password_baru.required' => 'Masukkan password baru.',
+            'password_baru.min' => 'Password baru minimal terdiri dari 8 karakter.',
+            'konf_password.required' => 'Masukkan konfirmasi password baru.',
+            'konf_password.same' => 'Konfirmasi password baru tidak cocok.',
+        ]);
+
+        $user = User::where('id',$id_pegawai)->firstOrFail();
+        $user->password = Hash::make($request->password_baru);
+        if ($user->save()) {
+            return redirect()->back()->with([
+                'notifikasi' => 'Password berhasil diperbarui!',
+                'type' => 'success'
+            ]);
+        } else {
+            return redirect()->back()->with([
+                'notifikasi' => 'Password gagal diperbarui!',
+                'type' => 'error'
+            ]);
+        }
+    }
+
     public function updatePassword(Request $request){
         $validatedData = $request->validate([
             'password_lama' => 'required',

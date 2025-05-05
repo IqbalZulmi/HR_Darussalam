@@ -10,9 +10,7 @@ class UserSosialMediaController extends Controller
 {
     public function destroy($id_user_sosmed)
     {
-        $userSosmed = UserSosialMedia::where('id', $id_user_sosmed)
-                            ->where('id_user', Auth::user()->id)
-                            ->first();
+        $userSosmed = UserSosialMedia::where('id', $id_user_sosmed)->first();
 
         if (!$userSosmed) {
             return redirect()->back()->with([

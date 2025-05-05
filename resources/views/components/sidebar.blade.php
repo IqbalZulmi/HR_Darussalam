@@ -2,17 +2,60 @@
 <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-heading">MAIN MENU</li>
-        @hasanyrole(['staff hrd','kepala hrd','kepala yayasan'])
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('hrd.dashboard.page') }}">
-                    <i class="bi bi-grid"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li><!-- End Dashboard Nav -->
+        @canany([
+            'manajemen_user.read',
+            'manajemen_rekap_absensi.read',
+            'manajemen_evaluasi.read',
+            'verifikasi_cuti.read',
+        ])
+            <li class="nav-heading">HRD</li>
+        @endcanany
+
+        @hasanyrole(['staff hrd','kepala hrd','kepala yayasan','superadmin'])
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('hrd.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('hrd.dashboard.page') }}">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
         @endhasanyrole
 
-        @hasanyrole(['tenaga pendidik','kepala sekolah','kepala departemen'])
+        @can('manajemen_rekap_absensi.read')
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.today.page') }}">
+                <i class="bi bi-clipboard-check"></i>
+                <span>Absensi Hari ini</span>
+            </a>
+        </li>
+        @endcan
+
+        {{-- @can('verifikasi_cuti.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('hrd.verifikasi.cuti.page') ? '' : ' collapsed' }}" href="{{ route('hrd.verifikasi.cuti.page') }}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Verifikasi Cuti</span>
+                </a>
+            </li>
+        @endcan --}}
+
+        @can('manajemen_user.read')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.page') }}">
+                        <i class="bi bi-people"></i>
+                        <span>Pegawai</span>
+                    </a>
+                </li>
+        @endcan
+
+        @canany([
+            'rekap_absensi_pribadi.read',
+            'pengajuan_cuti.read',
+            'rekap_evaluasi_pribadi.read'
+        ])
+            <li class="nav-heading">Pegawai</li>
+        @endcanany
+
+        @hasanyrole(['tenaga pendidik','kepala sekolah','kepala departemen','superadmin'])
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('pegawai.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('pegawai.dashboard.page') }}">
                     <i class="bi bi-grid"></i>
@@ -25,49 +68,29 @@
                     <span>Rekap Absensi Pribadi</span>
                 </a>
             </li>
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('pegawai.pengajuan.cuti.page') ? '' : ' collapsed' }}" href="{{ route('pegawai.pengajuan.cuti.page') }}">
                     <i class="bi bi-calendar-event"></i>
                     <span>Pengajuan Cuti</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.index') }}">
+                <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.page') }}">
                     <i class="bi bi-ui-checks"></i>
                     <span>Evaluasi</span>
                 </a>
             </li>
         @endhasanyrole
 
-        @can('manajemen_rekap_absensi.read')
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.today.page') }}">
-                <i class="bi bi-clipboard-check"></i>
-                <span>Absensi Hari ini</span>
-            </a>
-        </li>
-        @endcan
-
-        @can('manajemen_verifikasi_cuti.read')
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.verifikasi.cuti.page') ? '' : ' collapsed' }}" href="{{ route('hrd.verifikasi.cuti.page') }}">
-                    <i class="bi bi-calendar-event"></i>
-                    <span>Verifikasi Cuti</span>
-                </a>
-            </li>
-        @endcan
-
-        @can('manajemen_user.read')
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.index') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.index') }}">
-                        <i class="bi bi-people"></i>
-                        <span>Pegawai</span>
-                    </a>
-                </li>
-        @endcan
+        @canany([
+            'manajemen_role.read',
+            'manajemen_hak_akses.read',
+            'manajemen_hak_akses_user.read',
+        ])
+            <li class="nav-heading">Roles & Permission</li>
+        @endcanany
 
         @can('manajemen_role.read')
-            <li class="nav-heading">Roles & Permission</li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('role.index') ? '' : ' collapsed' }}" href="{{ route('role.index') }}">
                     <i class="bi bi-person-badge"></i>
