@@ -118,6 +118,70 @@
         });
     </script>
 
+{{-- tambah sosmed button --}}
+    <script>
+        $(document).ready(function () {
+            $('#tambah-sosmed').on('click', function () {
+                let index = $('#container-sosmed .sosmed').length + 1;
+
+                let newSosmed = `
+                <div class="row mt-2 sosmed">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold text-capitalize">Sosial Media ke ${index}</h6>
+                        <i class="bi bi-dash-circle text-danger fs-4 hapus-baris" role="button" data-bs-toggle="tooltip" data-bs-title="Hapus Baris" data-bs-custom-class="danger-tooltip"></i>
+                    </div>
+                    <input type="hidden" name="id_user_sosmed[]" value="">
+                    <div class="col-6 mb-3">
+                        <label for="formFile" class="form-label">Nama Platform</label>
+                        <select name="id_platform[]" class="form-select @error('id_platform') is-invalid @enderror" disabled required>
+                            @foreach ($dataSosialMedia as $platform )
+                                <option value="{{ $platform->id }}">{{ $platform->nama_platform }}</option>
+                            @endforeach
+                        </select>
+                        @error('id_platform')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="formFile" class="form-label">Username</label>
+                        <input name="username[]" class="form-control @error('username') is-invalid @enderror" type="text" disabled required>
+                        @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="formFile" class="form-label">Link Sosial Media</label>
+                        <input name="link[]" class="form-control  @error('link') is-invalid @enderror" type="text" disabled required>
+                        @error('link')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>`;
+
+                $('#container-sosmed').append(newSosmed);
+
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
+
+            //hapus-baris
+            $('#container-sosmed').on('click', '.hapus-baris', function () {
+                // Temukan elemen i (icon) tempat tooltip aktif
+                const tooltipEl = this;
+
+                // Dispose tooltip sebelum elemen dihapus
+                const tooltipInstance = bootstrap.Tooltip.getInstance(tooltipEl);
+                if (tooltipInstance) {
+                    tooltipInstance.dispose();
+                }
+
+                $(this).closest('.sosmed').remove();
+            });
+        });
+    </script>
+
 @endpush
 
 @section('content')
@@ -523,6 +587,78 @@
                             </div>
                         </div>
 
+                        {{-- data sosial media --}}
+                        <div class="row">
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <p class="h5 text-capitalize fw-semibold mt-2">Ubah data sosial media</p>
+                                        <hr class="border border-dark opacity-100">
+                                    </div>
+                                    <div class="col-lg-9 bg-light">
+                                        <div class="row mt-2">
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-end align-items-center gap-2">
+                                                    <button type="button" id="tambah-sosmed" class="btn btn-sm btn-main">
+                                                        <i class="bi bi-plus-circle"></i> Tambah Sosial Media
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-main toggle-edit">
+                                                        <i class="bi bi-pencil"></i> Sunting
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="container-sosmed">
+                                            @forelse ($data->userSosialMedia as $index => $sosmed )
+                                            <div class="row mt-2 sosmed">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="fw-bold text-capitalize">Sosial media ke {{ $index+1 }}</div>
+                                                    <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#hapusModal{{ $sosmed->id }}">
+                                                        <i class="bi bi-trash" data-bs-toggle="tooltip" data-bs-title="Hapus Keluarga" data-bs-custom-class="danger-tooltip"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="hidden" name="id_user_sosmed[]" value="{{ $sosmed->id }}">
+                                                <div class="col-6 mb-3">
+                                                    <label for="formFile" class="form-label">Nama Platform</label>
+                                                    <select name="id_platform[]" class="form-select @error('id_platform.' . $index) is-invalid @enderror" disabled required>
+                                                        @foreach ($dataSosialMedia as $platform )
+                                                            <option value="{{ $platform->id }}" @if ($sosmed->id_platform == $platform->id) selected @endif>{{ $platform->nama_platform }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('id_platform.' . $index)
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="formFile" class="form-label">Username</label>
+                                                    <input name="username[]" class="form-control @error('username.' . $index) is-invalid @enderror" type="text" value="{{ old('username.' . $index, $sosmed->username) }}" disabled required>
+                                                    @error('username.' . $index)
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="formFile" class="form-label">Link Sosial Media</label>
+                                                    <input name="link[]" class="form-control  @error('link.' . $index) is-invalid @enderror" type="text" value="{{ old('link.' . $index, $sosmed->link) }}" disabled required>
+                                                    @error('link.' . $index)
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            @empty
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="text-center h1">
+                                                            Tidak ada data untuk ditampilkan!
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- button submit --}}
                         <div class="row">
                             <button type="submit" class="btn btn-main">Simpan Perubahan</button>
@@ -589,6 +725,35 @@
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('keluarga.destroy',['id_keluarga'=> $keluarga->id]) }}" method="post">
+                            @csrf @method('delete')
+                            <div class="container-fluid">
+                                <input type="hidden" name="id" id="hapusId">
+                                <h4 class="text-capitalize">
+                                    Apakah anda yakin ingin <span class="text-danger fw-bold">menghapus data</span> yang dipilih ?</span>
+                                </h4>
+                            </div>
+                        </div>
+                    <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-main">Simpan</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    @foreach ($data->userSosialMedia as $userSosmed )
+        {{-- hapus modal --}}
+        <div class="modal fade" id="hapusModal{{ $userSosmed->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Hapus Sosial Media</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('user.sosmed.destroy',['id_user_sosmed'=> $userSosmed->id]) }}" method="post">
                             @csrf @method('delete')
                             <div class="container-fluid">
                                 <input type="hidden" name="id" id="hapusId">

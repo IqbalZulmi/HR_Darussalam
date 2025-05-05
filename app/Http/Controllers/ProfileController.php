@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SosialMedia;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -13,6 +14,7 @@ class ProfileController extends Controller
 {
     public function showProfilePage(){
         $user = Auth::user();
+        $sosialMedia = SosialMedia::all();
 
         $lamaPengabdian = Carbon::parse($user->profilePekerjaan->tanggal_masuk)->diffForHumans(null, true);
 
@@ -24,6 +26,7 @@ class ProfileController extends Controller
 
         return view('general.profile',[
             'data'=>$user,
+            'dataSosialMedia' => $sosialMedia,
             'lamaPengabdian' => $lamaPengabdian,
             'allKota' => $dataKotaJson,
             'allKecamatan' => $dataKecamatanJson,
@@ -62,6 +65,11 @@ class ProfileController extends Controller
             'hubungan.*' => 'required|string',
             'tanggal_lahir_keluarga.*' => 'required|date',
             'pekerjaan.*' => 'required|string',
+
+            // validasi user sosmed
+            'id_platform.*' => 'required|exists:sosial_media,id',
+            'username.*' => 'required|string|max:255',
+            'link.*' => 'required|url|max:255',
         ], [
             // Pesan error kustom
 
@@ -103,6 +111,15 @@ class ProfileController extends Controller
             'tanggal_lahir_keluarga.*.date' => 'Tanggal lahir keluarga harus dalam format yang valid.',
             'pekerjaan.*.required' => 'Pekerjaan wajib diisi untuk setiap anggota.',
             'pekerjaan.*.string' => 'Pekerjaan keluarga harus berupa teks.',
+
+            //sosmed
+            'id_platform.*.required' => 'Platform wajib dipilih.',
+            'id_platform.*.exists' => 'Platform yang dipilih tidak valid.',
+            'username.*.required' => 'Username wajib diisi.',
+            'username.*.max' => 'Username terlalu panjang.',
+            'link.*.required' => 'Link sosial media wajib diisi.',
+            'link.*.url' => 'Link sosial media harus berupa URL yang valid.',
+            'link.*.max' => 'Link sosial media terlalu panjang.',
         ]);
 
         try{
@@ -173,8 +190,29 @@ class ProfileController extends Controller
                         'id_user' => $user->id,
                         'nama' => $nama[$i],
                         'hubungan' => $hubungan[$i],
-                        'tanggal_lahir' => $tanggal_lahir[$i] ?? null,
-                        'pekerjaan' => $pekerjaan[$i] ?? null,
+                        'tanggal_lahir' => $tanggal_lahir[$i],
+                        'pekerjaan' => $pekerjaan[$i],
+                    ]
+                );
+            }
+
+
+            //update or create user sosial media
+            $id_user_sosmed = $request->input('id_user_sosmed', []);
+            $id_platform = $request->input('id_platform', []);
+            $username = $request->input('username', []);
+            $link = $request->input('link', []);
+
+            for ($i = 0; $i < count($id_platform); $i++) {
+                $id = $id_user_sosmed[$i] ?? null;
+
+                $user->userSosialMedia()->updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'id_user' => $user->id,
+                        'id_platform' => $id_platform[$i],
+                        'username' => $username[$i],
+                        'link' => $link[$i],
                     ]
                 );
             }

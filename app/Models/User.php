@@ -66,7 +66,7 @@ class User extends Authenticatable
         return $this->hasMany(Keluarga::class, 'id_user');
     }
 
-    public function sosialMedia(){
+    public function userSosialMedia(){
         return $this->hasMany(UserSosialMedia::class, 'id_user');
     }
 
