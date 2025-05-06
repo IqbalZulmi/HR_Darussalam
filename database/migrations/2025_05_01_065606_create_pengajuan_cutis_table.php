@@ -18,7 +18,22 @@ return new class extends Migration
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->enum('tipe_cuti',['cuti tahunan','cuti melahirkan','cuti nikah','cuti kematian','cuti bersama','cuti pemotongan gaji','cuti lainnya']);
-            $table->enum('status',['menunggu','diterima','ditolak']);
+            $table->enum('status_pengajuan', [
+                'ditinjau kepala sekolah',
+                'disetujui kepala sekolah',
+                'ditolak kepala sekolah',
+                'disetujui kepala sekolah menunggu tinjauan dirpen',
+                'ditinjau dirpen',
+                'disetujui dirpen',
+                'ditolak dirpen',
+                'disetujui dirpen menunggu tinjauan hrd',
+                'disteujui dirpen menunggu tinjauan kepala hrd',
+                'disetujui hrd',
+                'ditolak hrd',
+                'disetujui kepala hrd',
+                'ditolak kepala hrd',
+            ])->default('ditinjau kepala sekolah');
+
             $table->text('alasan_pendukung')->nullable();
             $table->string('file_pendukung')->nullable();
             $table->text('komentar')->nullable();

@@ -203,7 +203,7 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active profile-edit" id="profile-edit">
-                    <form id="form-edit" action="{{ route('hrd.kelola.pegawai.update',['id_pegawai' => $data->id]) }}" method="post" enctype="multipart/form-data">
+                    <form id="form-edit" action="{{ route('kelola.pegawai.update',['id_pegawai' => $data->id]) }}" method="post" enctype="multipart/form-data">
                         @csrf @method('put')
                         {{-- data pekerjaan --}}
                         <div class="row">
@@ -643,7 +643,7 @@
                     <!-- Change Password Form -->
                     <div class="card">
                         <div class="card-body pt-3">
-                            <form action="{{ route('hrd.kelola.pegawai.password.update',['id_pegawai' => $data->id]) }}" method="post">
+                            <form action="{{ route('kelola.pegawai.password.update',['id_pegawai' => $data->id]) }}" method="post">
                                 @csrf @method('put')
 
                                 <div class="row mb-3">

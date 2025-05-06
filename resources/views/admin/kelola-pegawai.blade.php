@@ -200,12 +200,12 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
+                                                            <a class="dropdown-item" href="{{ route('kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
                                                                 <i class="bi bi-pencil-square"></i> Detail Profil
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ route('hrd.kelola.pegawai.rekap.absen.page',['id_pegawai' => $data->id]) }}">
+                                                            <a class="dropdown-item" href="{{ route('kelola.pegawai.rekap.absen.page',['id_pegawai' => $data->id]) }}">
                                                                 <i class="bi bi-calendar-check"></i>Rekap Absensi
                                                             </a>
                                                         </li>
@@ -341,7 +341,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('hrd.kelola.pegawai.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('kelola.pegawai.store') }}" method="post" enctype="multipart/form-data">
                         @csrf @method('post')
                         <div class="container-fluid">
                             <div class="row gy-2">
@@ -471,7 +471,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('hrd.kelola.pegawai.mass.delete') }}" method="post">
+                    <form action="{{ route('kelola.pegawai.mass.delete') }}" method="post">
                         @csrf @method('delete')
                         <div class="container-fluid">
                             <input type="hidden" name="id" id="hapusId">

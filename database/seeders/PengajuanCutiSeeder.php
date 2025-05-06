@@ -35,7 +35,7 @@ class PengajuanCutiSeeder extends Seeder
                 'tanggal_mulai' => $tanggalMulai,
                 'tanggal_selesai' => $tanggalSelesai,
                 'tipe_cuti' => 'cuti tahunan', // Tipe cuti bisa disesuaikan
-                'status' => 'menunggu', // Status cuti awalnya menunggu
+                'status_pengajuan' => 'ditinjau kepala sekolah', // Status cuti awalnya menunggu
                 'alasan_pendukung' => 'Untuk keperluan pribadi', // Alasan bisa disesuaikan
                 'file_pendukung' => null, // Jika tidak ada file pendukung, bisa dibiarkan null
                 'komentar' => 'Pengajuan cuti tahunan', // Komentar bisa disesuaikan
