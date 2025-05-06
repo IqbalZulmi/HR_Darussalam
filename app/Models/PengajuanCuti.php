@@ -17,7 +17,7 @@ class PengajuanCuti extends Model
         'tanggal_mulai',
         'tanggal_selesai',
         'tipe_cuti',
-        'status',
+        'status_pengajuan',
         'alasan_pendukung',
         'file_pendukung',
         'komentar',
