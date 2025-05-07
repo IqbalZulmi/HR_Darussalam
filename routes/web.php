@@ -7,11 +7,14 @@ use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PengajuanCutiController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSosialMediaController;
+use App\Http\Controllers\VerifikasiCutiController;
+use App\Models\PengajuanCuti;
 use Illuminate\Support\Facades\Route;
 
 
@@ -83,58 +86,72 @@ Route::middleware(['auth'])->group(function () {
         ->name('destroy');
     });
 
+    // Kelola Pegawai routes
+    Route::prefix('kelola/pegawai')->name('kelola.pegawai.')->group(function(){
+        Route::get('/',[UserController::class,'showKelolaPegawaiPage'])
+        ->name('page');
+
+        Route::get('/{id_pegawai}/profile',[UserController::class,'showEditPegawaiPage'])
+        ->name('edit.page');
+
+        Route::get('/{id_pegawai}/rekap-absen',[AbsensiController::class,'edit'])
+        ->name('rekap.absen.page');
+
+        Route::post('/',[UserController::class,'tambahPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.create')
+        ->name('store');
+
+        Route::put('/{id_pegawai}',[UserController::class,'updatePegawaiProfile'])
+        ->name('update');
+
+        Route::put('/{id_pegawai}/password',([UserController::class,'updatePasswordPegawai']))
+        ->name('password.update');
+
+        Route::delete('/kelola/mass-delete/pegawai', [UserController::class, 'hapusMassalPegawai'])
+        ->name('mass.delete');
+    });
+
+    //pengajuan cuti routes
+    Route::prefix('pengajuan/cuti')->name('pengajuan.cuti.')->group(function(){
+        Route::get('/tendik', [PengajuanCutiController::class, 'showPengajuanCutiTendikPage'])
+        ->name('tendik.page');
+
+        Route::post('/tendik/store', [PengajuanCutiController::class, 'storePengajuanTendik'])
+        ->name('tendik.store');
+    });
+
+    // verifikasi cuti routes
+    Route::prefix('verifikasi-cuti')->name('verifikasi.cuti.')->group(function(){
+        //halaman kepsek
+        Route::get('/kepsek', [VerifikasiCutiController::class, 'showVerifikasiKepsekPage'])
+        ->name('kepsek.page');
+
+        Route::put('{id_pengajuan}/kepsek', [VerifikasiCutiController::class, 'verifikasiCutiKepsek'])
+        ->name('kepsek.update');
+
+        //halaman dirpen
+        Route::get('/dirpen', [VerifikasiCutiController::class, 'showVerifikasiDirpenPage'])
+        ->name('dirpen.page');
+
+        Route::put('{id_pengajuan}/dirpen', [VerifikasiCutiController::class, 'verifikasiCutiDirpen'])
+        ->name('dirpen.update');
+    });
+
+     //rekap absensi routes
+    Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
+        Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
+        ->name('today.page');
+        Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])
+        ->name('pribadi.page');
+    });
+
     //HRD pages
     Route::prefix('hrd')->name('hrd.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'showAdminDashboard'])->name('dashboard.page');
-
-        //rekap absensi route
-        Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
-            Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
-            ->name('today.page');
-            Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])
-            ->name('pribadi.page');
-        });
-
-        //verifikasi cuti route
-        // Route::prefix('verifikasi-cuti')->name('verifikasi.cuti.')->group(function(){
-        //     Route::get('/', [CutiController::class, 'showVerifikasiCutiPage'])->middleware('Check_Roles_or_Permissions:manajemen_verifikasi_cuti.read')
-        //     ->name('page');
-        // });
-
-        // Kelola Pegawai route
-        Route::prefix('kelola/pegawai')->name('kelola.pegawai.')->group(function(){
-            Route::get('/',[UserController::class,'showKelolaPegawaiPage'])
-            ->name('page');
-
-            Route::get('/{id_pegawai}/profile',[UserController::class,'showEditPegawaiPage'])
-            ->name('edit.page');
-
-            Route::get('/{id_pegawai}/rekap-absen',[AbsensiController::class,'edit'])
-            ->name('rekap.absen.page');
-
-            Route::post('/',[UserController::class,'tambahPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.create')
-            ->name('store');
-
-            Route::put('/{id_pegawai}',[UserController::class,'updatePegawaiProfile'])
-            ->name('update');
-
-            Route::put('/{id_pegawai}/password',([UserController::class,'updatePasswordPegawai']))
-            ->name('password.update');
-
-            Route::delete('/kelola/mass-delete/pegawai', [UserController::class, 'hapusMassalPegawai'])
-            ->name('mass.delete');
-        });
-
     });
 
     //pegawai pages
     Route::prefix('pegawai')->name('pegawai.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'showPegawaiDashboard'])->name('dashboard.page');
-
-        // Route::prefix('pengajuan/cuti')->name('pengajuan.cuti.')->group(function(){
-        //     Route::get('/', [CutiController::class, 'showPengajuanCutiPage'])
-        //     ->name('page');
-        // });
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

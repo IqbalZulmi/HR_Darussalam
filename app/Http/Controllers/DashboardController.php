@@ -14,8 +14,8 @@ class DashboardController extends Controller
 
     public function showPegawaiDashboard()
     {
-        $user = Auth::user()->pegawai;
-        $selisih = Carbon::parse($user->tanggal_masuk)->diff(Carbon::now());
+        $user = Auth::user();
+        $selisih = Carbon::parse($user->profilePekerjaan->tanggal_masuk)->diff(Carbon::now());
 
         // Ambil tahun dan bulan
         $tahunPengabdian = $selisih->y;

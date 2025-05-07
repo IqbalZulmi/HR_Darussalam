@@ -22,25 +22,17 @@
 
         @can('manajemen_rekap_absensi.read')
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.today.page') }}">
+            <a class="nav-link {{ request()->routeIs('rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('rekap.absensi.today.page') }}">
                 <i class="bi bi-clipboard-check"></i>
                 <span>Absensi Hari ini</span>
             </a>
         </li>
         @endcan
 
-        {{-- @can('verifikasi_cuti.read')
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.verifikasi.cuti.page') ? '' : ' collapsed' }}" href="{{ route('hrd.verifikasi.cuti.page') }}">
-                    <i class="bi bi-calendar-event"></i>
-                    <span>Verifikasi Cuti</span>
-                </a>
-            </li>
-        @endcan --}}
 
         @can('manajemen_user.read')
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.page') }}">
+                    <a class="nav-link {{ request()->routeIs('kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.page') }}">
                         <i class="bi bi-people"></i>
                         <span>Pegawai</span>
                     </a>
@@ -55,7 +47,7 @@
             <li class="nav-heading">Pegawai</li>
         @endcanany
 
-        @hasanyrole(['tenaga pendidik','kepala sekolah','kepala departemen','superadmin'])
+        @hasanyrole(['tenaga pendidik','kepala sekolah','kepala departemen','superadmin','direktur pendidikan'])
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('pegawai.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('pegawai.dashboard.page') }}">
                     <i class="bi bi-grid"></i>
@@ -63,19 +55,33 @@
                 </a>
             </li><!-- End Dashboard Nav -->
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.rekap.absensi.pribadi.page') ? '' : ' collapsed' }}" href="{{ route('hrd.rekap.absensi.pribadi.page') }}">
+                <a class="nav-link {{ request()->routeIs('rekap.absensi.pribadi.page') ? '' : ' collapsed' }}" href="{{ route('rekap.absensi.pribadi.page') }}">
                     <i class="bi bi-clipboard-check"></i>
                     <span>Rekap Absensi Pribadi</span>
                 </a>
             </li>
-            {{-- <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('pegawai.pengajuan.cuti.page') ? '' : ' collapsed' }}" href="{{ route('pegawai.pengajuan.cuti.page') }}">
+            <li class="nav-heading">Direktur Pendidikan</li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('verifikasi.cuti.dirpen.page') ? '' : ' collapsed' }}" href="{{ route('verifikasi.cuti.dirpen.page') }}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Verifikasi Cuti</span>
+                </a>
+            </li>
+            <li class="nav-heading">Kepala Sekolah</li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('verifikasi.cuti.kepsek.page') ? '' : ' collapsed' }}" href="{{ route('verifikasi.cuti.kepsek.page') }}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Verifikasi Cuti</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('pengajuan.cuti.tendik.page') ? '' : ' collapsed' }}" href="{{ route('pengajuan.cuti.tendik.page') }}">
                     <i class="bi bi-calendar-event"></i>
                     <span>Pengajuan Cuti</span>
                 </a>
-            </li> --}}
+            </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('hrd.kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('hrd.kelola.pegawai.page') }}">
+                <a class="nav-link {{ request()->routeIs('kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.page') }}">
                     <i class="bi bi-ui-checks"></i>
                     <span>Evaluasi</span>
                 </a>

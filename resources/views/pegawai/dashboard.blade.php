@@ -116,32 +116,32 @@
                         <div class="card bg-second text-light">
                             <div class="row">
                                 <div class="col-4 col-md-2">
-                                    <img src="{{ Auth::user()->pegawai->foto ? asset('storage/'.Auth::user()->pegawai->foto) : asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle my-2" >
+                                    <img src="{{ $dataProfile->profilePribadi->foto ? asset('storage/'.$dataProfile->profilePribadi->foto) : asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle my-2" >
                                 </div>
                                 <div class="col-8 col-md-10 my-2">
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Nama</div>
-                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->nama }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePribadi->nama_lengkap }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Jabatan</div>
-                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->jabatan->nama_jabatan }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePekerjaan->jabatan->nama_jabatan }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Alamat</div>
-                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->alamat }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePribadi->alamat_lengkap }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Email</div>
-                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->user->email }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->email }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Nomor Telepon</div>
-                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->no_telepon }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePribadi->no_hp }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Tahun Masuk</div>
-                                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($dataProfile->tanggal_masuk)->translatedFormat('F Y') }}
+                                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($dataProfile->profilePekerjaan->tanggal_masuk)->translatedFormat('F Y') }}
                                         </div>
                                     </div>
                                     <div class="row m-2">
@@ -150,11 +150,7 @@
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Tahun Kelahiran</div>
-                                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($dataProfile->tanggal_lahir)->translatedFormat('d F Y') }}</div>
-                                    </div>
-                                    <div class="row m-2">
-                                        <div class="col-lg-3 col-md-4 label fw-semibold">Golongan</div>
-                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->golongan->nama_golongan }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($dataProfile->profilePribadi->tanggal_lahir)->translatedFormat('d F Y') }}</div>
                                     </div>
                                 </div>
                             </div>
