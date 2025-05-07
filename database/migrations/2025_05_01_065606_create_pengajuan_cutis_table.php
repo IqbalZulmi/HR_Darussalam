@@ -23,15 +23,15 @@ return new class extends Migration
                 'disetujui kepala sekolah',
                 'ditolak kepala sekolah',
                 'disetujui kepala sekolah menunggu tinjauan dirpen',
+                'disetujui hrd',
+                'disetujui hrd menunggu tinjauan dirpen',
+                'ditolak hrd',
+                'disetujui kepala hrd',
+                'disetujui kepala hrd menunggu tinjauan dirpen',
+                'ditolak kepala hrd',
                 'ditinjau dirpen',
                 'disetujui dirpen',
                 'ditolak dirpen',
-                'disetujui dirpen menunggu tinjauan hrd',
-                'disteujui dirpen menunggu tinjauan kepala hrd',
-                'disetujui hrd',
-                'ditolak hrd',
-                'disetujui kepala hrd',
-                'ditolak kepala hrd',
             ])->default('ditinjau kepala sekolah');
 
             $table->text('alasan_pendukung')->nullable();

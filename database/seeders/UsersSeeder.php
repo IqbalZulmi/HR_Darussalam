@@ -22,19 +22,39 @@ class UsersSeeder extends Seeder
                 'role' => 'superadmin',
             ],
             [
+                'email' => 'kepalayayasan@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'Kepala Yayasan',
+            ],
+            [
+                'email' => 'dirpen@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'direktur pendidikan',
+            ],
+            [
                 'email' => 'kepalahrd@gmail.com',
                 'password' => bcrypt('password'),
                 'role' => 'kepala hrd',
             ],
             [
+                'email' => 'hrd@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'staff hrd',
+            ],
+            [
+                'email' => 'kadep@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'kepala departemen',
+            ],
+            [
+                'email' => 'kepsek@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'kepala sekolah',
+            ],
+            [
                 'email' => 'tendik@gmail.com',
                 'password' => bcrypt('password'),
                 'role' => 'Tenaga Pendidik',
-            ],
-            [
-                'email' => 'kepalayayasan@gmail.com',
-                'password' => bcrypt('password'),
-                'role' => 'Kepala Yayasan',
             ],
         ];
 
