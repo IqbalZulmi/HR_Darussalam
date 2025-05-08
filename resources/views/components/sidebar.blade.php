@@ -25,6 +25,19 @@
                 <span>Verifikasi Cuti</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('pengajuan.cuti.staff.hrd.page') ? '' : ' collapsed' }}" href="{{ route('pengajuan.cuti.staff.hrd.page') }}">
+                <i class="bi bi-calendar-event"></i>
+                <span>Pengajuan Cuti</span>
+            </a>
+        </li>
+        <li class="nav-heading">Kepala Hrd</li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('verifikasi.cuti.kepala.hrd.page') ? '' : ' collapsed' }}" href="{{ route('verifikasi.cuti.kepala.hrd.page') }}">
+                <i class="bi bi-calendar-event"></i>
+                <span>Verifikasi Cuti</span>
+            </a>
+        </li>
         @endhasanyrole
 
         @can('manajemen_rekap_absensi.read')

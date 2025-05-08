@@ -130,7 +130,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <span class="badge text-wrap {{ in_array($cutiSelesai->status_pengajuan, ['disetujui hrd', 'disetujui dirpen']) ? 'text-bg-success' : 'text-bg-danger' }}">
+                                                    <span class="badge text-wrap {{ in_array($cutiSelesai->status_pengajuan, ['disetujui kepala hrd', 'disetujui dirpen']) ? 'text-bg-success' : 'text-bg-danger' }}">
                                                         {{ $cutiSelesai->status_pengajuan }}
                                                     </span>
                                                 </td>
@@ -159,7 +159,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('pengajuan.cuti.kepsek.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('pengajuan.cuti.staff.hrd.store') }}" method="post" enctype="multipart/form-data">
                         @csrf @method('post')
                         <div class="container-fluid">
                             <div class="row gy-2">

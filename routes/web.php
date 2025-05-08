@@ -125,6 +125,13 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/kepsek/store', [PengajuanCutiController::class, 'storePengajuanKepsek'])
         ->name('kepsek.store');
+
+        //halaman staff hrd
+        Route::get('/staff-hrd', [PengajuanCutiController::class, 'showPengajuanCutiStaffHrdPage'])
+        ->name('staff.hrd.page');
+
+        Route::post('/staff-hrd/store', [PengajuanCutiController::class, 'storePengajuanStaffHrd'])
+        ->name('staff.hrd.store');
     });
 
     // verifikasi cuti routes
@@ -149,6 +156,14 @@ Route::middleware(['auth'])->group(function () {
 
         Route::put('{id_pengajuan}/staff-hrd', [VerifikasiCutiController::class, 'verifikasiCutiHrd'])
         ->name('hrd.update');
+
+        //halaman kepala hrd
+        Route::get('/kepala-hrd', [VerifikasiCutiController::class, 'showVerifikasiKepalaHrdPage'])
+        ->name('kepala.hrd.page');
+
+        Route::put('{id_pengajuan}/kepala-hrd', [VerifikasiCutiController::class, 'verifikasiCutiKepalaHrd'])
+        ->name('kepala.hrd.update');
+
     });
 
      //rekap absensi routes
