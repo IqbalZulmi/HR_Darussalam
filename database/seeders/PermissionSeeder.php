@@ -20,18 +20,32 @@ class PermissionSeeder extends Seeder
             'manajemen_hak_akses',
             'manajemen_hak_akses_user',
 
-            //general
-            'manajemen_profil',
+            //dirpen
+            'verifikasi_cuti_dirpen',
+
+            //kepala hrd
+            'verifikasi_cuti_kepala_hrd',
+            'pengajuan_cuti_kepala_hrd',
 
             //hrd
             'manajemen_user',
             'manajemen_rekap_absensi',
             'manajemen_evaluasi',
-            'verifikasi_cuti',
+            'verifikasi_cuti_staff_hrd',
+            'pengajuan_cuti_staff_hrd',
+            'pengajuan_cuti_all',
 
-            //pegawai
+            //kepsek & kadep
+            'verifikasi_cuti_kepsek',
+            'pengajuan_cuti_kepsek',
+
+            //tenaga pendidik
+            'verifikasi_cuti_tenaga_pendidik',
+            'pengajuan_cuti_tenaga_pendidik',
+
+            //general
+            'manajemen_profil',
             'rekap_absensi_pribadi',
-            'pengajuan_cuti',
             'rekap_evaluasi_pribadi',
         ];
 
@@ -41,6 +55,86 @@ class PermissionSeeder extends Seeder
             foreach ($actions as $action) {
                 Permission::firstOrCreate(['name' => "$module.$action"]);
             }
+        }
+
+
+        // Mapping role ke permission module
+        $rolePermissions = [
+            'kepala yayasan' => [
+                'manajemen_profil',
+                'manajemen_user.read',
+                'manajemen_evaluasi.read',
+                'pengajuan_cuti_all'
+            ],
+            'dirpen' => [
+                'verifikasi_cuti_dirpen',
+                'manajemen_user',
+                'manajemen_evaluasi.read',
+                'manajemen_rekap_absensi.read',
+                'manajemen_profil',
+                'rekap_absensi_pribadi',
+                'rekap_evaluasi_pribadi',
+                'pengajuan_cuti_all.read'
+            ],
+            'kepala hrd' => [
+                'manajemen_user',
+                'manajemen_evaluasi.read',
+                'manajemen_rekap_absensi.read',
+                'rekap_absensi_pribadi',
+                'rekap_evaluasi_pribadi',
+                'verifikasi_cuti_kepala_hrd',
+                'pengajuan_cuti_kepala_hrd',
+                'pengajuan_cuti_all.read'
+            ],
+            'staff hrd' => [
+                'manajemen_user',
+                'manajemen_evaluasi',
+                'manajemen_rekap_absensi',
+                'rekap_absensi_pribadi',
+                'rekap_evaluasi_pribadi',
+                'verifikasi_cuti_staff_hrd',
+                'pengajuan_cuti_staff_hrd',
+                'pengajuan_cuti_all'
+            ],
+            'kepala departemen' => [
+                'manajemen_profil',
+                'manajemen_evaluasi',
+                'rekap_absensi_pribadi',
+                'rekap_evaluasi_pribadi',
+                'pengajuan_cuti_kepsek'
+            ],
+            'kepala sekolah' => [
+                'manajemen_profil',
+                'rekap_absensi_pribadi',
+                'rekap_evaluasi_pribadi',
+                'pengajuan_cuti_kepsek',
+                'verifikasi_cuti_kepsek',
+                'manajemen_rekap_absensi',
+                'manajemen_evaluasi'
+            ],
+            'tenaga pendidik' => [
+                'manajemen_profil',
+                'rekap_absensi_pribadi',
+                'rekap_evaluasi_pribadi',
+                'pengajuan_cuti_tenaga_pendidik'
+            ],
+        ];
+
+        // Assign permission ke setiap role
+        foreach ($rolePermissions as $roleName => $perms) {
+            $role = Role::firstOrCreate(['name' => $roleName]);
+
+            $permissionNames = collect($perms)->flatMap(function ($perm) use ($actions) {
+                // Jika permission sudah berupa module.action, langsung pakai
+                if (str_contains($perm, '.')) {
+                    return [$perm];
+                }
+
+                // Kalau belum, beri semua aksi default (CRUD)
+                return collect($actions)->map(fn($act) => "$perm.$act");
+            })->toArray();
+
+            $role->syncPermissions($permissionNames);
         }
 
         // Assign permissions to superadmin role

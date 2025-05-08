@@ -20,6 +20,7 @@ return new class extends Migration
             $table->time('jam_keluar');
             $table->enum('status',['hadir','sakit','izin','cuti','terlambat']);
             $table->text('keterangan')->nullable();
+            $table->string('file_pendukung')->nullable();
             $table->timestamps();
         });
     }
