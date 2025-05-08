@@ -18,6 +18,13 @@
                 <span>Dashboard</span>
             </a>
         </li><!-- End Dashboard Nav -->
+        <li class="nav-heading">Staff Hrd</li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('verifikasi.cuti.hrd.page') ? '' : ' collapsed' }}" href="{{ route('verifikasi.cuti.hrd.page') }}">
+                <i class="bi bi-calendar-event"></i>
+                <span>Verifikasi Cuti</span>
+            </a>
+        </li>
         @endhasanyrole
 
         @can('manajemen_rekap_absensi.read')
@@ -72,6 +79,13 @@
                 <a class="nav-link {{ request()->routeIs('verifikasi.cuti.kepsek.page') ? '' : ' collapsed' }}" href="{{ route('verifikasi.cuti.kepsek.page') }}">
                     <i class="bi bi-calendar-event"></i>
                     <span>Verifikasi Cuti</span>
+                </a>
+            </li>
+            <li class="nav-heading">Kepala Sekolah & Kepala Departemen</li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('pengajuan.cuti.kepsek.page') ? '' : ' collapsed' }}" href="{{ route('pengajuan.cuti.kepsek.page') }}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Pengajuan Cuti</span>
                 </a>
             </li>
             <li class="nav-item">

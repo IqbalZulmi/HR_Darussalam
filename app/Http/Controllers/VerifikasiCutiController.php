@@ -119,4 +119,54 @@ class VerifikasiCutiController extends Controller
             ]);
         }
     }
+
+    public function showVerifikasiHrdPage(){
+
+        $verifikasiSedangDiproses = PengajuanCuti::whereIn('status_pengajuan',[
+            'ditinjau hrd',
+            ])->latest()->get();
+
+        $verifikasiSelesai = PengajuanCuti::whereIn('status_pengajuan',[
+            'disetujui hrd',
+            'disetujui hrd menunggu tinjauan dirpen',
+            'ditolak hrd',
+            ])->orderBy('updated_at', 'desc')->get();
+
+        return view('admin.verifikasi-cuti-hrd',[
+            'dataSedangDiproses' => $verifikasiSedangDiproses,
+            'dataSelesai' => $verifikasiSelesai,
+        ]);
+    }
+
+    public function verifikasiCutiHrd(Request $request,$id_pengajuan){
+        $validatedData = $request->validate([
+            'status_pengajuan' => 'required',
+            'komentar' => 'nullable|string|max:1000',
+        ], [
+            'status_pengajuan.required' => 'Status pengajuan wajib diisi.',
+            'komentar.string' => 'Komentar harus berupa teks.',
+            'komentar.max' => 'Komentar maksimal 1000 karakter.',
+        ]);
+
+        // Ambil data pengajuan
+        $pengajuan = PengajuanCuti::findOrFail($id_pengajuan);
+
+        // Simpan perubahan
+        $save = $pengajuan->update([
+            'status_pengajuan' => $request->status_pengajuan,
+            'komentar' => $request->komentar,
+        ]);
+
+        if($save){
+            return redirect()->back()->with([
+                'notifikasi' => 'Berhasil memverifikasi cuti',
+                'type' => 'success',
+            ]);
+        }else{
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal memverifikasi cuti',
+                'type' => 'error',
+            ]);
+        }
+    }
 }

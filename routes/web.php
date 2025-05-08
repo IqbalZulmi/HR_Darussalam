@@ -112,11 +112,19 @@ Route::middleware(['auth'])->group(function () {
 
     //pengajuan cuti routes
     Route::prefix('pengajuan/cuti')->name('pengajuan.cuti.')->group(function(){
+        //halaman Tenaga pendidik
         Route::get('/tendik', [PengajuanCutiController::class, 'showPengajuanCutiTendikPage'])
         ->name('tendik.page');
 
         Route::post('/tendik/store', [PengajuanCutiController::class, 'storePengajuanTendik'])
         ->name('tendik.store');
+
+        //halaman Kepala sekolah dan kepala departemen
+        Route::get('/kepsek', [PengajuanCutiController::class, 'showPengajuanCutiKepsekPage'])
+        ->name('kepsek.page');
+
+        Route::post('/kepsek/store', [PengajuanCutiController::class, 'storePengajuanKepsek'])
+        ->name('kepsek.store');
     });
 
     // verifikasi cuti routes
@@ -134,6 +142,13 @@ Route::middleware(['auth'])->group(function () {
 
         Route::put('{id_pengajuan}/dirpen', [VerifikasiCutiController::class, 'verifikasiCutiDirpen'])
         ->name('dirpen.update');
+
+        //halaman staff hrd
+        Route::get('/staff-hrd', [VerifikasiCutiController::class, 'showVerifikasiHrdPage'])
+        ->name('hrd.page');
+
+        Route::put('{id_pengajuan}/staff-hrd', [VerifikasiCutiController::class, 'verifikasiCutiHrd'])
+        ->name('hrd.update');
     });
 
      //rekap absensi routes
