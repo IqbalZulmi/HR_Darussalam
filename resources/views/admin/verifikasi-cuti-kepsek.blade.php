@@ -24,7 +24,7 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1 class="text-capitalize">Pengajuan Cuti</h1>
+            <h1 class="text-capitalize">Verifikasi Cuti</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('hrd.dashboard.page') }}">Home</a></li>
@@ -41,7 +41,7 @@
                 <div class="col-12" id="kelola-admin">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Pengajuan Cuti</h5>
+                            <h5 class="card-title">Verifikasi Cuti</h5>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover border table-bordered align-middle">
                                     <thead>
