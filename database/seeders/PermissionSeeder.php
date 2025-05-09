@@ -33,14 +33,14 @@ class PermissionSeeder extends Seeder
             'manajemen_evaluasi',
             'verifikasi_cuti_staff_hrd',
             'pengajuan_cuti_staff_hrd',
-            'pengajuan_cuti_all',
+
+            // 'pengajuan_cuti_all',
 
             //kepsek & kadep
             'verifikasi_cuti_kepsek',
             'pengajuan_cuti_kepsek',
 
             //tenaga pendidik
-            'verifikasi_cuti_tenaga_pendidik',
             'pengajuan_cuti_tenaga_pendidik',
 
             //general
@@ -63,42 +63,35 @@ class PermissionSeeder extends Seeder
             'kepala yayasan' => [
                 'manajemen_profil',
                 'manajemen_user.read',
-                'manajemen_evaluasi.read',
-                'pengajuan_cuti_all'
             ],
             'dirpen' => [
-                'verifikasi_cuti_dirpen',
-                'manajemen_user',
-                'manajemen_evaluasi.read',
-                'manajemen_rekap_absensi.read',
                 'manajemen_profil',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
-                'pengajuan_cuti_all.read'
+                'verifikasi_cuti_dirpen',
+                'manajemen_user',
+                'manajemen_rekap_absensi.read',
             ],
             'kepala hrd' => [
-                'manajemen_user',
-                'manajemen_evaluasi.read',
-                'manajemen_rekap_absensi.read',
+                'manajemen_profil',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
+                'manajemen_user',
+                'manajemen_rekap_absensi.read',
                 'verifikasi_cuti_kepala_hrd',
                 'pengajuan_cuti_kepala_hrd',
-                'pengajuan_cuti_all.read'
             ],
             'staff hrd' => [
-                'manajemen_user',
-                'manajemen_evaluasi',
-                'manajemen_rekap_absensi',
+                'manajemen_profil',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
+                'manajemen_user',
+                'manajemen_rekap_absensi',
                 'verifikasi_cuti_staff_hrd',
                 'pengajuan_cuti_staff_hrd',
-                'pengajuan_cuti_all'
             ],
             'kepala departemen' => [
                 'manajemen_profil',
-                'manajemen_evaluasi',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
                 'pengajuan_cuti_kepsek'
@@ -109,8 +102,6 @@ class PermissionSeeder extends Seeder
                 'rekap_evaluasi_pribadi',
                 'pengajuan_cuti_kepsek',
                 'verifikasi_cuti_kepsek',
-                'manajemen_rekap_absensi',
-                'manajemen_evaluasi'
             ],
             'tenaga pendidik' => [
                 'manajemen_profil',

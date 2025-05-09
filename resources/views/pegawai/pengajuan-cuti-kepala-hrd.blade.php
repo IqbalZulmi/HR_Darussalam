@@ -27,7 +27,7 @@
             <h1 class="text-capitalize">Pengajuan Cuti</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('pegawai.dashboard.page') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('hrd.dashboard.page') }}">Home</a></li>
                     <li class="breadcrumb-item active text-capitalize">
                         {{ ucwords(str_replace('/', ' / ', Request::path())) }}
                     </li>
