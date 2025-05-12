@@ -199,16 +199,27 @@
                                                         <i class="bi bi-three-dots"></i>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a class="dropdown-item" href="{{ route('kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
-                                                                <i class="bi bi-pencil-square"></i> Detail Profil
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="{{ route('kelola.pegawai.rekap.absen.page',['id_pegawai' => $data->id]) }}">
-                                                                <i class="bi bi-calendar-check"></i>Rekap Absensi
-                                                            </a>
-                                                        </li>
+                                                        @can('manajemen_user.read')
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
+                                                                    <i class="bi bi-pencil-square"></i> Detail Profil
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('manajemen_rekap_absensi.read')
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('kelola.pegawai.rekap.absen.page',['id_pegawai' => $data->id]) }}">
+                                                                    <i class="bi bi-calendar-check"></i>Rekap Absensi
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('manajemen_rekap_cuti_pegawai.read')
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('kelola.pegawai.rekap.cuti.page',['id_pegawai' => $data->id]) }}">
+                                                                    <i class="bi bi-calendar-event"></i>Rekap Cuti
+                                                                </a>
+                                                            </li>
+                                                        @endcan
                                                     </ul>
                                                 </div>
                                             </td>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Departemen;
 use App\Models\Jabatan;
+use App\Models\PengajuanCuti;
 use App\Models\ProfilePekerjaan;
 use App\Models\ProfilePribadi;
 use App\Models\SosialMedia;
@@ -35,6 +36,17 @@ class UserController extends Controller
             'dataJabatan' => $jabatan,
             'dataDepartemen' => $departemen,
             'dataRoles' => $roles,
+        ]);
+    }
+
+    public function showRekapCutiPegawaiPage($id_pegawai){
+        $user = User::findOrFail($id_pegawai);
+
+        $pengajuan_cuti = PengajuanCuti::where('id_user',$id_pegawai)->latest()->get();
+
+        return view('admin.rekap-cuti-pegawai',[
+            'dataUser' => $user,
+            'dataCuti' => $pengajuan_cuti,
         ]);
     }
 

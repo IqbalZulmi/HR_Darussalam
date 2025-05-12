@@ -97,6 +97,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id_pegawai}/rekap-absen',[AbsensiController::class,'edit'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
         ->name('rekap.absen.page');
 
+        //manajemen rekap cuti
+        Route::get('/{id_pegawai}/rekap-cuti',[UserController::class,'showRekapCutiPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_cuti_pegawai.read')
+        ->name('rekap.cuti.page');
+
+        Route::post('/{id_pegawai}/rekap-cuti/store',[PengajuanCutiController::class,'storeRekapCuti'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_cuti_pegawai.create')
+        ->name('rekap.cuti.store');
+
+        Route::put('/{id_pengajuan}/rekap-cuti/update',[PengajuanCutiController::class,'updateRekapCuti'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_cuti_pegawai.update')
+        ->name('rekap.cuti.update');
+
+        Route::delete('/{id_pengajuan}/rekap-cuti/delete',[PengajuanCutiController::class,'destroyRekapCuti'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_cuti_pegawai.delete')
+        ->name('rekap.cuti.destroy');
+
         Route::post('/',[UserController::class,'tambahPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.create')
         ->name('store');
 
