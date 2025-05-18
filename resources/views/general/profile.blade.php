@@ -244,14 +244,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Departemen</label>
-                                                <input name="departemen" class="unedit form-control @error('departemen') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->departemen->nama_departemen ?? 'Tidak ada data untuk ditampilkan'}}" disabled>
+                                                <input name="departemen" class="unedit form-control @error('departemen') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->departemen->nama_departemen ?? ''}}" disabled>
                                                 @error('departemen')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Jabatan</label>
-                                                <input name="jabatan" class="unedit form-control @error('jabatan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->jabatan->nama_jabatan ?? 'Tidak ada data untuk ditampilkan'}}" disabled>
+                                                <input name="jabatan" class="unedit form-control @error('jabatan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->jabatan->nama_jabatan ?? ''}}" disabled>
                                                 @error('jabatan')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -260,7 +260,7 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Induk Karyawan</label>
-                                                <input name="nomor_induk_karyawan" class="unedit form-control @error('nomor_induk_karyawan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->nomor_induk_karyawan ??  'Tidak ada data untuk ditampilkan'}}" disabled>
+                                                <input name="nomor_induk_karyawan" class="unedit form-control @error('nomor_induk_karyawan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->nomor_induk_karyawan ?? ''}}" disabled>
                                                 @error('nomor_induk_karyawan')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -320,7 +320,7 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Induk Kependudukan</label>
-                                                <input name="nomor_induk_kependudukan" class="form-control @error('nomor_induk_kependudukan') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nomor_induk_kependudukan ?? 'Tidak ada data untuk ditampilkan' }}" disabled required>
+                                                <input name="nomor_induk_kependudukan" class="form-control @error('nomor_induk_kependudukan') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nomor_induk_kependudukan ?? '' }}" disabled required>
                                                 @error('nomor_induk_kependudukan')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -329,14 +329,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nama Lengkap</label>
-                                                <input name="nama_lengkap" class="form-control @error('nama_lengkap') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nama_lengkap ?? 'Tidak ada data untuk ditampilkan' }}" disabled required>
+                                                <input name="nama_lengkap" class="form-control @error('nama_lengkap') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nama_lengkap ?? '' }}" disabled required>
                                                 @error('nama_lengkap')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">NPWP</label>
-                                                <input name="npwp" type="text" class="form-control @error('npwp') is-invalid @enderror" value="{{ $data->profilePribadi->npwp ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="npwp" type="text" class="form-control @error('npwp') is-invalid @enderror" value="{{ $data->profilePribadi->npwp ?? '' }}" disabled>
                                                 @error('npwp')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -361,7 +361,7 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Tanggal Lahir</label>
-                                                <input name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" type="date" value="{{ $data->profilePribadi->tanggal_lahir ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" type="date" value="{{ $data->profilePribadi->tanggal_lahir ?? '' }}" disabled>
                                                 @error('tanggal_lahir')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -418,14 +418,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Alamat Lengkap</label>
-                                                <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" disabled>{{ $data->profilePribadi->alamat_lengkap ?? 'Tidak ada data untuk ditampilkan'}}</textarea>
+                                                <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" disabled>{{ $data->profilePribadi->alamat_lengkap ?? ''}}</textarea>
                                                 @error('alamat_lengkap')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Hp</label>
-                                                <input name="no_hp" type="text" class="form-control @error('no_hp') is-invalid @enderror" value="{{ $data->profilePribadi->no_hp ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="no_hp" type="text" class="form-control @error('no_hp') is-invalid @enderror" value="{{ $data->profilePribadi->no_hp ?? '' }}" disabled>
                                                 @error('no_hp')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -464,14 +464,14 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nama Ayah</label>
-                                                <input name="nama_ayah" class="form-control @error('nama_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ayah ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="nama_ayah" class="form-control @error('nama_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ayah ?? '' }}" disabled>
                                                 @error('nama_ayah')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Pekerjaan Ayah</label>
-                                                <input name="pekerjaan_ayah" class="form-control @error('pekerjaan_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ayah ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="pekerjaan_ayah" class="form-control @error('pekerjaan_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ayah ?? '' }}" disabled>
                                                 @error('pekerjaan_ayah')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -480,14 +480,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nama Ibu</label>
-                                                <input name="nama_ibu" class="form-control @error('nama_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ibu ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="nama_ibu" class="form-control @error('nama_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ibu ?? '' }}" disabled>
                                                 @error('nama_ibu')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Pekerjaan Ibu</label>
-                                                <input name="pekerjaan_ibu" class="form-control @error('pekerjaan_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ibu ?? 'Tidak ada data untuk ditampilkan' }}" disabled>
+                                                <input name="pekerjaan_ibu" class="form-control @error('pekerjaan_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ibu ?? '' }}" disabled>
                                                 @error('pekerjaan_ibu')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -496,7 +496,7 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Alamat Orang Tua</label>
-                                                <textarea name="alamat_orang_tua" class="form-control @error('alamat_orang_tua') is-invalid @enderror" disabled>{{ $data->orangTua->alamat_orang_tua ?? 'Tidak ada data untuk ditampilkan' }}</textarea>
+                                                <textarea name="alamat_orang_tua" class="form-control @error('alamat_orang_tua') is-invalid @enderror" disabled>{{ $data->orangTua->alamat_orang_tua ?? '' }}</textarea>
                                                 @error('alamat_orang_tua')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror

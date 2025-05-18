@@ -51,13 +51,13 @@
         {{-- header hrd --}}
         @canany([
             'manajemen_user.read',
-            'manajemen_rekap_absensi.read',
+            'manajemen_rekap_absensi_today.read',
             'manajemen_evaluasi.read',
             ])
             <li class="nav-heading">HRD</li>
         @endcanany
 
-        @can('manajemen_rekap_absensi.read')
+        @can('manajemen_rekap_absensi_today.read')
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('rekap.absensi.today.page') ? '' : ' collapsed' }}" href="{{ route('rekap.absensi.today.page') }}">
                     <i class="bi bi-clipboard-check"></i>
@@ -148,6 +148,38 @@
                 <a class="nav-link {{ request()->routeIs('verifikasi.cuti.hrd.page') ? '' : ' collapsed' }}" href="{{ route('verifikasi.cuti.hrd.page') }}">
                     <i class="bi bi-calendar-event"></i>
                     <span>Verifikasi Cuti</span>
+                </a>
+            </li>
+        @endcan
+
+        {{-- header kadep --}}
+        @canany([
+            'manajemen_tenaga_pendidik_all.read',
+        ])
+            <li class="nav-heading">Kepala Departemen</li>
+        @endcanany
+
+        @can('manajemen_tenaga_pendidik_all.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('kelola.pegawai.kadep.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.kadep.page') }}">
+                    <i class="bi bi-people"></i>
+                    <span>Tenaga Pendidik</span>
+                </a>
+            </li>
+        @endcan
+
+        {{-- header kepsek --}}
+        @canany([
+            'manajemen_tenaga_pendidik_kepsek.read',
+        ])
+            <li class="nav-heading">Kepala Sekolah</li>
+        @endcanany
+
+        @can('manajemen_tenaga_pendidik_kepsek.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('kelola.pegawai.kepsek.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.kepsek.page') }}">
+                    <i class="bi bi-people"></i>
+                    <span>Tenaga Pendidik</span>
                 </a>
             </li>
         @endcan

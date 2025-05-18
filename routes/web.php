@@ -88,12 +88,35 @@ Route::middleware(['auth'])->group(function () {
 
     // Kelola Pegawai routes
     Route::prefix('kelola/pegawai')->name('kelola.pegawai.')->group(function(){
+        //halaman hrd
         Route::get('/',[UserController::class,'showKelolaPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_user.read')
         ->name('page');
 
-        Route::get('/{id_pegawai}/profile',[UserController::class,'showEditPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_user.read')
+        //halaman kepala sekolah
+        Route::get('/kepsek',[UserController::class,'showKelolaPegawaiKepsekPage'])->middleware('Check_Roles_or_Permissions:manajemen_tenaga_pendidik_kepsek.read')
+        ->name('kepsek.page');
+
+        //halaman kepala departemen
+        Route::get('/kadep',[UserController::class,'showKelolaPegawaiKadepPage'])->middleware('Check_Roles_or_Permissions:manajemen_tenaga_pendidik_all.read')
+        ->name('kadep.page');
+
+        //crud pegawai
+        Route::get('/{id_pegawai}/profile',[UserController::class,'showEditPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_user.read|manajemen_tenaga_pendidik_kepsek.read|manajemen_tenaga_pendidik_all.read')
         ->name('edit.page');
 
+        Route::post('/',[UserController::class,'tambahPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.create|manajemen_tenaga_pendidik_kepsek.create|manajemen_tenaga_pendidik_all.create')
+        ->name('store');
+
+        Route::put('/{id_pegawai}/update',[UserController::class,'updatePegawaiProfile'])->middleware('Check_Roles_or_Permissions:manajemen_user.update|manajemen_tenaga_pendidik_kepsek.update|manajemen_tenaga_pendidik_all.update')
+        ->name('update');
+
+        Route::put('/{id_pegawai}/password',([UserController::class,'updatePasswordPegawai']))->middleware('Check_Roles_or_Permissions:manajemen_user.update|manajemen_tenaga_pendidik_kepsek.update|manajemen_tenaga_pendidik_all.update')
+        ->name('password.update');
+
+        Route::delete('/kelola/mass-delete/pegawai', [UserController::class, 'hapusMassalPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.delete|manajemen_tenaga_pendidik_kepsek.delete|manajemen_tenaga_pendidik_all.delete')
+        ->name('mass.delete');
+
+        //manajemen rekap absen
         Route::get('/{id_pegawai}/rekap-absen',[AbsensiController::class,'edit'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
         ->name('rekap.absen.page');
 
@@ -109,18 +132,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::delete('/{id_pengajuan}/rekap-cuti/delete',[PengajuanCutiController::class,'destroyRekapCuti'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_cuti_pegawai.delete')
         ->name('rekap.cuti.destroy');
-
-        Route::post('/',[UserController::class,'tambahPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.create')
-        ->name('store');
-
-        Route::put('/{id_pegawai}/update',[UserController::class,'updatePegawaiProfile'])->middleware('Check_Roles_or_Permissions:manajemen_user.update')
-        ->name('update');
-
-        Route::put('/{id_pegawai}/password',([UserController::class,'updatePasswordPegawai']))->middleware('Check_Roles_or_Permissions:manajemen_user.update')
-        ->name('password.update');
-
-        Route::delete('/kelola/mass-delete/pegawai', [UserController::class, 'hapusMassalPegawai'])->middleware('Check_Roles_or_Permissions:manajemen_user.delete')
-        ->name('mass.delete');
     });
 
     //pengajuan cuti routes
@@ -188,9 +199,10 @@ Route::middleware(['auth'])->group(function () {
 
      //rekap absensi routes
     Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
-        Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
+        Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.read')
         ->name('today.page');
-        Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])
+
+        Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.read')
         ->name('pribadi.page');
     });
 

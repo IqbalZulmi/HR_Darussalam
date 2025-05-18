@@ -155,6 +155,20 @@
         });
     </script>
 
+{{-- jika user tidak punya permission ini maka disabled --}}
+@unless(auth()->user()->canany([
+        'manajemen_user.update',
+        'manajemen_tenaga_pendidik_kepsek.update',
+        'manajemen_tenaga_pendidik_all.update',
+    ]))
+    <script>
+        $(document).ready(function () {
+            $('input, select, textarea').prop('disabled', true);
+        });
+    </script>
+@endunless
+
+
 @endpush
 
 @section('content')
@@ -306,7 +320,7 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Induk Kependudukan</label>
-                                                <input name="nomor_induk_kependudukan" class="form-control @error('nomor_induk_kependudukan') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nomor_induk_kependudukan ?? 'Tidak ada data untuk ditampilkan' }}"  required>
+                                                <input name="nomor_induk_kependudukan" class="form-control @error('nomor_induk_kependudukan') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nomor_induk_kependudukan ?? '' }}"  required>
                                                 @error('nomor_induk_kependudukan')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -315,14 +329,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nama Lengkap</label>
-                                                <input name="nama_lengkap" class="form-control @error('nama_lengkap') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nama_lengkap ?? 'Tidak ada data untuk ditampilkan' }}"  required>
+                                                <input name="nama_lengkap" class="form-control @error('nama_lengkap') is-invalid @enderror" type="text" value="{{ $data->profilePribadi->nama_lengkap ?? '' }}"  required>
                                                 @error('nama_lengkap')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">NPWP</label>
-                                                <input name="npwp" type="text" class="form-control @error('npwp') is-invalid @enderror" value="{{ $data->profilePribadi->npwp ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="npwp" type="text" class="form-control @error('npwp') is-invalid @enderror" value="{{ $data->profilePribadi->npwp ?? '' }}" >
                                                 @error('npwp')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -347,7 +361,7 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Tanggal Lahir</label>
-                                                <input name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" type="date" value="{{ $data->profilePribadi->tanggal_lahir ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" type="date" value="{{ $data->profilePribadi->tanggal_lahir ?? '' }}" >
                                                 @error('tanggal_lahir')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -404,14 +418,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Alamat Lengkap</label>
-                                                <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" >{{ $data->profilePribadi->alamat_lengkap ?? 'Tidak ada data untuk ditampilkan'}}</textarea>
+                                                <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" >{{ $data->profilePribadi->alamat_lengkap ?? ''}}</textarea>
                                                 @error('alamat_lengkap')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Hp</label>
-                                                <input name="no_hp" type="text" class="form-control @error('no_hp') is-invalid @enderror" value="{{ $data->profilePribadi->no_hp ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="no_hp" type="text" class="form-control @error('no_hp') is-invalid @enderror" value="{{ $data->profilePribadi->no_hp ?? '' }}" >
                                                 @error('no_hp')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -443,14 +457,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nama Ayah</label>
-                                                <input name="nama_ayah" class="form-control @error('nama_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ayah ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="nama_ayah" class="form-control @error('nama_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ayah ?? '' }}" >
                                                 @error('nama_ayah')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Pekerjaan Ayah</label>
-                                                <input name="pekerjaan_ayah" class="form-control @error('pekerjaan_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ayah ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="pekerjaan_ayah" class="form-control @error('pekerjaan_ayah') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ayah ?? '' }}" >
                                                 @error('pekerjaan_ayah')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -459,14 +473,14 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nama Ibu</label>
-                                                <input name="nama_ibu" class="form-control @error('nama_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ibu ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="nama_ibu" class="form-control @error('nama_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->nama_ibu ?? '' }}" >
                                                 @error('nama_ibu')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Pekerjaan Ibu</label>
-                                                <input name="pekerjaan_ibu" class="form-control @error('pekerjaan_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ibu ?? 'Tidak ada data untuk ditampilkan' }}" >
+                                                <input name="pekerjaan_ibu" class="form-control @error('pekerjaan_ibu') is-invalid @enderror" type="text" value="{{ $data->orangTua->pekerjaan_ibu ?? '' }}" >
                                                 @error('pekerjaan_ibu')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -475,7 +489,7 @@
                                         <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Alamat Orang Tua</label>
-                                                <textarea name="alamat_orang_tua" class="form-control @error('alamat_orang_tua') is-invalid @enderror" >{{ $data->orangTua->alamat_orang_tua ?? 'Tidak ada data untuk ditampilkan' }}</textarea>
+                                                <textarea name="alamat_orang_tua" class="form-control @error('alamat_orang_tua') is-invalid @enderror" >{{ $data->orangTua->alamat_orang_tua ?? '' }}</textarea>
                                                 @error('alamat_orang_tua')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -495,6 +509,11 @@
                                         <hr class="border border-dark opacity-100">
                                     </div>
                                     <div class="col-lg-9 bg-light">
+                                        @canany([
+                                            'manajemen_user.update',
+                                            'manajemen_tenaga_pendidik_kepsek.update',
+                                            'manajemen_tenaga_pendidik_all.update',
+                                        ])
                                         <div class="row mt-2">
                                             <div class="col-12">
                                                 <div class="d-flex justify-content-end align-items-center gap-2">
@@ -504,14 +523,21 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @endcanany
                                         <div id="container-keluarga">
                                             @forelse ($data->keluarga as $index => $keluarga )
                                             <div class="row mt-2 anggota-keluarga">
                                                 <div class="d-flex align-items-center gap-2">
                                                     <div class="fw-bold text-capitalize">keluarga ke {{ $index+1 }}</div>
+                                                    @canany([
+                                                        'manajemen_user.update',
+                                                        'manajemen_tenaga_pendidik_kepsek.update',
+                                                        'manajemen_tenaga_pendidik_all.update',
+                                                    ])
                                                     <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#hapusModal{{ $keluarga->id }}">
                                                         <i class="bi bi-trash" data-bs-toggle="tooltip" data-bs-title="Hapus Keluarga" data-bs-custom-class="danger-tooltip"></i>
                                                     </button>
+                                                    @endcanany
                                                 </div>
                                                 <input type="hidden" name="id_keluarga[]" value="{{ $keluarga->id }}">
                                                 <div class="col-6 mb-3">
@@ -572,6 +598,11 @@
                                         <hr class="border border-dark opacity-100">
                                     </div>
                                     <div class="col-lg-9 bg-light">
+                                        @canany([
+                                            'manajemen_user.update',
+                                            'manajemen_tenaga_pendidik_kepsek.update',
+                                            'manajemen_tenaga_pendidik_all.update',
+                                        ])
                                         <div class="row mt-2">
                                             <div class="col-12">
                                                 <div class="d-flex justify-content-end align-items-center gap-2">
@@ -581,14 +612,21 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @endcanany
                                         <div id="container-sosmed">
                                             @forelse ($data->userSosialMedia as $index => $sosmed )
                                             <div class="row mt-2 sosmed">
                                                 <div class="d-flex align-items-center gap-2">
                                                     <div class="fw-bold text-capitalize">Sosial media ke {{ $index+1 }}</div>
+                                                    @canany([
+                                                        'manajemen_user.update',
+                                                        'manajemen_tenaga_pendidik_kepsek.update',
+                                                        'manajemen_tenaga_pendidik_all.update',
+                                                    ])
                                                     <button class="btn btn-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#hapusModal{{ $sosmed->id }}">
                                                         <i class="bi bi-trash" data-bs-toggle="tooltip" data-bs-title="Hapus Keluarga" data-bs-custom-class="danger-tooltip"></i>
                                                     </button>
+                                                    @endcanany
                                                 </div>
                                                 <input type="hidden" name="id_user_sosmed[]" value="{{ $sosmed->id }}">
                                                 <div class="col-6 mb-3">
@@ -633,9 +671,15 @@
                         </div>
 
                         {{-- button submit --}}
+                        @canany([
+                            'manajemen_user.update',
+                            'manajemen_tenaga_pendidik_kepsek.update',
+                            'manajemen_tenaga_pendidik_all.update',
+                        ])
                         <div class="row">
                             <button type="submit" class="btn btn-main">Simpan Perubahan</button>
                         </div>
+                        @endcanany
                     </form>
                 </div>
 
@@ -665,10 +709,15 @@
                                         @enderror
                                     </div>
                                 </div>
-
+                                @canany([
+                                    'manajemen_user.update',
+                                    'manajemen_tenaga_pendidik_kepsek.update',
+                                    'manajemen_tenaga_pendidik_all.update',
+                                ])
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-main">Ubah Kata Sandi</button>
                                 </div>
+                                @endcanany
                             </form><!-- End Change Password Form -->
                         </div>
                     </div>

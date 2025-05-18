@@ -148,16 +148,29 @@
                             <h5 class="card-title">Kelola Pegawai</h5>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div class="d-flex flex-column flex-md-row justify-content-start mb-2">
+                                    @canany([
+                                        'manajemen_user.create',
+                                        'manajemen_tenaga_pendidik_kepsek.create',
+                                        'manajemen_tenaga_pendidik_all.create',
+                                    ])
                                     <div class="me-md-2 mb-2 mb-md-0">
                                         <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
                                             <i class="bi bi-plus-circle-fill"></i> Tambah Baru
                                         </button>
                                     </div>
+                                    @endcanany
+
+                                    @canany([
+                                        'manajemen_user.delete',
+                                        'manajemen_tenaga_pendidik_kepsek.delete',
+                                        'manajemen_tenaga_pendidik_all.delete',
+                                    ])
                                     <div class="me-md-2 mb-2 mb-md-0">
                                         <button class="btn btn-danger" id="btnHapus">
                                             <i class="bi bi-trash"></i> Hapus Pilihan
                                         </button>
                                     </div>
+                                    @endcanany
                                 </div>
                                 <a class="btn btn-main" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
                                     Filter <i class="bi bi-filter-right"></i>
@@ -199,13 +212,17 @@
                                                         <i class="bi bi-three-dots"></i>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        @can('manajemen_user.read')
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
-                                                                    <i class="bi bi-pencil-square"></i> Detail Profil
-                                                                </a>
-                                                            </li>
-                                                        @endcan
+                                                        @canany([
+                                                            'manajemen_user.read',
+                                                            'manajemen_tenaga_pendidik_kepsek.read',
+                                                            'manajemen_tenaga_pendidik_all.read',
+                                                        ])
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ route('kelola.pegawai.edit.page',['id_pegawai' => $data->id]) }}">
+                                                                <i class="bi bi-pencil-square"></i> Detail Profil
+                                                            </a>
+                                                        </li>
+                                                        @endcanany
                                                         @can('manajemen_rekap_absensi.read')
                                                             <li>
                                                                 <a class="dropdown-item" href="{{ route('kelola.pegawai.rekap.absen.page',['id_pegawai' => $data->id]) }}">
