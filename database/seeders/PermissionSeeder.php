@@ -30,12 +30,19 @@ class PermissionSeeder extends Seeder
             //hrd
             'manajemen_user',
             'manajemen_rekap_absensi',
+            'manajemen_rekap_absensi_today.read',
             'manajemen_rekap_cuti_pegawai',
             'manajemen_evaluasi',
             'verifikasi_cuti_staff_hrd',
             'pengajuan_cuti_staff_hrd',
 
             // 'pengajuan_cuti_all',
+
+            // kadep
+            'manajemen_tenaga_pendidik_all',
+
+            // kepsek
+            'manajemen_tenaga_pendidik_kepsek',
 
             //kepsek & kadep
             'verifikasi_cuti_kepsek',
@@ -53,10 +60,17 @@ class PermissionSeeder extends Seeder
         $actions = ['create', 'read', 'update', 'delete'];
 
         foreach ($modules as $module) {
-            foreach ($actions as $action) {
-                Permission::firstOrCreate(['name' => "$module.$action"]);
+            if (str_contains($module, '.')) {
+                // Jika module sudah dalam format "module.action", langsung buat permission-nya
+                Permission::firstOrCreate(['name' => $module]);
+            } else {
+                // Jika belum, maka buat permission untuk setiap action
+                foreach ($actions as $action) {
+                    Permission::firstOrCreate(['name' => "$module.$action"]);
+                }
             }
         }
+
 
 
         // Mapping role ke permission module
@@ -72,6 +86,7 @@ class PermissionSeeder extends Seeder
                 'verifikasi_cuti_dirpen',
                 'manajemen_user',
                 'manajemen_rekap_absensi.read',
+                'manajemen_rekap_absensi_today.read',
                 'manajemen_rekap_cuti_pegawai.read',
             ],
             'kepala hrd' => [
@@ -80,6 +95,7 @@ class PermissionSeeder extends Seeder
                 'rekap_evaluasi_pribadi',
                 'manajemen_user',
                 'manajemen_rekap_absensi.read',
+                'manajemen_rekap_absensi_today.read',
                 'manajemen_rekap_cuti_pegawai.read',
                 'verifikasi_cuti_kepala_hrd',
                 'pengajuan_cuti_kepala_hrd',
@@ -90,18 +106,25 @@ class PermissionSeeder extends Seeder
                 'rekap_evaluasi_pribadi',
                 'manajemen_user',
                 'manajemen_rekap_absensi',
+                'manajemen_rekap_absensi_today.read',
                 'manajemen_rekap_cuti_pegawai',
                 'verifikasi_cuti_staff_hrd',
                 'pengajuan_cuti_staff_hrd',
             ],
             'kepala departemen' => [
                 'manajemen_profil',
+                'manajemen_tenaga_pendidik_all.read',
+                'manajemen_rekap_absensi.read',
+                'manajemen_rekap_cuti_pegawai.read',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
                 'pengajuan_cuti_kepsek'
             ],
             'kepala sekolah' => [
                 'manajemen_profil',
+                'manajemen_tenaga_pendidik_kepsek.read',
+                'manajemen_rekap_absensi.read',
+                'manajemen_rekap_cuti_pegawai.read',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
                 'pengajuan_cuti_kepsek',
