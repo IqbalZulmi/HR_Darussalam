@@ -262,5 +262,41 @@
                 </a>
             </li>
         @endcan
+
+        {{-- header other --}}
+        @canany([
+            'manajemen_jabatan.read',
+            'manajemen_departemen.read',
+            'manajemen_sosial_media.read',
+            ])
+            <li class="nav-heading">other</li>
+        @endcanany
+
+        @can('manajemen_jabatan.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('jabatan.index') ? '' : ' collapsed' }}" href="{{ route('jabatan.index') }}">
+                    <i class="bi bi-diagram-3"></i>
+                    <span>Jabatan</span>
+                </a>
+            </li>
+        @endcan
+
+        @can('manajemen_departemen.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('departemen.index') ? '' : ' collapsed' }}" href="{{ route('departemen.index') }}">
+                    <i class="bi bi-buildings"></i>
+                    <span>Departemen</span>
+                </a>
+            </li>
+        @endcan
+
+        @can('manajemen_sosial_media.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('sosmed.index') ? '' : ' collapsed' }}" href="{{ route('sosmed.index') }}">
+                    <i class="bi bi-linkedin"></i>
+                    <span>Sosial Media</span>
+                </a>
+            </li>
+        @endcan
     </ul>
 </aside><!-- End Sidebar-->

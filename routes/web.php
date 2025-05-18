@@ -5,12 +5,15 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengajuanCutiController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\SosialMediaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSosialMediaController;
 use App\Http\Controllers\VerifikasiCutiController;
@@ -80,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('destroy');
     });
 
-    //user sosial medit routes
+    //user sosial media routes
     Route::prefix('user/sosmed')->name('user.sosmed.')->group(function(){
         Route::delete('/{id_user_sosmed}/delete',[UserSosialMediaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_profil.delete')
         ->name('destroy');
@@ -215,6 +218,51 @@ Route::middleware(['auth'])->group(function () {
     //pegawai pages
     Route::prefix('pegawai')->name('pegawai.')->middleware('Check_Roles_or_Permissions:superadmin|kepala departemen|kepala sekolah|tenaga pendidik')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'showPegawaiDashboard'])->name('dashboard.page');
+    });
+
+    //jabatan routes
+    Route::prefix('jabatan')->name('jabatan.')->group(function(){
+        Route::get('/',[JabatanController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_jabatan.read')
+        ->name('index');
+
+        Route::post('/',[JabatanController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_jabatan.create')
+        ->name('store');
+
+        Route::put('/{id_jabatan}',[JabatanController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_jabatan.update')
+        ->name('update');
+
+        Route::delete('/{id_jabatan}',[JabatanController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_jabatan.delete')
+        ->name('destroy');
+    });
+
+    //departemen routes
+    Route::prefix('departemen')->name('departemen.')->group(function(){
+        Route::get('/',[DepartemenController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_departemen.read')
+        ->name('index');
+
+        Route::post('/',[DepartemenController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_departemen.create')
+        ->name('store');
+
+        Route::put('/{id_departemen}',[DepartemenController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_departemen.update')
+        ->name('update');
+
+        Route::delete('/{id_departemen}',[DepartemenController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_departemen.delete')
+        ->name('destroy');
+    });
+
+    //sosialmedia routes
+    Route::prefix('sosial-media')->name('sosmed.')->group(function(){
+        Route::get('/',[SosialMediaController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_sosial_media.read')
+        ->name('index');
+
+        Route::post('/',[SosialMediaController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_sosial_media.create')
+        ->name('store');
+
+        Route::put('/{id_sosmed}',[SosialMediaController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_sosial_media.update')
+        ->name('update');
+
+        Route::delete('/{id_sosmed}',[SosialMediaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_sosial_media.delete')
+        ->name('destroy');
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
