@@ -60,6 +60,7 @@ class PermissionSeeder extends Seeder
             'manajemen_jabatan',
             'manajemen_departemen',
             'manajemen_sosial_media',
+            'manajemen_tempat_kerja',
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];
@@ -84,7 +85,7 @@ class PermissionSeeder extends Seeder
                 'manajemen_profil',
                 'manajemen_user.read',
             ],
-            'dirpen' => [
+            'direktur pendidikan' => [
                 'manajemen_profil',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',

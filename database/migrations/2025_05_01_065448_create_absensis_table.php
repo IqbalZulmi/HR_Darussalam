@@ -18,10 +18,10 @@ return new class extends Migration
             $table->date('tanggal');
             $table->timestamp('check_in')->nullable();
             $table->timestamp('check_out')->nullable();
-            $table->decimal('latitude_in', 10, 8)->nullable();
-            $table->decimal('longitude_in', 11, 8)->nullable();
-            $table->decimal('latitude_out', 10, 8)->nullable();
-            $table->decimal('longitude_out', 11, 8)->nullable();
+            $table->decimal('latitude_in', 18, 15)->nullable();
+            $table->decimal('longitude_in', 18, 15)->nullable();
+            $table->decimal('latitude_out', 18, 15)->nullable();
+            $table->decimal('longitude_out', 18, 15)->nullable();
             $table->enum('status',['hadir','sakit','cuti','terlambat','alpa']);
             $table->text('keterangan')->nullable();
             $table->string('file_pendukung')->nullable();

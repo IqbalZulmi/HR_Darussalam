@@ -54,7 +54,7 @@ class UsersSeeder extends Seeder
             [
                 'email' => 'tendik@gmail.com',
                 'password' => bcrypt('password'),
-                'role' => 'Tenaga Pendidik',
+                'role' => 'tenaga pendidik',
             ],
         ];
 

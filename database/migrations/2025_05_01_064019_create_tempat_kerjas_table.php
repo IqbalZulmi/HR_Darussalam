@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('tempat_kerjas', function (Blueprint $table) {
             $table->id();
             $table->string('nama_tempat');
-            $table->decimal('latitude', 10, 8);  // Presisi untuk koordinat GPS
-            $table->decimal('longitude', 11, 8);
+            $table->decimal('latitude', 18, 15);
+            $table->decimal('longitude', 18, 15);
             $table->timestamps();
         });
     }
