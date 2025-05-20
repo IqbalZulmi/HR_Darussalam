@@ -15,10 +15,21 @@ class Absensi extends Model
     protected $fillable = [
         'id_user',
         'tanggal',
-        'jam_masuk',
-        'jam_keluar',
+        'check_in',
+        'check_out',
+        'latitude_in',
+        'longitude_in',
+        'latitude_out',
+        'longitude_out',
         'status',
         'keterangan',
+        'file_pendukung',
+    ];
+
+    protected $casts = [
+        'check_in' => 'datetime',
+        'check_out' => 'datetime',
+        'tanggal' => 'date',
     ];
 
     public function user()

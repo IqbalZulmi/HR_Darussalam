@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UsersSeeder::class,
             JabatanSeeder::class,
             DepartementSeeder::class,
+            TempatKerjaSeeder::class,
             ProfileSeeder::class,
             KeluargaSeeder::class,
             OrangTuaSeeder::class,
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
             AbsensiSeeder::class,
             PengajuanCutiSeeder::class,
             EvaluasiSeeder::class,
+            JamKerjaSeeder::class,
         ]);
 
 

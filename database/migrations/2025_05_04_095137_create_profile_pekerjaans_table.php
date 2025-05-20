@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('id_departemen')->nullable();
             $table->foreign('id_departemen')->references('id')->on('departemens')->onUpdate('cascade')->onDelete('set null');
+            $table->unsignedBigInteger('id_tempat_kerja')->nullable();
+            $table->foreign('id_tempat_kerja')->references('id')->on('tempat_kerjas')->onUpdate('cascade')->onDelete('set null');
             $table->unsignedBigInteger('id_jabatan')->nullable();
             $table->foreign('id_jabatan')->references('id')->on('jabatans')->onUpdate('cascade')->onDelete('set null');
             $table->string('nomor_induk_karyawan')->unique()->nullable();

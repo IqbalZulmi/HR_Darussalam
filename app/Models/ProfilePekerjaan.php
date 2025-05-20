@@ -15,6 +15,7 @@ class ProfilePekerjaan extends Model
     protected $fillable = [
         'id_user',
         'id_departemen',
+        'id_tempat_kerja',
         'id_jabatan',
         'nomor_induk_karyawan',
         'tanggal_masuk',
@@ -29,6 +30,11 @@ class ProfilePekerjaan extends Model
     public function departemen()
     {
         return $this->belongsTo(Departemen::class, 'id_departemen');
+    }
+
+    public function tempatKerja()
+    {
+        return $this->belongsTo(TempatKerja::class, 'id_tempat_kerja');
     }
 
     public function jabatan()

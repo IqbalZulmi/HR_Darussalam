@@ -7,6 +7,7 @@ use App\Models\Jabatan;
 use App\Models\Profile;
 use App\Models\ProfilePekerjaan;
 use App\Models\ProfilePribadi;
+use App\Models\TempatKerja;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,10 +23,11 @@ class ProfileSeeder extends Seeder
 
         $departemens = Departemen::all();
         $jabatans = Jabatan::all();
+        $tempatKerja = TempatKerja::all();
 
         // Pastikan ada data di departemen dan jabatan
-        if ($departemens->isEmpty() || $jabatans->isEmpty()) {
-            $this->command->warn('Seeder dibatalkan: Departemen atau Jabatan kosong.');
+        if ($departemens->isEmpty() || $jabatans->isEmpty() || $tempatKerja->isEmpty()) {
+            $this->command->warn('Seeder dibatalkan: Departemen atau Jabatan atau tempat kerja kosong.');
             return;
         }
 
@@ -49,6 +51,7 @@ class ProfileSeeder extends Seeder
             ProfilePekerjaan::create([
                 'id_user' => $user->id,
                 'id_departemen' => $departemens->random()->id,
+                'id_tempat_kerja' => $departemens->random()->id,
                 'id_jabatan' => $jabatans->random()->id,
                 'nomor_induk_karyawan' => strtoupper(Str::random(6)),
                 'tanggal_masuk' => now()->subYears(rand(22, 40))->subDays(rand(1, 365)),

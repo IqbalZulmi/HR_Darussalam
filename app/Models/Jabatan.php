@@ -17,4 +17,8 @@ class Jabatan extends Model
     public function profilePekerjaan(){
         return $this->hasMany(ProfilePekerjaan::class,'id_jabatan');
     }
+
+    public function jamKerja(){
+        return $this->hasMany(JamKerja::class,'id_jabatan');
+    }
 }

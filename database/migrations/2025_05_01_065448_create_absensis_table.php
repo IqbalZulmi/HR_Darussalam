@@ -16,9 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('id_user');
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->date('tanggal');
-            $table->time('jam_masuk');
-            $table->time('jam_keluar');
-            $table->enum('status',['hadir','sakit','izin','cuti','terlambat']);
+            $table->timestamp('check_in')->nullable();
+            $table->timestamp('check_out')->nullable();
+            $table->decimal('latitude_in', 10, 8)->nullable();
+            $table->decimal('longitude_in', 11, 8)->nullable();
+            $table->decimal('latitude_out', 10, 8)->nullable();
+            $table->decimal('longitude_out', 11, 8)->nullable();
+            $table->enum('status',['hadir','sakit','cuti','terlambat','alpa']);
             $table->text('keterangan')->nullable();
             $table->string('file_pendukung')->nullable();
             $table->timestamps();

@@ -55,6 +55,11 @@ class PermissionSeeder extends Seeder
             'manajemen_profil',
             'rekap_absensi_pribadi',
             'rekap_evaluasi_pribadi',
+
+            //other
+            'manajemen_jabatan',
+            'manajemen_departemen',
+            'manajemen_sosial_media',
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];
