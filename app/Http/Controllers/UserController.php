@@ -8,6 +8,7 @@ use App\Models\PengajuanCuti;
 use App\Models\ProfilePekerjaan;
 use App\Models\ProfilePribadi;
 use App\Models\SosialMedia;
+use App\Models\TempatKerja;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -29,12 +30,20 @@ class UserController extends Controller
 
         $departemen = Departemen::all();
 
+        $tempatKerja = TempatKerja::all();
+
         $roles = Role::all();
+
+        //jika role bukan superadmin,sembunyikan opsi superadmin
+        if (!Auth::user()->hasRole('superadmin')) {
+            $roles = $roles->filter(fn($role) => $role->name !== 'superadmin');
+        }
 
         return view('admin.kelola-pegawai',[
             'dataPegawai' => $pegawai,
             'dataJabatan' => $jabatan,
             'dataDepartemen' => $departemen,
+            'dataTempatKerja' => $tempatKerja,
             'dataRoles' => $roles,
         ]);
     }
@@ -109,8 +118,9 @@ class UserController extends Controller
             'tanggal_masuk' => 'required|date',
             'jabatan' => 'required',
             'departemen' => 'required',
+            'tempat_kerja' => 'required',
             'status_karyawan' => 'required',
-            'roles' => 'required|array',
+            'roles' => 'required',
         ],[
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
@@ -136,10 +146,10 @@ class UserController extends Controller
 
             'jabatan.required' => 'Jabatan wajib dipilih.',
             'departemen.required' => 'Departemen wajib dipilih.',
+            'tempat_kerja.required' => 'Tempat Bekerja wajib dipilih.',
             'status_karyawan.required' => 'Status karyawan wajib dipilih.',
 
             'roles.required' => 'Roles wajib dipilih.',
-            'roles.array' => 'Format peran (roles) tidak valid.',
         ]);
 
         try{
@@ -160,6 +170,7 @@ class UserController extends Controller
                 'id_user' => $user->id,
                 'id_jabatan' => $request->jabatan,
                 'id_departemen' => $request->departemen,
+                'id_tempat_kerja' => $request->tempat_kerja,
                 'nomor_induk_karyawan' => $request->nomor_induk_karyawan,
                 'tanggal_masuk' => $request->tanggal_masuk,
                 'status' => $request->status_karyawan,
@@ -216,6 +227,15 @@ class UserController extends Controller
         $jabatan = jabatan::all();
         $sosialMedia = SosialMedia::all();
 
+        $tempatKerja = TempatKerja::all();
+
+        $roles = Role::all();
+
+        //jika role bukan superadmin,sembunyikan opsi superadmin
+        if (!Auth::user()->hasRole('superadmin')) {
+            $roles = $roles->filter(fn($role) => $role->name !== 'superadmin');
+        }
+
         $lamaPengabdian = Carbon::parse($pegawai->profilePekerjaan->tanggal_masuk)->diffForHumans(null, true);
 
         $jsonKota = File::get(resource_path('json/kota-indonesia.json'));
@@ -227,6 +247,8 @@ class UserController extends Controller
         return view('admin.edit-pegawai-profile',[
             'data' => $pegawai,
             'dataDepartemen' => $departemen,
+            'dataTempatKerja' => $tempatKerja,
+            'dataRoles' => $roles,
             'dataJabatan' => $jabatan,
             'dataSosialMedia' => $sosialMedia,
             'lamaPengabdian' => $lamaPengabdian,
@@ -242,10 +264,12 @@ class UserController extends Controller
 
             //validasi profile kerja
             'departemen' => 'required|exists:departemens,id',
+            'tempat_kerja' => 'required|exists:tempat_kerjas,id',
             'jabatan' => 'required|exists:jabatans,id',
             'nomor_induk_karyawan' => 'required|string|max:100',
             'tanggal_masuk' => 'required|date',
             'status_karyawan' => 'required|in:aktif,nonaktif,kontrak,tetap,magang,honorer,pensiun,cuti,skorsing',
+            'roles' => 'required',
 
             // Validasi untuk profile
             'nomor_induk_kependudukan' => 'required',
@@ -290,6 +314,8 @@ class UserController extends Controller
             //profile kerja
             'departemen.required' => 'Departemen wajib dipilih.',
             'departemen.exists' => 'Departemen yang dipilih tidak valid.',
+            'tempat_kerja.required' => 'Tempat Bekerja wajib dipilih.',
+            'tempat_kerja.exists' => 'Tempat Bekerja yang dipilih tidak valid.',
             'jabatan.required' => 'Jabatan wajib dipilih.',
             'jabatan.exists' => 'Jabatan yang dipilih tidak valid.',
             'nomor_induk_karyawan.required' => 'Nomor Induk Karyawan wajib diisi.',
@@ -299,6 +325,7 @@ class UserController extends Controller
             'tanggal_masuk.date' => 'Format Tanggal Masuk tidak valid.',
             'status_karyawan.required' => 'Status Karyawan wajib dipilih.',
             'status_karyawan.in' => 'Status Karyawan yang dipilih tidak valid.',
+            'roles.required' => 'Role Karyawan wajib dipilih.',
 
             // No HP
             'no_hp.regex' => 'Nomor HP hanya boleh terdiri dari angka.',
@@ -355,11 +382,14 @@ class UserController extends Controller
             $user->profilePekerjaan()->update([
                 'id_user' => $user->id,
                 'id_departemen' => $request->departemen,
+                'id_tempat_kerja' => $request->tempat_kerja,
                 'id_jabatan' => $request->jabatan,
                 'nomor_induk_karyawan' => $request->nomor_induk_karyawan,
                 'tanggal_masuk' => $request->tanggal_masuk,
                 'status' => $request->status_karyawan,
             ]);
+
+            $user->syncRoles($request->roles);
 
             if ($request->hasFile('foto')) {
                 $old_foto = $user->profilePribadi->foto ?? null;

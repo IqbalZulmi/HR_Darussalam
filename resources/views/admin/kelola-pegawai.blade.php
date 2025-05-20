@@ -446,6 +446,18 @@
                                 </div>
 
                                 <div class="col-12">
+                                    <label for="" class="form-label">Tempat Bekerja</label>
+                                    <select name="tempat_kerja" class="form-select @error('tempat_kerja') is-invalid @enderror" required>
+                                        @foreach ($dataTempatKerja as $tempatKerja )
+                                            <option value="{{ $tempatKerja->id }}">{{ $tempatKerja->nama_tempat }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('tempat_kerja')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
                                     <label for="" class="form-label">Status</label>
                                     <select name="status_karyawan" class="form-select @error('status_karyawan') is-invalid @enderror" required>
                                         <option value="" disabled selected>Pilih status karyawan</option>
@@ -466,14 +478,11 @@
 
                                 <div class="col-12">
                                     <label for="" class="form-label">Role</label>
-                                    @foreach($dataRoles as $role)
-                                        <div class="form-check">
-                                            <input type="checkbox" name="roles[]" class="form-check-input @error('roles') is-invalid @enderror" value="{{ $role->name }}">
-                                            <label class="form-check-label text-capitalize" for="checkDefault">
-                                                {{ $role->name }}
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                    <select name="roles" id=""  class="form-select @error('roles') is-invalid @enderror">
+                                        @foreach($dataRoles as $role)
+                                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('roles')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror

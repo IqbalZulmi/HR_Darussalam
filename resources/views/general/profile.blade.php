@@ -250,14 +250,21 @@
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
+                                                <label for="formFile" class="form-label">Tempat Bekerja</label>
+                                                <input name="tempat_kerja" class="unedit form-control @error('tempat_kerja') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->tempatKerja->nama_tempat ?? ''}}" disabled>
+                                                @error('tempat_kerja')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Jabatan</label>
                                                 <input name="jabatan" class="unedit form-control @error('jabatan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->jabatan->nama_jabatan ?? ''}}" disabled>
                                                 @error('jabatan')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Induk Karyawan</label>
                                                 <input name="nomor_induk_karyawan" class="unedit form-control @error('nomor_induk_karyawan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->nomor_induk_karyawan ?? ''}}" disabled>
@@ -265,25 +272,25 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
+                                        </div>
+                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Tanggal Masuk</label>
-                                                <input name="tanggal_masuk" class="unedit form-control @error('tanggal_masuk') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->tanggal_masuk ??  'Tidak ada data untuk ditampilkan'}}" disabled>
+                                                <input name="tanggal_masuk" class="unedit form-control @error('tanggal_masuk') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->tanggal_masuk ??  ''}}" disabled>
                                                 @error('tanggal_masuk')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Lama Pengabdian</label>
-                                                <input name="lama_pengabdian" class="unedit form-control @error('lama_pengabdian') is-invalid @enderror" type="text" value="{{ $lamaPengabdian ??  'Tidak ada data untuk ditampilkan'}}" disabled>
+                                                <input name="lama_pengabdian" class="unedit form-control @error('lama_pengabdian') is-invalid @enderror" type="text" value="{{ $lamaPengabdian ??  ''}}" disabled>
                                                 @error('lama_pengabdian')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Status</label>
-                                                <input name="status_karyawan" class="unedit form-control @error('status_karyawan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->status ??  'Tidak ada data untuk ditampilkan'}}" disabled>
+                                                <input name="status_karyawan" class="unedit form-control @error('status_karyawan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->status ??  ''}}" disabled>
                                                 @error('status_karyawan')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror

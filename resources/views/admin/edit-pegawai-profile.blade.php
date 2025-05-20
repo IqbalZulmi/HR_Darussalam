@@ -244,6 +244,25 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
+
+                                            <div class="col-6 mb-3">
+                                                <label for="formFile" class="form-label">Tempat Bekerja</label>
+                                                <select name="tempat_kerja" class="form-select @error('tempat_kerja') is-invalid @enderror">
+                                                    @forelse ($dataTempatKerja as $tempatKerja )
+                                                        <option value="{{ $tempatKerja->id }}" @if ($data->profilePekerjaan->id_tempat_kerja == $tempatKerja->id) selected @endif>
+                                                            {{ $tempatKerja->nama_tempat }}
+                                                        </option>
+                                                    @empty
+                                                        <option value="" disabled>Tidak ada data yang dapat ditampilkan</option>
+                                                    @endforelse
+                                                </select>
+                                                @error('tempat_kerja')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Jabatan</label>
                                                 <select name="jabatan" class="form-select @error('jabatan') is-invalid @enderror">
@@ -259,8 +278,6 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Nomor Induk Karyawan</label>
                                                 <input name="nomor_induk_karyawan" class="form-control @error('nomor_induk_karyawan') is-invalid @enderror" type="text" value="{{ $data->profilePekerjaan->nomor_induk_karyawan ??  'Tidak ada data untuk ditampilkan'}}" >
@@ -268,6 +285,9 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
+                                        </div>
+
+                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="formFile" class="form-label">Tanggal Masuk</label>
                                                 <input name="tanggal_masuk" class="form-control @error('tanggal_masuk') is-invalid @enderror" type="date" value="{{ $data->profilePekerjaan->tanggal_masuk ??  'Tidak ada data untuk ditampilkan'}}" >
@@ -275,8 +295,6 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="row mt-2">
                                             <div class="col-6 mb-3">
                                                 <label for="" class="form-label">Status</label>
                                                 <select name="status_karyawan" class="form-select @error('status_karyawan') is-invalid @enderror" required>
@@ -295,6 +313,21 @@
                                                 @enderror
                                             </div>
                                         </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-6 mb-3">
+                                                <label for="" class="form-label">Role</label>
+                                                <select name="roles" id=""  class="form-select @error('roles') is-invalid @enderror">
+                                                    @foreach($dataRoles as $role)
+                                                        <option value="{{ $role->name }}" {{ $data->getRoleNames()->contains($role->name) ? 'selected' : '' }}>{{ $role->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('roles')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
