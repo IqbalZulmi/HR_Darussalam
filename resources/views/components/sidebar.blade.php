@@ -268,6 +268,7 @@
             'manajemen_jabatan.read',
             'manajemen_departemen.read',
             'manajemen_sosial_media.read',
+            'manajemen_tempat_kerja.read',
             ])
             <li class="nav-heading">other</li>
         @endcanany
@@ -286,6 +287,15 @@
                 <a class="nav-link {{ request()->routeIs('departemen.index') ? '' : ' collapsed' }}" href="{{ route('departemen.index') }}">
                     <i class="bi bi-buildings"></i>
                     <span>Departemen</span>
+                </a>
+            </li>
+        @endcan
+
+        @can('manajemen_tempat_kerja.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('kantor.index') ? '' : ' collapsed' }}" href="{{ route('kantor.index') }}">
+                    <i class="bi bi-building"></i>
+                    <span>Kantor</span>
                 </a>
             </li>
         @endcan

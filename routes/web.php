@@ -14,6 +14,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SosialMediaController;
+use App\Http\Controllers\TempatKerjaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSosialMediaController;
 use App\Http\Controllers\VerifikasiCutiController;
@@ -262,6 +263,21 @@ Route::middleware(['auth'])->group(function () {
         ->name('update');
 
         Route::delete('/{id_sosmed}',[SosialMediaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_sosial_media.delete')
+        ->name('destroy');
+    });
+
+    //tempat kerja routes
+    Route::prefix('kantor')->name('kantor.')->group(function(){
+        Route::get('/',[TempatKerjaController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_tempat_kerja.read')
+        ->name('index');
+
+        Route::post('/',[TempatKerjaController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_tempat_kerja.create')
+        ->name('store');
+
+        Route::put('/{id_tempat_kerja}',[TempatKerjaController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_tempat_kerja.update')
+        ->name('update');
+
+        Route::delete('/{id_tempat_kerja}',[TempatKerjaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_tempat_kerja.delete')
         ->name('destroy');
     });
 
