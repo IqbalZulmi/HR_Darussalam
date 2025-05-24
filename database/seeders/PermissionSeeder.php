@@ -58,6 +58,7 @@ class PermissionSeeder extends Seeder
 
             //other
             'manajemen_jabatan',
+            'manajemen_jam_kerja',
             'manajemen_departemen',
             'manajemen_sosial_media',
             'manajemen_tempat_kerja',

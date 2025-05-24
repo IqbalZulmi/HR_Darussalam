@@ -73,6 +73,11 @@
                                                     <i class="bi bi-trash"></i> hapus
                                                 </button>
                                                 @endcan
+                                                @can('manajemen_jam_kerja.read')
+                                                <a class="btn btn-secondary btn-sm mb-2 mb-md-0" href="{{ route('jabatan.jam.kerja.index',['id_jabatan' => $data->id]) }}">
+                                                    <i class="bi bi-clock"></i> Jam kerja
+                                                </a>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @empty
