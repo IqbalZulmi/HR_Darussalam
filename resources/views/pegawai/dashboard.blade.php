@@ -171,28 +171,9 @@
                     </div>
                 </div>
 
-                {{-- table --}}
+                {{-- absensi --}}
                 <div class="col-lg-6 order-1 order-lg-3">
-                    <div class="card recent-sales overflow-auto">
-                        <div class="card-title px-3">
-                            <p class="second-color fw-semibold">
-                                Absensi Kehadiran
-                            </p>
-                            <hr class="border border-3 opacity-100 shadow" style="border-color: #D5C584 !important;">
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <div class="btn-group btn-group-lg mb-3" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" class="btn btn-main">
-                                        <i class="bi bi-building-check"></i> Check In
-                                    </button>
-                                    <button type="button" class="btn btn-light">
-                                        <i class="bi bi-person-down"></i> Check Out
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @include('components.absensi-button')
                 </div>
             </div>
         </section>

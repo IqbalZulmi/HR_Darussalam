@@ -30,6 +30,7 @@
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/index.js" defer></script>
 
+    {{-- kalender --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const { Calendar } = window.VanillaCalendarPro;
@@ -43,6 +44,7 @@
         });
     </script>
 
+    {{-- datatable --}}
     <script>
         $(document).ready(function () {
             $('.table').DataTable({
@@ -77,50 +79,46 @@
             <div class="row">
 
                 <!-- Left side columns -->
-                <div class="col-lg-8 order-0">
+                <div class="col-lg-8 order-0 order-lg-0">
                     <div class="row">
                         <div class="card bg-second text-light">
                             <div class="row">
                                 <div class="col-4 col-md-2">
-                                    <img src="{{ asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle my-2" >
+                                    <img src="{{ $dataProfile->profilePribadi->foto ? asset('storage/'.$dataProfile->profilePribadi->foto) : asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle my-2" >
                                 </div>
                                 <div class="col-8 col-md-10 my-2">
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Nama</div>
-                                        <div class="col-lg-9 col-md-8">Chandra</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePribadi->nama_lengkap }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Jabatan</div>
-                                        <div class="col-lg-9 col-md-8">Kepala HRD</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePekerjaan->jabatan->nama_jabatan }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Alamat</div>
-                                        <div class="col-lg-9 col-md-8">{{ 'Tiban' }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePribadi->alamat_lengkap }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Email</div>
-                                        <div class="col-lg-9 col-md-8">{{ 'tiban@gmail.com' }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->email }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Nomor Telepon</div>
-                                        <div class="col-lg-9 col-md-8">{{ '0892832131' }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ $dataProfile->profilePribadi->no_hp }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Tahun Masuk</div>
-                                        <div class="col-lg-9 col-md-8">{{ '13 Januari 1990' }}
+                                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($dataProfile->profilePekerjaan->tanggal_masuk)->translatedFormat('F Y') }}
                                         </div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Tahun Pengabdian</div>
-                                        <div class="col-lg-9 col-md-8">{{ '3 Tahun 10 bulan' }} </div>
+                                        <div class="col-lg-9 col-md-8">{{ $tahunPengabdian. ' Tahun' }} {{ $bulanPengabdian. ' Bulan' }}</div>
                                     </div>
                                     <div class="row m-2">
                                         <div class="col-lg-3 col-md-4 label fw-semibold">Tahun Kelahiran</div>
-                                        <div class="col-lg-9 col-md-8">{{ '13 Januari 1991' }}</div>
-                                    </div>
-                                    <div class="row m-2">
-                                        <div class="col-lg-3 col-md-4 label fw-semibold">Golongan</div>
-                                        <div class="col-lg-9 col-md-8">{{ 'Golongan' }}</div>
+                                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($dataProfile->profilePribadi->tanggal_lahir)->translatedFormat('d F Y') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +136,7 @@
                 <div class="col-lg-8 order-2 order-lg-2" id="kelola-admin">
                     <div class="card recent-sales overflow-auto">
                         <div class="card-body">
-                            <h5 class="card-title">Persetujuan Cuti</h5>
+                            <h5 class="card-title">Pengajuan Cuti</h5>
                             <table class="table table-striped table-hover border table-bordered align-middle">
                                 <thead>
                                     <tr>
@@ -150,76 +148,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @forelse ($dataPengajuanCuti as $index => $data )
                                     <tr>
-                                        <td>2025-04-01</td>
-                                        <td>Andi Saputra</td>
-                                        <td>Cuti Tahunan</td>
-                                        <td>2025-04-05 - 2025-04-07</td>
-                                        <td><span class="badge bg-success">Disetujui</span></td>
+                                        <td>{{ $data->created_at->format('d/m/Y') }}</td>
+                                        <td>{{ $data->user->profilePribadi->nama_lengkap  }}</td>
+                                        <td>{{ $data->tipe_cuti }}</td>
+                                        <td>{{ $data->tanggal_mulai->format('d-m-Y') }} - {{ $data->tanggal_selesai->format('d-m-Y') }}</td>
+                                        <td>
+                                            <span class="badge text-wrap
+                                            {{ str_contains($data->status_pengajuan, 'menunggu tinjauan') ? 'text-bg-warning' :
+                                            (str_contains($data->status_pengajuan, 'disetujui') ? 'text-bg-success' :
+                                            (str_contains($data->status_pengajuan, 'ditolak') ? 'text-bg-danger' : 'text-bg-warning')) }}">
+                                                {{ $data->status_pengajuan }}
+                                            </span>
+                                        </td>
                                     </tr>
-                                    <tr>
-                                        <td>2025-04-02</td>
-                                        <td>Budi Santoso</td>
-                                        <td>Sakit</td>
-                                        <td>2025-04-03 - 2025-04-04</td>
-                                        <td><span class="badge bg-warning text-dark">Menunggu</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-03</td>
-                                        <td>Citra Lestari</td>
-                                        <td>Cuti Hamil</td>
-                                        <td>2025-04-10 - 2025-07-08</td>
-                                        <td><span class="badge bg-danger">Ditolak</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-04</td>
-                                        <td>Dewi Anggraini</td>
-                                        <td>Cuti Tahunan</td>
-                                        <td>2025-04-08 - 2025-04-12</td>
-                                        <td><span class="badge bg-success">Disetujui</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-05</td>
-                                        <td>Eko Prasetyo</td>
-                                        <td>Sakit</td>
-                                        <td>2025-04-06 - 2025-04-06</td>
-                                        <td><span class="badge bg-warning text-dark">Menunggu</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-06</td>
-                                        <td>Fajar Hidayat</td>
-                                        <td>Cuti Hamil</td>
-                                        <td>2025-04-15 - 2025-07-14</td>
-                                        <td><span class="badge bg-success">Disetujui</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-07</td>
-                                        <td>Gita Sari</td>
-                                        <td>Cuti Tahunan</td>
-                                        <td>2025-04-09 - 2025-04-15</td>
-                                        <td><span class="badge bg-danger">Ditolak</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-08</td>
-                                        <td>Hadi Wijaya</td>
-                                        <td>Sakit</td>
-                                        <td>2025-04-09 - 2025-04-10</td>
-                                        <td><span class="badge bg-success">Disetujui</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-09</td>
-                                        <td>Indra Kusuma</td>
-                                        <td>Cuti Hamil</td>
-                                        <td>2025-04-20 - 2025-07-19</td>
-                                        <td><span class="badge bg-warning text-dark">Menunggu</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2025-04-10</td>
-                                        <td>Joko Widodo</td>
-                                        <td>Cuti Tahunan</td>
-                                        <td>2025-04-12 - 2025-04-16</td>
-                                        <td><span class="badge bg-success">Disetujui</span></td>
-                                    </tr>
+                                    @empty
+
+                                    @endforelse
                                 </tbody>
                             </table>
                             <div class="status-container">
@@ -242,26 +188,7 @@
 
                 {{-- absen button --}}
                 <div class="col-lg-4 order-1 order-lg-3">
-                    <div class="card recent-sales overflow-auto">
-                        <div class="card-title px-3">
-                            <p class="second-color fw-semibold">
-                                Absensi Kehadiran
-                            </p>
-                            <hr class="border border-3 opacity-100 shadow" style="border-color: #D5C584 !important;">
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <div class="btn-group btn-group-lg mb-3" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" class="btn btn-main">
-                                        <i class="bi bi-building-check"></i> Check In
-                                    </button>
-                                    <button type="button" class="btn btn-light">
-                                        <i class="bi bi-person-down"></i> Check Out
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @include('components.absensi-button')
                 </div>
             </div>
         </section>

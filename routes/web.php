@@ -7,6 +7,7 @@ use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\JamKerjaController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengajuanCutiController;
@@ -201,6 +202,15 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+    //absensi route
+    Route::prefix('absensi')->name('absensi.')->group(function(){
+        Route::post('/check-in',[AbsensiController::class,'checkInProcess'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
+        ->name('check.in');
+
+        Route::put('/check-out',[AbsensiController::class,'checkOutProcess'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
+        ->name('check.out');
+    });
+
      //rekap absensi routes
     Route::prefix('rekap/absensi')->name('rekap.absensi.')->group(function(){
         Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.read')
@@ -234,6 +244,20 @@ Route::middleware(['auth'])->group(function () {
 
         Route::delete('/{id_jabatan}',[JabatanController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_jabatan.delete')
         ->name('destroy');
+
+        Route::prefix('{id_jabatan}/jam-kerja')->name('jam.kerja.')->group(function(){
+            Route::get('/',[JamKerjaController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_jam_kerja.read')
+            ->name('index');
+
+            Route::post('/',[JamKerjaController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_jam_kerja.create')
+            ->name('store');
+
+            Route::put('/{id_jam_kerja}',[JamKerjaController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_jam_kerja.update')
+            ->name('update');
+
+            Route::delete('/{id_jam_kerja}',[JamKerjaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_jam_kerja.delete')
+            ->name('destroy');
+        });
     });
 
     //departemen routes
