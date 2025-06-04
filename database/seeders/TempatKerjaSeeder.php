@@ -44,6 +44,16 @@ class TempatKerjaSeeder extends Seeder
                 'latitude' => -6.201700,
                 'longitude' => 106.817400,
             ],
+            [
+                'nama_tempat' => 'Poltek',
+                'latitude' => 1.1189457625979018,
+                'longitude' => 104.0483922269825,
+            ],
+            [
+                'nama_tempat' => 'Xplay',
+                'latitude' => 1.1434830726392244,
+                'longitude' => 104.00289268015779,
+            ],
         ];
 
         foreach ($tempatKerjaList as $tempat) {

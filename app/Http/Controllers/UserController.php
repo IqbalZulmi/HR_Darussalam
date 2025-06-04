@@ -22,10 +22,8 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     public function showKelolaPegawaiPage(){
-        $pegawai = User::whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['superadmin', 'kepala yayasan']);
-        })->orderByDesc('created_at')->get();
-
+        $pegawai = User::orderByDesc('created_at')->get();
+        
         $jabatan = Jabatan::all();
 
         $departemen = Departemen::all();
@@ -36,6 +34,10 @@ class UserController extends Controller
 
         //jika role bukan superadmin,sembunyikan opsi superadmin
         if (!Auth::user()->hasRole('superadmin')) {
+            $pegawai = User::whereDoesntHave('roles', function ($query) {
+                $query->whereIn('name', ['superadmin', 'kepala yayasan']);
+            })->orderByDesc('created_at')->get();
+
             $roles = $roles->filter(fn($role) => $role->name !== 'superadmin');
         }
 
