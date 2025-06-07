@@ -78,6 +78,10 @@ class User extends Authenticatable
         return $this->hasMany(PengajuanCuti::class, 'id_user');
     }
 
+    public function logAktivitasAbsensi(){
+        return $this->hasMany(LogAktivitasAbsensi::class, 'id_user');
+    }
+
     public function evaluasi(){
         return $this->hasMany(Evaluasi::class, 'id_user');
     }

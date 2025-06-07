@@ -9,6 +9,7 @@ use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\JamKerjaController;
 use App\Http\Controllers\KeluargaController;
+use App\Http\Controllers\LogAktivitasAbsensiController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengajuanCutiController;
 use App\Http\Controllers\PermissionController;
@@ -204,6 +205,10 @@ Route::middleware(['auth'])->group(function () {
 
     //absensi route
     Route::prefix('absensi')->name('absensi.')->group(function(){
+        //log absensi
+        Route::get('{id_absensi}/log', [LogAktivitasAbsensiController::class, 'showLogAbsenPage'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.read')
+        ->name('log.page');
+
         Route::post('/check-in',[AbsensiController::class,'checkInProcess'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
         ->name('check.in');
 
@@ -218,6 +223,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.read')
         ->name('pribadi.page');
+
+        Route::post('/store', [AbsensiController::class, 'rekapStore'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
+        ->name('store');
     });
 
     //HRD pages

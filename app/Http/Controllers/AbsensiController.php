@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\absensi;
 use App\Models\JamKerja;
+use App\Models\LogAktivitasAbsensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\DB;
+use function Laravel\Prompts\error;
 
 class AbsensiController extends Controller
 {
@@ -17,8 +21,11 @@ class AbsensiController extends Controller
     }
 
     public function showRekapPribadiPage(){
-        return view('pegawai.rekap-absensi-pribadi',[
+        $user = Auth::user();
+        $absensi = absensi::withTrashed()->where('id_user',$user->id)->latest()->get();
 
+        return view('pegawai.rekap-absensi-pribadi',[
+            'dataAbsensi' => $absensi,
         ]);
     }
 
@@ -132,6 +139,7 @@ class AbsensiController extends Controller
         }
     }
 
+    //fungsi perhitungan radius
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
     {
          $earthRadius = 6371000; // Radius bumi dalam meter
@@ -150,7 +158,6 @@ class AbsensiController extends Controller
 
         return $distance; // hasil dalam meter
     }
-
 
     public function checkOutProcess(Request $request)
     {
@@ -214,28 +221,95 @@ class AbsensiController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    public function rekapStore(Request $request){
+        $validatedData = $request->validate([
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'tanggal' => 'required|date',
+            'durasi_hari' => 'required|integer|min:0',
+            'status' => 'required',
+            'file_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'keterangan' => 'nullable|string|max:1000',
+        ], [
+            // Latitude & Longitude
+            'latitude.required' => 'Lokasi latitude wajib dikirim.',
+            'longitude.required' => 'Lokasi longitude wajib dikirim.',
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+            // Tanggal
+            'tanggal.required' => 'Tanggal wajib diisi.',
+            'tanggal.date' => 'Format tanggal tidak valid.',
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+            // Durasi
+            'durasi_hari.required' => 'Durasi hari wajib diisi.',
+            'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
+            'durasi_hari.min' => 'Durasi hari minimal 0 (hari ini saja).',
+
+            // Status
+            'status.required' => 'Status wajib dipilih.',
+
+            // File
+            'file_pendukung.file' => 'File pendukung harus berupa file.',
+            'file_pendukung.mimes' => 'File hanya boleh berformat: jpg, jpeg, png, atau pdf.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
+
+            // Keterangan
+            'keterangan.string' => 'Keterangan harus berupa teks.',
+            'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $filePath = null;
+            if ($request->hasFile('file_pendukung')) {
+                $filePath = $request->file('file_pendukung')->store('file_pendukung', 'public');
+            }
+
+            $user = Auth::user();
+            $tanggalAwal = Carbon::parse($request->tanggal);
+            $durasi = $request->durasi_hari;
+            $jumlahDisimpan = 0;
+
+            for ($i = 0; $i <= $durasi; $i++) {
+                $tanggalAbsen = $tanggalAwal->copy()->addDays($i);
+
+                $sudahAbsen = Absensi::where('id_user', $user->id)
+                    ->whereDate('tanggal', $tanggalAbsen)
+                    ->exists();
+
+                if (!$sudahAbsen) {
+                    Absensi::create([
+                        'id_user' => $user->id,
+                        'tanggal' => $tanggalAbsen,
+                        'status' => $request->status,
+                        'check_in' => Carbon::now(),
+                        'check_out' => Carbon::now(),
+                        'latitude_in' => $request->latitude,
+                        'longitude_in' => $request->longitude,
+                        'keterangan' => $request->keterangan,
+                        'file_pendukung' => $filePath,
+                    ]);
+
+                    $jumlahDisimpan++;
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with([
+                'notifikasi' => $jumlahDisimpan > 0
+                    ? 'Berhasil menambahkan absen ' . $request->status . ' selama ' . $jumlahDisimpan . ' hari.'
+                    : 'Semua tanggal sudah tercatat. Tidak ada data baru yang ditambahkan.',
+                'type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal menambahkan absen: ' . $e->getMessage(),
+                'type' => 'error',
+            ]);
+        }
     }
 
     /**

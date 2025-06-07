@@ -26,6 +26,7 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->string('file_pendukung')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
