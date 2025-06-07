@@ -23,7 +23,7 @@ class UserController extends Controller
 {
     public function showKelolaPegawaiPage(){
         $pegawai = User::orderByDesc('created_at')->get();
-        
+
         $jabatan = Jabatan::all();
 
         $departemen = Departemen::all();
@@ -67,11 +67,14 @@ class UserController extends Controller
 
         $departemen = Departemen::all();
 
+        $tempatKerja = TempatKerja::all();
+
         $roles = Role::all();
 
         return view('admin.kelola-pegawai',[
             'dataPegawai' => $pegawai,
             'dataJabatan' => $jabatan,
+            'dataTempatKerja' => $tempatKerja,
             'dataDepartemen' => $departemen,
             'dataRoles' => $roles,
         ]);
@@ -89,12 +92,15 @@ class UserController extends Controller
 
         $departemen = Departemen::all();
 
+        $tempatKerja = TempatKerja::all();
+
         $roles = Role::all();
 
         return view('admin.kelola-pegawai',[
             'dataPegawai' => $pegawai,
             'dataJabatan' => $jabatan,
             'dataDepartemen' => $departemen,
+            'dataTempatKerja' => $tempatKerja,
             'dataRoles' => $roles,
         ]);
     }
