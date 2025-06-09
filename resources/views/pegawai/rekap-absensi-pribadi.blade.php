@@ -1,6 +1,26 @@
 @extends('html.html')
 
 @push('css')
+    <style>
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .deleted  { background-color: #f8d7da; }  /* Oranye */
+    </style>
 @endpush
 
 @push('js')
@@ -108,7 +128,7 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($dataAbsensi as $index => $data)
-                                        <tr>
+                                        <tr class="{{ $data->deleted_at ? 'table-danger' : '' }}">
                                             <td>{{ $data->tanggal->translatedFormat('d F Y')  }}</td>
                                             <td>{{ $data->check_in }}</td>
                                             <td>{{ $data->check_out }}</td>
@@ -145,6 +165,12 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                            <div class="status-container">
+                                <div class="status">
+                                    <div class="status-box deleted"></div>
+                                    <span class="text-capitalize">Data telah dihapus</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,7 +189,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('rekap.absensi.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('rekap.absensi.pribadi.store') }}" method="post" enctype="multipart/form-data">
                         @csrf @method('post')
                         <div class="container-fluid">
                             <input type="hidden" name="latitude" class="latitude">
@@ -188,7 +214,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-12">
-                                    <label for="exampleFormControlInput1" class="form-label">Tipe Cuti</label>
+                                    <label for="exampleFormControlInput1" class="form-label">Status Absensi</label>
                                     <select name="status" class="form-select @error('status') is-invalid @enderror" required>
                                         <option value="sakit">Sakit</option>
                                         <option value="cuti">Cuti</option>

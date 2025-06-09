@@ -221,11 +221,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/hari-ini', [AbsensiController::class, 'showRekapTodayPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.read')
         ->name('today.page');
 
+        Route::post('/hari-ini/store', [AbsensiController::class, 'rekapTodayStore'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.create')
+        ->name('today.store');
+
+        Route::put('{id_absensi}/hari-ini/update', [AbsensiController::class, 'rekapTodayUpdate'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.update')
+        ->name('today.update');
+
         Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.read')
         ->name('pribadi.page');
 
-        Route::post('/store', [AbsensiController::class, 'rekapStore'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
-        ->name('store');
+        Route::post('pribadi/store', [AbsensiController::class, 'rekapPribadiStore'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
+        ->name('pribadi.store');
+
+        Route::delete('{id_absensi}/destroy', [AbsensiController::class, 'rekapDestroy'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.delete')
+        ->name('delete');
+
+        Route::put('{id_absensi}/restore', [AbsensiController::class, 'rekapRestore'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.delete')
+        ->name('restore');
     });
 
     //HRD pages

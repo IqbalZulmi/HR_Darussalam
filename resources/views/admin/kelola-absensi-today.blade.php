@@ -4,12 +4,33 @@
     <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/styles/index.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/styles/layout.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .deleted  { background-color: #f8d7da; }  /* Oranye */
+    </style>
 @endpush
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/index.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+{{-- d-select --}}
     <script>
         $(document).ready(function() {
             $('#search-name').select2({
@@ -18,6 +39,7 @@
         });
     </script>
 
+{{-- calendar --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const { Calendar } = window.VanillaCalendarPro;
@@ -31,13 +53,58 @@
         });
     </script>
 
+{{-- DataTable --}}
     <script>
         $(document).ready(function () {
             $('.table').DataTable({
                 info: true,
+                order:[],
                 dom: '<"row"<"col-sm-6 d-flex justify-content-center justify-content-sm-start mb-2 mb-sm-0"l><"col-sm-6 d-flex justify-content-center justify-content-sm-end"f>>rt<"row"<"col-sm-6 mt-0"i><"col-sm-6 mt-2"p>>'
             });
         });
+    </script>
+
+    {{-- autofill input latitude dan longitude --}}
+    <script>
+        var latitudeInputs = document.getElementsByClassName('latitude');
+        var longitudeInputs = document.getElementsByClassName('longitude');
+
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+            });
+        }else{
+            Swal.fire({
+                text: 'Geolocation tidak didukung oleh browser ini.',
+                icon: 'warning',
+                confirmButtonText:'OK',
+                showCloseButton: true,
+                timer: 5000,
+            })
+        }
+
+        function successCallback(position) {
+            for (let i = 0; i < latitudeInputs.length; i++) {
+                latitudeInputs[i].value = position.coords.latitude;
+                longitudeInputs[i].value = position.coords.longitude;
+            }
+        }
+
+
+        function errorCallback(error){
+            Swal.fire({
+                title: 'Lokasi gagal didapatkan',
+                html: 'Pastikan GPS Anda aktif dan browser mengizinkan akses lokasi. <br><a class="text-info" href="https://support.google.com/chrome/answer/142065" target="_blank">Cara mengaktifkan lokasi di browser</a>',
+                icon: 'error',
+                confirmButtonText:'OK',
+                showCloseButton: true,
+                // timer: 5000,
+            }).then(() => {
+                location.reload(); // Supaya bisa coba akses lokasi ulang
+            });
+        }
     </script>
 @endpush
 
@@ -53,7 +120,7 @@
             <h1 class="text-capitalize">Absensi</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('hrd.dashboard.page') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="">Home</a></li>
                     <li class="breadcrumb-item active text-capitalize">
                         {{ ucwords(str_replace('/', ' / ', Request::path())) }}
                     </li>
@@ -64,230 +131,103 @@
         <section class="section dashboard">
             <div class="row">
                 {{-- tabel pengajuan cuti --}}
-                <div class="col-lg-8" id="kelola-admin">
+                <div class="col-lg-9" id="kelola-admin">
                     <div class="card recent-sales overflow-auto">
                         <div class="card-body">
                             <h5 class="card-title">Absensi Hari ini</h5>
                             <div class="d-flex flex-column flex-md-row justify-content-start mb-2">
-                                <div class="me-md-2 mb-2">
-                                    <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                                        <i class="bi bi-plus-circle-fill"></i> Tambah Baru
-                                    </button>
-                                </div>
+                                @can('manajemen_rekap_absensi_today.create')
+                                    <div class="me-md-2 mb-2">
+                                        <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                                            <i class="bi bi-plus-circle-fill"></i> Tambah Baru
+                                        </button>
+                                    </div>
+                                @endcan
                             </div>
                             <table class="table table-striped table-hover border table-bordered align-middle">
                                 <thead>
                                     <tr>
                                         <th scope="col">Nama</th>
-                                        <th scope="col">Jam Masuk</th>
-                                        <th scope="col">Jam Keluar</th>
+                                        <th scope="col">Check In</th>
+                                        <th scope="col">Check Out</th>
+                                        <th scope="col">Presensi</th>
+                                        <th scope="col">Keterangan</th>
+                                        <th scope="col">File Pendukung</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#editModal">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#hapusModal">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
+                                    @forelse ($dataAbsensi as $index => $data)
+                                        <tr class="{{ $data->deleted_at ? 'table-danger' : '' }}">
+                                            <td>{{ $data->user->profilePribadi->nama_lengkap  }}</td>
+                                            <td>{{ $data->check_in }}</td>
+                                            <td>{{ $data->check_out }}</td>
+                                            <td>
+                                                @php
+                                                    $statusClass = [
+                                                        'hadir' => 'text-bg-success',
+                                                        'cuti' => 'text-bg-primary',
+                                                        'alpa' => 'text-bg-danger',
+                                                        'sakit' => 'text-bg-warning',
+                                                        'terlambat' => 'text-bg-warning',
+                                                    ][$data->status] ?? 'text-bg-secondary';
+                                                @endphp
+                                                <span class="badge {{ $statusClass }}">{{ $data->status }}</span>
+                                            </td>
+                                            <td>{{ $data->keterangan ?? '-' }}</td>
+                                            <td>
+                                                @if (!empty($data->file_pendukung))
+                                                        <a href="{{ asset('storage/' . $data->file_pendukung) }}" target="_blank" class="btn btn-main btn-sm">
+                                                            <i class="bi bi-eye"></i> Buka
+                                                        </a>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1 text-nowrap">
+                                                    @can('manajemen_rekap_absensi_today.update')
+                                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">
+                                                            <i class="bi bi-pencil-square"></i> Edit
+                                                        </button>
+                                                    @endcan
+                                                    @can('manajemen_rekap_absensi_today.delete')
+                                                        @if (is_null($data->deleted_at))
+                                                            {{-- Tombol Hapus --}}
+                                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapusModal{{ $data->id }}">
+                                                                <i class="bi bi-trash"></i> Hapus
+                                                            </button>
+                                                        @else
+                                                            {{-- Tombol Restore --}}
+                                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#restoreModal{{ $data->id }}">
+                                                                <i class="bi bi-arrow-clockwise"></i> Restore
+                                                            </button>
+                                                        @endif
+                                                    @endcan
+                                                    <a class="btn btn-sm btn-secondary" href="{{ route('absensi.log.page',['id_absensi' => $data->id]) }}">
+                                                        <i class="bi bi-clock-history"></i> Log Absensi
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
 
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Andi Pratama</td>
-                                        <td>08:00</td>
-                                        <td>16:00</td>
-                                        <td>
-                                            <div class="p-2">
-                                                <button class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-
+                                    @endforelse
                                 </tbody>
                             </table>
+                            <div class="status-container">
+                                <div class="status">
+                                    <div class="status-box deleted"></div>
+                                    <span class="text-capitalize">Data telah dihapus</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right side columns -->
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <div id="calendar"></div>
-
                 </div>
 
             </div>
@@ -304,53 +244,65 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('role.store') }}" method="post">
+                    <form action="{{ route('rekap.absensi.today.store') }}" method="post">
                         @csrf @method('post')
                         <div class="container-fluid">
                             <div class="row gy-2">
+                                <input type="hidden" name="latitude" class="latitude">
+                                <input type="hidden" name="longitude" class="longitude">
                                 <div class="d-flex flex-column">
-                                    <label for="">Nama</label>
-                                    <select name="nama" id="search-name" class="form-select @error('nama') is-invalid @enderror">
+                                    <label for="" class="form-label">Nama</label>
+                                    <select name="id_user" id="search-name" class="form-select @error('id_user') is-invalid @enderror">
                                         <option value="" disabled selected>Pilih Pegawai</option>
-                                        <option value="">ahmad</option>
-                                        <option value="">ayu</option>
-                                        <option value="">when</option>
-                                        <option value="">yh</option>
+                                        @forelse ($dataUser as $user )
+                                            <option value="{{ $user->id }}">{{ $user->profilePekerjaan->nomor_induk_karyawan }} - {{ $user->profilePribadi->nama_lengkap }}</option>
+                                        @empty
+                                            <option value="" disabled selected>Data Not Found</option>
+                                        @endforelse
                                     </select>
-                                    @error('nama')
+                                    @error('id_user')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-6">
                                     <label for="exampleFormControlInput1" class="form-label">Jam Masuk</label>
-                                    <input name="jam_masuk" type="datetime-local" class="form-control @error('jam_masuk') is-invalid @enderror" value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
-                                    @error('jam_masuk')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                    <input name="check_in" type="datetime-local" class="form-control @error('check_in') is-invalid @enderror" value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
+                                    @error('check_in')
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-6">
                                     <label for="exampleFormControlInput1" class="form-label">Jam Keluar</label>
-                                    <input name="jam_keluar" type="datetime-local" class="form-control @error('jam_keluar') is-invalid @enderror" value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
-                                    @error('jam_keluar')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                    <input name="check_out" type="datetime-local" class="form-control @error('check_out') is-invalid @enderror" value="{{ \Carbon\Carbon::now()->addHour()->format('Y-m-d\TH:i') }}">
+                                    @error('check_out')
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-12">
-                                    <label for="exampleFormControlInput1" class="form-label">Tipe Absen</label>
-                                    <select name="tipe" class="form-select @error('tipe') is-invalid @enderror">
-                                        <option value="">Hadir</option>
-                                        <option value="">Sakit</option>
-                                        <option value="">Izin</option>
-                                        <option value="">Cuti</option>
+                                    <label for="exampleFormControlInput1" class="form-label">Status Absen</label>
+                                    <select name="status" class="form-select @error('status') is-invalid @enderror">
+                                        <option value="hadir">Hadir</option>
+                                        <option value="sakit">Sakit</option>
+                                        <option value="cuti">Cuti</option>
+                                        <option value="terlambat">Terlambat</option>
+                                        <option value="alpa">Alpa</option>
                                     </select>
-                                    @error('tipe')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                    @error('status')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label for="" class="form-label">File Pendukung</label>
+                                    <input type="file" name="file_pendukung" class="form-control @error('file_pendukung') is-invalid @enderror">
+                                    @error('file_pendukung')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label for="" class="form-label">Keterangan Pendukung</label>
+                                    <textarea type="keterangan" name="keterangan" class="form-control @error('keterangan') is-invalid @enderror" placeholder="Dapat dikosongkan jika tidak ada">{{ old('keterangan') }}</textarea>
+                                    @error('keterangan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -365,99 +317,152 @@
         </div>
     </div>
 
-    {{-- editModal --}}
-    <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Edit Absensi</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('role.store') }}" method="post">
-                        @csrf @method('post')
-                        <div class="container-fluid">
-                            <div class="row gy-2">
-                                <div class="d-flex flex-column">
-                                    <label for="">Nama</label>
-                                    <select name="nama" class="form-select @error('nama') is-invalid @enderror" disabled>
-                                        <option value="">ahmad</option>
-                                        <option value="">ayu</option>
-                                        <option value="">when</option>
-                                        <option value="">yh</option>
-                                    </select>
-                                    @error('nama')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-6">
-                                    <label for="exampleFormControlInput1" class="form-label">Jam Masuk</label>
-                                    <input name="jam_masuk" type="datetime-local" class="form-control @error('jam_masuk') is-invalid @enderror" value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
-                                    @error('jam_masuk')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="col-6">
-                                    <label for="exampleFormControlInput1" class="form-label">Jam Keluar</label>
-                                    <input name="jam_keluar" type="datetime-local" class="form-control @error('jam_keluar') is-invalid @enderror" value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
-                                    @error('jam_keluar')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="col-12">
-                                    <label for="exampleFormControlInput1" class="form-label">Tipe Absen</label>
-                                    <select name="tipe" class="form-select @error('tipe') is-invalid @enderror">
-                                        <option value="">Hadir</option>
-                                        <option value="">Sakit</option>
-                                        <option value="">Izin</option>
-                                        <option value="">Cuti</option>
-                                    </select>
-                                    @error('tipe')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
+    @foreach ($dataAbsensi as $index => $data )
+        {{-- editModal --}}
+        <div class="modal fade" id="editModal{{ $data->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Edit Absensi</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('rekap.absensi.today.update',['id_absensi' => $data->id]) }}" method="post" enctype="multipart/form-data">
+                            @csrf @method('put')
+                            <div class="container-fluid">
+                                <div class="row gy-2">
+                                    <div class="col-6">
+                                        <label for="exampleFormControlInput1" class="form-label">Jam Masuk</label>
+                                        <input name="check_in" type="datetime-local" class="form-control @error('check_in') is-invalid @enderror" value="{{ old('check_in',$data->check_in ?? '') }}">
+                                        @error('check_in')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="exampleFormControlInput1" class="form-label">Jam Keluar</label>
+                                        <input name="check_out" type="datetime-local" class="form-control @error('check_out') is-invalid @enderror" value="{{ old('check_out',$data->check_out ?? '') }}">
+                                        @error('check_out')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="exampleFormControlInput1" class="form-label">Latitude Masuk</label>
+                                        <input name="latitude_in" type="text" class="form-control @error('latitude_in') is-invalid @enderror" value="{{ old('latitude_in',$data->latitude_in) }}">
+                                        @error('latitude_in')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="exampleFormControlInput1" class="form-label">Longitude Masuk</label>
+                                        <input name="longitude_in" type="text" class="form-control @error('longitude_in') is-invalid @enderror" value="{{ old('latitude_in',$data->longitude_in) }}">
+                                        @error('longitude_in')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="exampleFormControlInput1" class="form-label">Latitude Keluar</label>
+                                        <input name="latitude_out" type="text" class="form-control @error('latitude_out') is-invalid @enderror" value="{{ old('latitude_out',$data->latitude_out ?? '') }}">
+                                        @error('latitude_out')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="exampleFormControlInput1" class="form-label">Longitude Keluar</label>
+                                        <input name="longitude_out" type="text" class="form-control @error('longitude_out') is-invalid @enderror" value="{{ old('longitude_out',$data->longitude_out ?? '') }}">
+                                        @error('longitude_out')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="exampleFormControlInput1" class="form-label">Status Absen</label>
+                                        <select name="status" class="form-select @error('status') is-invalid @enderror">
+                                            <option value="hadir" {{ $data->status == 'hadir' ? 'selected' : '' }}>Hadir</option>
+                                            <option value="sakit" {{ $data->status == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                                            <option value="cuti" {{ $data->status == 'cuti' ? 'selected' : '' }}>Cuti</option>
+                                            <option value="terlambat" {{ $data->status == 'terlambat' ? 'selected' : '' }}>Terlambat</option>
+                                            <option value="alpa" {{ $data->status == 'alpa' ? 'selected' : '' }}>Alpa</option>
+                                        </select>
+                                        @error('status')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="" class="form-label">File Pendukung</label>
+                                        <input type="file" name="file_pendukung" class="form-control @error('file_pendukung') is-invalid @enderror">
+                                        @error('file_pendukung')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="" class="form-label">Keterangan Pendukung</label>
+                                        <textarea type="keterangan" name="keterangan" class="form-control @error('keterangan') is-invalid @enderror" placeholder="Dapat dikosongkan jika tidak ada">{{ old('keterangan') }}</textarea>
+                                        @error('keterangan')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-main">Simpan</button>
+                        </form>
                     </div>
-                <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-main">Simpan</button>
-                    </form>
-                </div>
+            </div>
+            </div>
         </div>
-        </div>
-    </div>
 
-    {{-- hapus modal --}}
-    <div class="modal fade" id="hapusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Hapus Absensi</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('role.store') }}" method="post">
-                        @csrf @method('delete')
-                        <div class="container-fluid">
-                            <h4 class="text-capitalize">
-                                Apakah anda yakin ingin <span class="text-danger fw-bold">menghapus absensi</span> Ahmad?</span>
-                            </h4>
-                        </div>
+        {{-- hapus modal --}}
+        <div class="modal fade" id="hapusModal{{ $data->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Hapus Absensi</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-main">Simpan</button>
-                    </form>
-                </div>
+                    <div class="modal-body">
+                        <form action="{{ route('rekap.absensi.delete',['id_absensi' => $data->id]) }}" method="post">
+                            @csrf @method('delete')
+                            <div class="container-fluid">
+                                <h4 class="text-capitalize">
+                                    Apakah anda yakin ingin <span class="text-danger fw-bold">menghapus absensi {{ $data->user->profilePribadi->nama_lengkap }}/{{ $data->tanggal->format('d-m- Y') }}</span>
+                                </h4>
+                            </div>
+                        </div>
+                    <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-main">Simpan</button>
+                        </form>
+                    </div>
+            </div>
+            </div>
         </div>
+
+        {{-- restore modal --}}
+        <div class="modal fade" id="restoreModal{{ $data->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Pulihkan Absensi</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('rekap.absensi.restore',['id_absensi' => $data->id]) }}" method="post">
+                            @csrf @method('put')
+                            <div class="container-fluid">
+                                <h4 class="text-capitalize">
+                                    Apakah anda yakin ingin <span class="text-success fw-bold">memulihkan absensi {{ $data->user->profilePribadi->nama_lengkap }}/{{ $data->tanggal->format('d-m- Y') }}</span>
+                                </h4>
+                            </div>
+                        </div>
+                    <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-main">Simpan</button>
+                        </form>
+                    </div>
+            </div>
+            </div>
         </div>
-    </div>
+    @endforeach
     @include('components.footer')
 @endsection

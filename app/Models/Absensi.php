@@ -44,24 +44,47 @@ class Absensi extends Model
     {
         return $this->hasMany(LogAktivitasAbsensi::class,'id_absensi');
     }
-    
+
+    protected static $isRestoring = false; // Flag restore
     protected static function booted()
     {
-        static::created(function ($absensi) {
+        static::restoring(function ($absensi) {
+            // Flag restore mulai
+            self::$isRestoring = true;
+        });
+
+        static::restored(function ($absensi) {
             LogAktivitasAbsensi::create([
                 'id_absensi' => $absensi->id,
                 'id_user' => Auth::id(),
-                'aksi' => 'created',
+                'aksi' => 'restored',
                 'data_baru' => $absensi->toJson(),
             ]);
+
+            // Selesai restore
+            self::$isRestoring = false;
         });
 
         static::updated(function ($absensi) {
+            // Cegah log update jika ini bagian dari proses restore
+            if (self::$isRestoring) {
+                return;
+            }
+
             LogAktivitasAbsensi::create([
                 'id_absensi' => $absensi->id,
                 'id_user' => Auth::id(),
                 'aksi' => 'updated',
                 'data_lama' => json_encode($absensi->getOriginal()),
+                'data_baru' => $absensi->toJson(),
+            ]);
+        });
+
+        static::created(function ($absensi) {
+            LogAktivitasAbsensi::create([
+                'id_absensi' => $absensi->id,
+                'id_user' => Auth::id(),
+                'aksi' => 'created',
                 'data_baru' => $absensi->toJson(),
             ]);
         });
