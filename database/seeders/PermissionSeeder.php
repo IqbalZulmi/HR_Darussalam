@@ -30,7 +30,7 @@ class PermissionSeeder extends Seeder
             //hrd
             'manajemen_user',
             'manajemen_rekap_absensi',
-            'manajemen_rekap_absensi_today.read',
+            'manajemen_rekap_absensi_today',
             'manajemen_rekap_cuti_pegawai',
             'manajemen_evaluasi',
             'verifikasi_cuti_staff_hrd',
