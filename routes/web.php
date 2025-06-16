@@ -123,8 +123,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('mass.delete');
 
         //manajemen rekap absen
-        Route::get('/{id_pegawai}/rekap-absen',[AbsensiController::class,'edit'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
+        Route::get('/{id_pegawai}/rekap-absen',[AbsensiController::class,'showRekapPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.read')
         ->name('rekap.absen.page');
+
+        Route::post('/{id_pegawai}/rekap-absen/store',[AbsensiController::class,'rekapPegawaiStore'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi.create')
+        ->name('rekap.absen.store');
 
         //manajemen rekap cuti
         Route::get('/{id_pegawai}/rekap-cuti',[UserController::class,'showRekapCutiPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_cuti_pegawai.read')
@@ -224,19 +227,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/hari-ini/store', [AbsensiController::class, 'rekapTodayStore'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.create')
         ->name('today.store');
 
-        Route::put('{id_absensi}/hari-ini/update', [AbsensiController::class, 'rekapTodayUpdate'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.update')
-        ->name('today.update');
-
         Route::get('/pribadi', [AbsensiController::class, 'showRekapPribadiPage'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.read')
         ->name('pribadi.page');
 
         Route::post('pribadi/store', [AbsensiController::class, 'rekapPribadiStore'])->middleware('Check_Roles_or_Permissions:rekap_absensi_pribadi.create')
         ->name('pribadi.store');
 
-        Route::delete('{id_absensi}/destroy', [AbsensiController::class, 'rekapDestroy'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.delete')
+        Route::put('{id_absensi}/update', [AbsensiController::class, 'rekapUpdate'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.update|manajemen_rekap_absensi.update')
+        ->name('update');
+
+        Route::delete('{id_absensi}/destroy', [AbsensiController::class, 'rekapDestroy'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.delete|manajemen_rekap_absensi.delete')
         ->name('delete');
 
-        Route::put('{id_absensi}/restore', [AbsensiController::class, 'rekapRestore'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.delete')
+        Route::put('{id_absensi}/restore', [AbsensiController::class, 'rekapRestore'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_absensi_today.delete|manajemen_rekap_absensi.delete')
         ->name('restore');
     });
 

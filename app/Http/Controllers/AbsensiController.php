@@ -108,73 +108,6 @@ class AbsensiController extends Controller
         ]);
     }
 
-    public function rekapTodayUpdate(Request $request,$id_absensi){
-        $validatedData = $request->validate([
-        'check_in' => 'nullable|date',
-        'check_out' => 'nullable|date|after_or_equal:check_in',
-        'latitude_in' => 'nullable|numeric',
-        'longitude_in' => 'nullable|numeric',
-        'latitude_out' => 'nullable|numeric',
-        'longitude_out' => 'nullable|numeric',
-        'status' => 'required|in:hadir,sakit,cuti,terlambat,alpa',
-        'file_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        'keterangan' => 'nullable|string|max:1000',
-        ], [
-        'check_in.date' => 'Format waktu check-in tidak valid.',
-        'check_out.date' => 'Format waktu check-out tidak valid.',
-        'check_out.after_or_equal' => 'Waktu check-out tidak boleh lebih awal dari check-in.',
-        'latitude_in.numeric' => 'Latitude masuk harus berupa angka.',
-        'longitude_in.numeric' => 'Longitude masuk harus berupa angka.',
-        'latitude_out.numeric' => 'Latitude keluar harus berupa angka.',
-        'longitude_out.numeric' => 'Longitude keluar harus berupa angka.',
-        'status.required' => 'Status absen wajib dipilih.',
-        'status.in' => 'Status absen tidak valid.',
-        'file_pendukung.file' => 'File pendukung harus berupa file.',
-        'file_pendukung.mimes' => 'Format file harus jpg, jpeg, png, atau pdf.',
-        'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
-        'keterangan.string' => 'Keterangan harus berupa teks.',
-        'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
-    ]);
-
-        $absensi = absensi::findOrFail($id_absensi);
-
-        if ($request->hasFile('file_pendukung')) {
-            $old_file= $absensi->file_pendukung ?? null;
-            if (!empty($old_file) && is_file('storage/'.$old_file)) {
-                unlink('storage/'.$old_file);
-            }
-
-            $filePath = $request->file('file_pendukung')->store('file_pendukung', 'public');
-        }else{
-            $filePath = $absensi->file_pendukung;
-        }
-
-        $save = $absensi->update([
-            'status' => $request->status,
-            'check_in' => $request->check_in,
-            'check_out' => $request->check_out,
-            'latitude_in' => $request->latitude_in ?? null,
-            'longitude_in' => $request->longitude_in ?? null,
-            'latitude_out' => $request->latitude_out ?? null,
-            'longitude_out' => $request->longitude_out ?? null,
-            'keterangan' => $request->keterangan,
-            'file_pendukung' => $filePath,
-        ]);
-
-        if ($save) {
-            return redirect()->back()->with([
-                'notifikasi' => 'Berhasil memperbarui data absen untuk hari ini.',
-                'type' => 'success',
-            ]);
-        } else {
-            return redirect()->back()->with([
-                'notifikasi' => 'Gagal memperbarui absen.',
-                'type' => 'error',
-            ]);
-        }
-
-    }
-
     public function showRekapPribadiPage(){
         $user = Auth::user();
         $absensi = absensi::withTrashed()->where('id_user',$user->id)->orderByDesc('tanggal')->get();
@@ -250,6 +183,8 @@ class AbsensiController extends Controller
                         'check_out' => Carbon::now(),
                         'latitude_in' => $request->latitude,
                         'longitude_in' => $request->longitude,
+                        'latitude_out' => $request->latitude,
+                        'longitude_out' => $request->longitude,
                         'keterangan' => $request->keterangan,
                         'file_pendukung' => $filePath,
                     ]);
@@ -468,11 +403,193 @@ class AbsensiController extends Controller
         }
     }
 
-    public function edit(absensi $absensi)
+    public function showRekapPegawaiPage($id_pegawai)
     {
-        return view('admin.rekap-absen-pegawai',[
+        $absensi = absensi::withTrashed()->where('id_user',$id_pegawai)->orderByDesc('tanggal')->get();
+        $user = User::where('id',$id_pegawai)->firstOrFail();
 
+        // Group by status dan hitung jumlah masing-masing
+        $statusCounts = $absensi->groupBy('status')->map(function ($item) {
+            return $item->count();
+        });
+
+        // Tentukan urutan dan isi default 0 jika tidak ada
+        $orderedStatuses = collect([
+            'hadir' => 0,
+            'terlambat' => 0,
+            'sakit' => 0,
+            'cuti' => 0,
+            'alpa' => 0,
         ]);
+
+        // Gabungkan hasil group dengan default
+        $orderedStatusCounts = $orderedStatuses->merge($statusCounts);
+
+        return view('admin.rekap-absen-pegawai',[
+            'dataAbsensi' => $absensi,
+            'dataUser' => $user,
+            'statusCounts' => $orderedStatusCounts,
+        ]);
+    }
+
+    public function rekapPegawaiStore(Request $request, $id_pegawai){
+        $validatedData = $request->validate([
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'tanggal' => 'required|date',
+            'durasi_hari' => 'required|integer|min:0',
+            'status' => 'required',
+            'file_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'keterangan' => 'nullable|string|max:1000',
+        ], [
+            // Latitude & Longitude
+            'latitude.required' => 'Lokasi latitude wajib dikirim.',
+            'longitude.required' => 'Lokasi longitude wajib dikirim.',
+
+            // Tanggal
+            'tanggal.required' => 'Tanggal wajib diisi.',
+            'tanggal.date' => 'Format tanggal tidak valid.',
+
+            // Durasi
+            'durasi_hari.required' => 'Durasi hari wajib diisi.',
+            'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
+            'durasi_hari.min' => 'Durasi hari minimal 0 (hari ini saja).',
+
+            // Status
+            'status.required' => 'Status wajib dipilih.',
+
+            // File
+            'file_pendukung.required' => 'File pendukung wajib diisi.',
+            'file_pendukung.file' => 'File pendukung harus berupa file.',
+            'file_pendukung.mimes' => 'File hanya boleh berformat: jpg, jpeg, png, atau pdf.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
+
+            // Keterangan
+            'keterangan.string' => 'Keterangan harus berupa teks.',
+            'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $filePath = null;
+            if ($request->hasFile('file_pendukung')) {
+                $filePath = $request->file('file_pendukung')->store('file_pendukung', 'public');
+            }
+
+            $tanggalAwal = Carbon::parse($request->tanggal);
+            $durasi = $request->durasi_hari;
+            $jumlahDisimpan = 0;
+
+            for ($i = 0; $i <= $durasi; $i++) {
+                $tanggalAbsen = $tanggalAwal->copy()->addDays($i);
+
+                $sudahAbsen = Absensi::where('id_user', $id_pegawai)
+                    ->whereDate('tanggal', $tanggalAbsen)
+                    ->exists();
+
+                if (!$sudahAbsen) {
+                    Absensi::create([
+                        'id_user' => $id_pegawai,
+                        'tanggal' => $tanggalAbsen,
+                        'status' => $request->status,
+                        'check_in' => Carbon::now(),
+                        'check_out' => Carbon::now(),
+                        'latitude_in' => $request->latitude,
+                        'longitude_in' => $request->longitude,
+                        'latitude_out' => $request->latitude,
+                        'longitude_out' => $request->longitude,
+                        'keterangan' => $request->keterangan,
+                        'file_pendukung' => $filePath,
+                    ]);
+
+                    $jumlahDisimpan++;
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with([
+                'notifikasi' => $jumlahDisimpan > 0
+                    ? 'Berhasil menambahkan absen ' . $request->status . ' selama ' . $jumlahDisimpan . ' hari.'
+                    : 'Semua tanggal sudah tercatat. Tidak ada data baru yang ditambahkan.',
+                'type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal menambahkan absen: ' . $e->getMessage(),
+                'type' => 'error',
+            ]);
+        }
+    }
+
+    public function rekapUpdate(Request $request,$id_absensi){
+        $validatedData = $request->validate([
+        'check_in' => 'nullable|date',
+        'check_out' => 'nullable|date|after_or_equal:check_in',
+        'latitude_in' => 'nullable|numeric',
+        'longitude_in' => 'nullable|numeric',
+        'latitude_out' => 'nullable|numeric',
+        'longitude_out' => 'nullable|numeric',
+        'status' => 'required|in:hadir,sakit,cuti,terlambat,alpa',
+        'file_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        'keterangan' => 'nullable|string|max:1000',
+        ], [
+        'check_in.date' => 'Format waktu check-in tidak valid.',
+        'check_out.date' => 'Format waktu check-out tidak valid.',
+        'check_out.after_or_equal' => 'Waktu check-out tidak boleh lebih awal dari check-in.',
+        'latitude_in.numeric' => 'Latitude masuk harus berupa angka.',
+        'longitude_in.numeric' => 'Longitude masuk harus berupa angka.',
+        'latitude_out.numeric' => 'Latitude keluar harus berupa angka.',
+        'longitude_out.numeric' => 'Longitude keluar harus berupa angka.',
+        'status.required' => 'Status absen wajib dipilih.',
+        'status.in' => 'Status absen tidak valid.',
+        'file_pendukung.file' => 'File pendukung harus berupa file.',
+        'file_pendukung.mimes' => 'Format file harus jpg, jpeg, png, atau pdf.',
+        'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
+        'keterangan.string' => 'Keterangan harus berupa teks.',
+        'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
+    ]);
+
+        $absensi = absensi::findOrFail($id_absensi);
+
+        if ($request->hasFile('file_pendukung')) {
+            $old_file= $absensi->file_pendukung ?? null;
+            if (!empty($old_file) && is_file('storage/'.$old_file)) {
+                unlink('storage/'.$old_file);
+            }
+
+            $filePath = $request->file('file_pendukung')->store('file_pendukung', 'public');
+        }else{
+            $filePath = $absensi->file_pendukung;
+        }
+
+        $save = $absensi->update([
+            'status' => $request->status,
+            'check_in' => $request->check_in,
+            'check_out' => $request->check_out,
+            'latitude_in' => $request->latitude_in ?? null,
+            'longitude_in' => $request->longitude_in ?? null,
+            'latitude_out' => $request->latitude_out ?? null,
+            'longitude_out' => $request->longitude_out ?? null,
+            'keterangan' => $request->keterangan,
+            'file_pendukung' => $filePath,
+        ]);
+
+        if ($save) {
+            return redirect()->back()->with([
+                'notifikasi' => 'Berhasil memperbarui data absen.',
+                'type' => 'success',
+            ]);
+        } else {
+            return redirect()->back()->with([
+                'notifikasi' => 'Gagal memperbarui absen.',
+                'type' => 'error',
+            ]);
+        }
+
     }
 
     public function rekapDestroy($id_absensi){

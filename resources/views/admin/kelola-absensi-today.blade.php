@@ -186,11 +186,13 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-wrap gap-1 text-nowrap">
-                                                    @can('manajemen_rekap_absensi_today.update')
-                                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">
-                                                            <i class="bi bi-pencil-square"></i> Edit
-                                                        </button>
-                                                    @endcan
+                                                    @if (is_null($data->deleted_at))
+                                                        @can('manajemen_rekap_absensi_today.update')
+                                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">
+                                                                <i class="bi bi-pencil-square"></i> Edit
+                                                            </button>
+                                                        @endcan
+                                                    @endif
                                                     @can('manajemen_rekap_absensi_today.delete')
                                                         @if (is_null($data->deleted_at))
                                                             {{-- Tombol Hapus --}}
@@ -327,7 +329,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('rekap.absensi.today.update',['id_absensi' => $data->id]) }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ route('rekap.absensi.update',['id_absensi' => $data->id]) }}" method="post" enctype="multipart/form-data">
                             @csrf @method('put')
                             <div class="container-fluid">
                                 <div class="row gy-2">
