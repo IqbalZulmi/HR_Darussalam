@@ -16,6 +16,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SosialMediaController;
+use App\Http\Controllers\TahunAjaranController;
 use App\Http\Controllers\TempatKerjaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSosialMediaController;
@@ -325,6 +326,20 @@ Route::middleware(['auth'])->group(function () {
         ->name('update');
 
         Route::delete('/{id_tempat_kerja}',[TempatKerjaController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_tempat_kerja.delete')
+        ->name('destroy');
+    });
+
+    Route::prefix('tahun-ajaran')->name('tahun.ajaran.')->group(function(){
+        Route::get('/',[TahunAjaranController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_tahun_ajaran.read')
+        ->name('index');
+
+        Route::post('/',[TahunAjaranController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_tahun_ajaran.create')
+        ->name('store');
+
+        Route::put('/{id_tahun_ajaran}',[TahunAjaranController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_tahun_ajaran.update')
+        ->name('update');
+
+        Route::delete('/{id_tahun_ajaran}',[TahunAjaranController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_tahun_ajaran.delete')
         ->name('destroy');
     });
 
