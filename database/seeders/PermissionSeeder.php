@@ -62,6 +62,8 @@ class PermissionSeeder extends Seeder
             'manajemen_departemen',
             'manajemen_sosial_media',
             'manajemen_tempat_kerja',
+            'manajemen_tahun_ajaran',
+            'manajemen_kategori_evaluasi',
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];

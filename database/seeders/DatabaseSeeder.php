@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             UserSosialMediaSeeder::class,
             AbsensiSeeder::class,
             PengajuanCutiSeeder::class,
+            TahunAjaranSeeder::class,
+            KategoriEvaluasiSeeder::class,
             EvaluasiSeeder::class,
             JamKerjaSeeder::class,
         ]);
