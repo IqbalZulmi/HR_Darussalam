@@ -308,5 +308,23 @@
                 </a>
             </li>
         @endcan
+
+        @can('manajemen_tahun_ajaran.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('tahun.ajaran.index') ? '' : ' collapsed' }}" href="{{ route('tahun.ajaran.index') }}">
+                    <i class="bi bi-calendar3"></i>
+                    <span>Tahun Ajaran</span>
+                </a>
+            </li>
+        @endcan
+
+        @can('manajemen_kategori_evaluasi.read')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('kategori.evaluasi.index') ? '' : ' collapsed' }}" href="{{ route('kategori.evaluasi.index') }}">
+                    <i class="bi bi-list-nested"></i>
+                    <span>Kategori Evaluasi</span>
+                </a>
+            </li>
+        @endcan
     </ul>
 </aside><!-- End Sidebar-->

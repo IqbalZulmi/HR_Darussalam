@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\JamKerjaController;
+use App\Http\Controllers\KategoriEvaluasiController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\LogAktivitasAbsensiController;
 use App\Http\Controllers\PegawaiController;
@@ -340,6 +341,20 @@ Route::middleware(['auth'])->group(function () {
         ->name('update');
 
         Route::delete('/{id_tahun_ajaran}',[TahunAjaranController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_tahun_ajaran.delete')
+        ->name('destroy');
+    });
+
+    Route::prefix('kategori-evaluasi')->name('kategori.evaluasi.')->group(function(){
+        Route::get('/',[KategoriEvaluasiController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_kategori_evaluasi.read')
+        ->name('index');
+
+        Route::post('/',[KategoriEvaluasiController::class,'store'])->middleware('Check_Roles_or_Permissions:manajemen_kategori_evaluasi.create')
+        ->name('store');
+
+        Route::put('/{id_kategori}',[KategoriEvaluasiController::class,'update'])->middleware('Check_Roles_or_Permissions:manajemen_kategori_evaluasi.update')
+        ->name('update');
+
+        Route::delete('/{id_kategori}',[KategoriEvaluasiController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_kategori_evaluasi.delete')
         ->name('destroy');
     });
 

@@ -113,9 +113,9 @@
      * Initiate quill editors
      */
     if (select('.quill-editor-default')) {
-      new Quill('.quill-editor-default', {
-        theme: 'snow'
-      });
+    //   new Quill('.quill-editor-default', {
+    //     theme: 'snow'
+    //   });
     }
 
     if (select('.quill-editor-bubble')) {
