@@ -15,6 +15,7 @@ class Evaluasi extends Model
     // Kolom yang dapat diisi massal
     protected $fillable = [
         'id_user',
+        'id_penilai',
         'id_kategori',
         'id_tahun_ajaran',
         'nilai',

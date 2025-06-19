@@ -1,17 +1,15 @@
 <?php
 
 use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CutiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\JamKerjaController;
 use App\Http\Controllers\KategoriEvaluasiController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\LogAktivitasAbsensiController;
-use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengajuanCutiController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -22,7 +20,6 @@ use App\Http\Controllers\TempatKerjaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSosialMediaController;
 use App\Http\Controllers\VerifikasiCutiController;
-use App\Models\PengajuanCuti;
 use Illuminate\Support\Facades\Route;
 
 
@@ -330,6 +327,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('destroy');
     });
 
+    //tahun ajaran routes
     Route::prefix('tahun-ajaran')->name('tahun.ajaran.')->group(function(){
         Route::get('/',[TahunAjaranController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_tahun_ajaran.read')
         ->name('index');
@@ -344,6 +342,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('destroy');
     });
 
+    //kategori evaluasi routes
     Route::prefix('kategori-evaluasi')->name('kategori.evaluasi.')->group(function(){
         Route::get('/',[KategoriEvaluasiController::class,'index'])->middleware('Check_Roles_or_Permissions:manajemen_kategori_evaluasi.read')
         ->name('index');
@@ -356,6 +355,15 @@ Route::middleware(['auth'])->group(function () {
 
         Route::delete('/{id_kategori}',[KategoriEvaluasiController::class,'destroy'])->middleware('Check_Roles_or_Permissions:manajemen_kategori_evaluasi.delete')
         ->name('destroy');
+    });
+
+    Route::prefix('evaluasi')->name('evaluasi.')->group(function(){
+        Route::get('/',[EvaluasiController::class,'showEvaluasiPage'])->middleware('Check_Roles_or_Permissions:manajemen_evaluasi.read')
+        ->name('pegawai.page');
+
+        Route::post('/store',[EvaluasiController::class,'storeEvaluasi'])->middleware('Check_Roles_or_Permissions:manajemen_evaluasi.create')
+        ->name('store');
+
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -25,9 +25,10 @@ class EvaluasiSeeder extends Seeder
                 foreach ($kategoris as $kategori) {
                     Evaluasi::create([
                         'id_user' => $user->id,
+                        'id_penilai' => 1,
                         'id_tahun_ajaran' => $tahun->id,
                         'id_kategori' => $kategori->id,
-                        'nilai' => rand(60, 100),
+                        'nilai' => rand(1, 5),
                         'catatan' => fake()->optional()->sentence()
                     ]);
                 }

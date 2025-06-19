@@ -77,7 +77,7 @@
 
         @can('manajemen_evaluasi.read')
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('pegawai.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('pegawai.dashboard.page') }}">
+                <a class="nav-link {{ request()->routeIs('evaluasi.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('evaluasi.pegawai.page') }}">
                     <i class="bi bi-ui-checks"></i>
                     <span>Evaluasi</span>
                 </a>
