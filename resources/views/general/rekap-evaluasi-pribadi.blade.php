@@ -47,7 +47,7 @@
                     <div class="card recent-sales overflow-auto">
                         <div class="card-body">
                             <h5 class="card-title">Evaluasi</h5>
-                            <livewire:evaluasi-form>
+                            <livewire:rekap-evaluasi-pribadi>
                         </div>
                     </div>
                 </div>

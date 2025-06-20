@@ -8,7 +8,7 @@
                 <select class="form-select form-select-sm" wire:model.change="id_pegawai">
                     <option disabled value="">Pilih Nama Pendidik</option>
                     @forelse ($dataPegawai as $pegawai )
-                        <option value="{{ $pegawai->id }}">{{ $pegawai->profilePribadi->nama_lengkap }}</option>
+                        <option value="{{ $pegawai->id }}" wire:key="pegawai-{{ $pegawai->id }}">{{ $pegawai->profilePribadi->nama_lengkap }}</option>
                     @empty
                         <option value=""></option>
                     @endforelse
@@ -23,7 +23,7 @@
                 <select class="form-select form-select-sm" wire:model.change="id_tahun_ajaran">
                     <option disabled value="">Pilih Tahun Ajaran</option>
                     @forelse ($dataTahunAjaran as $tahunAjaran )
-                        <option value="{{ $tahunAjaran->id }}">{{ $tahunAjaran->nama }} {{ $tahunAjaran->semester }}</option>
+                        <option value="{{ $tahunAjaran->id }}" wire:key="tahun-ajaran-{{ $tahunAjaran->id }}">{{ $tahunAjaran->nama }} {{ $tahunAjaran->semester }}</option>
                     @empty
                         <option value=""></option>
                     @endforelse
@@ -63,46 +63,46 @@
                             <div>Sangat Baik</div>
                             <div>(5)</div>
                             <div>
-                                <span class="text-primary text-decoration-underline" role="button" onclick="checkAllRadio(5)">Ceklis</span>
+                                <span class="@if ($dataNilaiEvaluasi != null) disabled-text @endif text-primary text-decoration-underline" role="button" onclick="checkAllRadio(5)">Ceklis</span>
                             </div>
                         </th>
                         <th scope="col">
                             <div>Baik</div>
                             <div>(4)</div>
                             <div>
-                                <span class="text-primary text-decoration-underline" role="button" onclick="checkAllRadio(4)">Ceklis</span>
+                                <span class="@if ($dataNilaiEvaluasi != null) disabled-text @endif text-primary text-decoration-underline" role="button" onclick="checkAllRadio(4)">Ceklis</span>
                             </div>
                         </th>
                         <th scope="col">
                             <div>Sedang</div>
                             <div>(3)</div>
                             <div>
-                                <span class="text-primary text-decoration-underline" role="button" onclick="checkAllRadio(3)">Ceklis</span>
+                                <span class="@if ($dataNilaiEvaluasi != null) disabled-text @endif text-primary text-decoration-underline" role="button" onclick="checkAllRadio(3)">Ceklis</span>
                             </div>
                         </th>
                         <th scope="col">
                             <div>Kurang</div>
                             <div>(2)</div>
                             <div>
-                                <span class="text-primary text-decoration-underline" role="button" onclick="checkAllRadio(2)">Ceklis</span>
+                                <span class="@if ($dataNilaiEvaluasi != null) disabled-text @endif text-primary text-decoration-underline" role="button" onclick="checkAllRadio(2)">Ceklis</span>
                             </div>
                         </th>
                         <th scope="col">
                             <div>Sangat Kurang</div>
                             <div>(1)</div>
                             <div>
-                                <span class="text-primary text-decoration-underline" role="button" onclick="checkAllRadio(1)">Ceklis</span>
+                                <span class="@if ($dataNilaiEvaluasi != null) disabled-text @endif text-primary text-decoration-underline" role="button" onclick="checkAllRadio(1)">Ceklis</span>
                             </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($dataKategori as $kategori => $data )
-                        <tr>
+                        <tr wire:key="row-kategori-{{ $data->id }}-pegawai-{{ $id_pegawai }}">
                             <td class="text-start">{{ $kategori+1 }}</td>
                             <td class="align-middle">{!! $data->nama !!}</td>
                             @for ($i = 5; $i >= 1; $i--)
-                                <td>
+                                <td wire:key="radio-kategori-{{ $data->id }}-nilai-{{ $i }}-pegawai-{{ $id_pegawai }}">
                                     <div class="form-check d-flex justify-content-center">
                                         <input class="form-check-input" type="radio" name="nilai[{{ $data->id }}]" value="{{ $i }}"
                                         {{-- cek apakah nilai null --}}

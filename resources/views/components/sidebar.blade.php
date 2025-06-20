@@ -41,7 +41,7 @@
 
         @can('rekap_evaluasi_pribadi.read')
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('pegawai.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('pegawai.dashboard.page') }}">
+                <a class="nav-link {{ request()->routeIs('evaluasi.rekap.pribadi.page') ? '' : ' collapsed' }}" href="{{ route('evaluasi.rekap.pribadi.page') }}">
                     <i class="bi bi-ui-checks"></i>
                     <span>Evaluasi Pribadi</span>
                 </a>

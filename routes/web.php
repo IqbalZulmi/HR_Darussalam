@@ -364,6 +364,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store',[EvaluasiController::class,'storeEvaluasi'])->middleware('Check_Roles_or_Permissions:manajemen_evaluasi.create')
         ->name('store');
 
+        Route::get('/rekap/pribadi',[EvaluasiController::class,'showRekapPribadiPage'])->middleware('Check_Roles_or_Permissions:rekap_evaluasi_pribadi.read')
+        ->name('rekap.pribadi.page');
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

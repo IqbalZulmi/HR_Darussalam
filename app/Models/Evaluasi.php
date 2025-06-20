@@ -27,6 +27,11 @@ class Evaluasi extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
+    public function penilai()
+    {
+        return $this->belongsTo(User::class, 'id_penilai');
+    }
+
     public function kategori()
     {
         return $this->belongsTo(KategoriEvaluasi::class, 'id_kategori');

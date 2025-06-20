@@ -18,6 +18,12 @@ class EvaluasiController extends Controller
         ]);
     }
 
+    public function showRekapPribadiPage(){
+        return view('general.rekap-evaluasi-pribadi',[
+
+        ]);
+    }
+
     public function storeEvaluasi(Request $request){
         $validatedData = $request->validate([
             'id_user' => 'required|exists:users,id',
