@@ -82,7 +82,7 @@
                         @for ($i = 5; $i >= 1; $i--)
                             <td wire:key="radio-{{ $data->id }}-{{ $i }}">
                                 <div class="form-check d-flex justify-content-center">
-                                    <input class="form-check-input" type="radio" name="nilai[{{ $data->id }}]" value="{{ $i }}"
+                                    <input class="form-check-input" type="radio" name="nilai[{{ $data->id_kategori }}]" value="{{ $i }}"
                                     @if ($data->nilai == $i)
                                     checked
                                     @endif

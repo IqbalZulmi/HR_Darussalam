@@ -1,13 +1,7 @@
 @extends('html.html')
 
 @push('css')
-    <style>
-        .disabled-text{
-            pointer-events: none;
-            cursor: default;
-            opacity: 0.5;
-        }
-    </style>
+
 @endpush
 
 @push('js')
@@ -30,7 +24,7 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1 class="text-capitalize">Rekap Evaluasi Pribadi</h1>
+            <h1 class="text-capitalize">Rekap Evaluasi</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="">Home</a></li>
@@ -46,8 +40,8 @@
                 <div class="col-12" id="kelola-admin">
                     <div class="card recent-sales overflow-auto">
                         <div class="card-body">
-                            <h5 class="card-title">Rekap Evaluasi Pribadi</h5>
-                            <livewire:rekap-evaluasi-pribadi>
+                            <h5 class="card-title">Rekap Evaluasi {{ $dataUser->profilePribadi->nama_lengkap }}</h5>
+                            <livewire:rekap-evaluasi-pegawai :id_pegawai="$dataUser->id">
                         </div>
                     </div>
                 </div>

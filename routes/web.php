@@ -357,6 +357,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('destroy');
     });
 
+    //evaluasi routes
     Route::prefix('evaluasi')->name('evaluasi.')->group(function(){
         Route::get('/',[EvaluasiController::class,'showEvaluasiPage'])->middleware('Check_Roles_or_Permissions:manajemen_evaluasi.read')
         ->name('pegawai.page');
@@ -364,8 +365,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store',[EvaluasiController::class,'storeEvaluasi'])->middleware('Check_Roles_or_Permissions:manajemen_evaluasi.create')
         ->name('store');
 
+        Route::put('/{id_pegawai}/{id_tahun_ajaran}/update',[EvaluasiController::class,'updateEvaluasi'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_evaluasi.update')
+        ->name('update');
+
         Route::get('/rekap/pribadi',[EvaluasiController::class,'showRekapPribadiPage'])->middleware('Check_Roles_or_Permissions:rekap_evaluasi_pribadi.read')
         ->name('rekap.pribadi.page');
+
+        Route::get('/rekap/{id_pegawai}/pegawai',[EvaluasiController::class,'showRekapPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_rekap_evaluasi.read')
+        ->name('rekap.pegawai.page');
     });
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

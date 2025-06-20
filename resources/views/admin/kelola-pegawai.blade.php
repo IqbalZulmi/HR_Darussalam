@@ -237,6 +237,13 @@
                                                                 </a>
                                                             </li>
                                                         @endcan
+                                                        @can('manajemen_rekap_evaluasi.read')
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('evaluasi.rekap.pegawai.page',['id_pegawai' => $data->id]) }}">
+                                                                    <i class="bi bi-ui-checks"></i>Rekap Evaluasi
+                                                                </a>
+                                                            </li>
+                                                        @endcan
                                                     </ul>
                                                 </div>
                                             </td>
