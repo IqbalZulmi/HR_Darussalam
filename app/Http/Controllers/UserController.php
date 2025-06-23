@@ -22,7 +22,7 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     public function showKelolaPegawaiPage(){
-        $pegawai = User::orderByDesc('created_at')->get();
+        $pegawai = User::with('profilePekerjaan')->orderByDesc('created_at')->get();
 
         $jabatan = Jabatan::all();
 
@@ -36,10 +36,12 @@ class UserController extends Controller
         if (!Auth::user()->hasRole('superadmin')) {
             $pegawai = User::whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['superadmin', 'kepala yayasan']);
-            })->orderByDesc('created_at')->get();
+            })->with('profilePekerjaan')->orderByDesc('created_at')->get();
 
             $roles = $roles->filter(fn($role) => $role->name !== 'superadmin');
         }
+
+        $chartStatus = $this->chartStatusPegawai();
 
         return view('admin.kelola-pegawai',[
             'dataPegawai' => $pegawai,
@@ -47,7 +49,85 @@ class UserController extends Controller
             'dataDepartemen' => $departemen,
             'dataTempatKerja' => $tempatKerja,
             'dataRoles' => $roles,
-        ]);
+            'jumlahPegawaiPerTahun' => $this->chartJumlahPegawai(),
+        ]+ $chartStatus);
+    }
+
+    private function chartJumlahPegawai(){
+        $pegawai = User::with('profilePekerjaan')->orderByDesc('created_at')->get();
+
+        //Hitung jumlah pegawai per tahun masuk
+        $jumlahPegawaiPerTahun = $pegawai->filter(function ($item) {
+            return $item->profilePekerjaan && $item->profilePekerjaan->tanggal_masuk;
+        })->groupBy(function ($item) {
+            return Carbon::parse($item->profilePekerjaan->tanggal_masuk)->format('Y');
+        })->map(function ($group) {
+            return $group->count();
+        });
+
+        return $jumlahPegawaiPerTahun;
+    }
+
+    private function chartStatusPegawai(){
+        $pegawai = User::with('profilePekerjaan')->orderByDesc('created_at')->get();
+
+        //jumlah status pergawai per tahun
+        $statusPegawaiPerTahun = $pegawai->filter(function ($item) {
+            return $item->profilePekerjaan && $item->profilePekerjaan->tanggal_masuk;
+        })
+        ->map(function ($item) {
+            return [
+                'tahun' => Carbon::parse($item->profilePekerjaan->tanggal_masuk)->format('Y'),
+                'status' => $item->profilePekerjaan->status, // pastikan ini valid, misal: 'aktif', 'keluar'
+            ];
+        })
+        ->groupBy('tahun')
+        ->map(function ($group) {
+            return collect($group)->groupBy('status')->map(function ($statusGroup) {
+                return count($statusGroup);
+            });
+        });
+
+         // Ambil list tahun dan status
+        $tahunList = $statusPegawaiPerTahun->keys()->sort()->values(); // contoh: ['2021', '2022']
+        $statusList = $statusPegawaiPerTahun->flatMap(fn ($g) => $g->keys())->unique()->values(); // contoh: ['aktif', 'keluar']
+
+        // Warna opsional
+        $colors = [
+            'aktif'     => '#4CAF50',   // Hijau - Menunjukkan aktif dan stabil
+            'nonaktif'  => '#9E9E9E',   // Abu-abu - Netral/tidak aktif
+            'kontrak'   => '#FF9800',   // Oranye - Sementara dan transisi
+            'tetap'     => '#2196F3',   // Biru - Stabil dan permanen
+            'magang'    => '#00BCD4',   // Cyan - Pembelajar atau trainee
+            'honorer'   => '#795548',   // Coklat - Fleksibel/tidak tetap
+            'pensiun'   => '#607D8B',   // Biru abu-abu - Tidak aktif tapi terhormat
+            'cuti'      => '#FFC107',   // Kuning - Sementara istirahat
+            'skorsing'  => '#F44336',   // Merah - Status darurat/masalah
+        ];
+
+
+        // Siapkan datasets untuk Chart.js
+        $chartDatasets = [];
+        foreach ($statusList as $status) {
+            $data = [];
+            foreach ($tahunList as $tahun) {
+                $data[] = $statusPegawaiPerTahun[$tahun][$status] ?? 0;
+            }
+
+            $chartDatasets[] = [
+                'label' => ucfirst($status),
+                'data' => $data,
+                'borderColor' => $colors[$status] ?? '#000',
+                'backgroundColor' => $colors[$status] ?? '#000',
+                'tension' => 0.1,
+                'fill' => false,
+            ];
+        }
+
+        return [
+            'chartStatusLabels' => $tahunList,
+            'chartStatusDatasets' => $chartDatasets,
+        ];
     }
 
     public function showKelolaPegawaiKepsekPage(){

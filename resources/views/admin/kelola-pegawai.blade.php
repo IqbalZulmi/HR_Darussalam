@@ -68,23 +68,20 @@
     });
 
     </script>
-    {{-- chart domisili --}}
+    {{-- chart jumlah pegawai --}}
     <script>
-        const domisili = document.getElementById('domisili');
+        const golongan = document.getElementById('rekapTahunanSDM');
 
-        new Chart(domisili, {
-            type: 'doughnut',
+        new Chart(golongan, {
+            type: 'line',
             data: {
-                labels: ['Red', 'Blue', 'Yellow'],
+                labels: {!! json_encode($jumlahPegawaiPerTahun->keys()) !!},
                 datasets: [{
-                    label: 'My First Dataset',
-                    data: [300, 50, 100],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
-                    ],
-                    hoverOffset: 4
+                    label: 'Jumlah Pegawai Masuk',
+                    data: {!! json_encode($jumlahPegawaiPerTahun->values()) !!},
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
                 }]
             },
             options: {
@@ -93,24 +90,18 @@
             }
         });
     </script>
-    {{-- chart golongan --}}
-    <script>
-        const golongan = document.getElementById('golongan');
 
-        new Chart(golongan, {
-            type: 'doughnut',
+    {{-- chart status --}}
+    <script>
+        const statusLabels = @json($chartStatusLabels);
+        const statusDatasets = @json($chartStatusDatasets);
+        const statusChart = document.getElementById('rekapStatusTahunan');
+
+        new Chart(statusChart, {
+            type: 'line',
             data: {
-                labels: ['Red', 'Blue', 'Yellow'],
-                datasets: [{
-                    label: 'My First Dataset',
-                    data: [300, 50, 100],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
-                    ],
-                    hoverOffset: 4
-                }]
+                labels: statusLabels,
+                datasets: statusDatasets
             },
             options: {
                 responsive: true,
@@ -257,18 +248,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card p-3">
-                        <h5 class="card-title">Domisili Pegawai</h5>
-                        <canvas id="domisili"></canvas>
+                @can('manajemen_user.read')
+                    <div class="col-12">
+                        <div class="card p-3">
+                            <h5 class="card-title">Rekap Tahunan SDM</h5>
+                            <canvas id="rekapTahunanSDM"></canvas>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card p-3">
-                        <h5 class="card-title">Golongan Pegawai</h5>
-                        <canvas id="golongan"></canvas>
+                    <div class="col-12">
+                        <div class="card p-3">
+                            <h5 class="card-title">Rekap Status Tahunan</h5>
+                            <canvas id="rekapStatusTahunan"></canvas>
+                        </div>
                     </div>
-                </div>
+                @endcan
             </div>
         </section>
 
