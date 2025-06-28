@@ -126,6 +126,9 @@ class PermissionSeeder extends Seeder
                 'manajemen_tenaga_pendidik_all.read',
                 'manajemen_rekap_absensi.read',
                 'manajemen_rekap_cuti_pegawai.read',
+                'manajemen_rekap_evaluasi.read',
+                'manajemen_rekap_evaluasi.update',
+                'manajemen_evaluasi',
                 'rekap_absensi_pribadi',
                 'rekap_evaluasi_pribadi',
                 'pengajuan_cuti_kepsek'

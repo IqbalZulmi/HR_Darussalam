@@ -40,16 +40,13 @@ class UserController extends Controller
             $roles = Role::where('name', 'tenaga pendidik')->get();
 
         } elseif ($user->hasRole('kepala departemen')) {
-            // Hanya tenaga pendidik dan kepala sekolah
+            // Hanya seluruh tenaga pendidik
             $pegawai = User::whereHas('roles', function ($query) {
-                    $query->whereIn('name', ['tenaga pendidik', 'kepala sekolah']);
-                })
-                ->whereHas('profilePekerjaan', function ($query) use ($user) {
-                    $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
-                })
-                ->with('profilePribadi', 'profilePekerjaan')
-                ->orderByDesc('created_at')
-                ->get();
+                        $query->where('name', 'tenaga pendidik');
+                    })
+                    ->with('profilePribadi', 'profilePekerjaan')
+                    ->orderByDesc('created_at')
+                    ->get();
 
             $roles = Role::whereIn('name', ['tenaga pendidik', 'kepala sekolah'])->get();
 
@@ -127,13 +124,10 @@ class UserController extends Controller
         } elseif ($user->hasRole('kepala departemen')) {
             // Hanya tenaga pendidik dan kepala sekolah
             $query = User::whereHas('roles', function ($query) {
-                    $query->whereIn('name', ['tenaga pendidik', 'kepala sekolah']);
-                })
-                ->whereHas('profilePekerjaan', function ($query) use ($user) {
-                    $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
-                })
-                ->with('profilePribadi', 'profilePekerjaan')
-                ->orderByDesc('created_at');
+                        $query->where('name', 'tenaga pendidik');
+                    })
+                    ->with('profilePribadi', 'profilePekerjaan')
+                    ->orderByDesc('created_at');
 
         } elseif (!$user->hasRole('superadmin')) {
             // Semua kecuali superadmin dan kepala yayasan
@@ -185,7 +179,6 @@ class UserController extends Controller
 
         return $query->get();
     }
-
 
     private function chartJumlahPegawai(){
         $pegawai = User::with('profilePekerjaan')->orderByDesc('created_at')->get();

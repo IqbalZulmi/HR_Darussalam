@@ -60,9 +60,9 @@ class EvaluasiForm extends Component
                 ->get();
 
         } elseif ($user->hasRole('kepala departemen')) {
-            // Hanya tenaga pendidik dan kepala sekolah
-            $pegawai = User::whereHas('roles', function ($query) {
-                    $query->whereIn('name', ['tenaga pendidik', 'kepala sekolah']);
+            // tampilkan user departemen yg sama kecuali role superadmin dan kepala yayasan
+            $pegawai = User::whereDoesntHave('roles', function ($query) {
+                    $query->whereIn('name', ['superadmin', 'kepala yayasan']);
                 })
                 ->whereHas('profilePekerjaan', function ($query) use ($user) {
                     $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
