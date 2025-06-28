@@ -43,11 +43,13 @@
                         <div class="card-body">
                             <h5 class="card-title">Ajukan Cuti</h5>
                             <div class="d-flex flex-column flex-md-row justify-content-start mb-2">
-                                <div class="me-md-2 mb-2">
-                                    <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                                        <i class="bi bi-plus-circle-fill"></i> Tambah Baru
-                                    </button>
-                                </div>
+                                @can('pengajuan_cuti_kepsek.create')
+                                    <div class="me-md-2 mb-2">
+                                        <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                                            <i class="bi bi-plus-circle-fill"></i> Tambah Baru
+                                        </button>
+                                    </div>
+                                @endcan
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover border table-bordered align-middle">

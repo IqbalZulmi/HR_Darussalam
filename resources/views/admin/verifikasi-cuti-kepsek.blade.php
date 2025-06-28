@@ -77,9 +77,11 @@
                                                     <span class="badge text-bg-warning text-wrap">{{ $verifikasiProses->status_pengajuan }}</span>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-primary text-nowrap"  data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $verifikasiProses->id }}">
-                                                        Konfirmasi <i class="bi bi-caret-right"></i>
-                                                    </button>
+                                                    @can('verifikasi_cuti_kepsek.update')
+                                                        <button class="btn btn-sm btn-primary text-nowrap"  data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $verifikasiProses->id }}">
+                                                            Konfirmasi <i class="bi bi-caret-right"></i>
+                                                        </button>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @empty

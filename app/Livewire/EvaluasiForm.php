@@ -6,6 +6,7 @@ use App\Models\Evaluasi;
 use App\Models\KategoriEvaluasi;
 use App\Models\TahunAjaran;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class EvaluasiForm extends Component
@@ -46,8 +47,40 @@ class EvaluasiForm extends Component
 
     public function getDataPegawai()
     {
-        $user = User::all();
-        $this->dataPegawai = $user;
+        $user = Auth::user();
+
+        if ($user->hasRole('kepala sekolah')) {
+            // Hanya tenaga pendidik di tempat kerja yang sama
+            $pegawai = User::whereHas('roles', function ($query) {
+                    $query->where('name', 'tenaga pendidik');
+                })
+                ->whereHas('profilePekerjaan', function ($query) use ($user) {
+                    $query->where('id_tempat_kerja', $user->profilePekerjaan->id_tempat_kerja);
+                })
+                ->get();
+
+        } elseif ($user->hasRole('kepala departemen')) {
+            // Hanya tenaga pendidik dan kepala sekolah
+            $pegawai = User::whereHas('roles', function ($query) {
+                    $query->whereIn('name', ['tenaga pendidik', 'kepala sekolah']);
+                })
+                ->whereHas('profilePekerjaan', function ($query) use ($user) {
+                    $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
+                })
+                ->get();
+
+        } elseif (!$user->hasRole('superadmin')) {
+            // Semua kecuali superadmin dan kepala yayasan
+            $pegawai = User::whereDoesntHave('roles', function ($query) {
+                    $query->whereIn('name', ['superadmin', 'kepala yayasan']);
+                })
+                ->get();
+        } else {
+            // Superadmin bisa melihat semua
+            $pegawai = User::all();
+        }
+
+        $this->dataPegawai = $pegawai;
     }
 
     public function getDataTahunAjaran()

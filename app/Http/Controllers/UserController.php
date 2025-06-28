@@ -21,8 +21,57 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function showKelolaPegawaiPage(){
-        $pegawai = User::with('profilePekerjaan')->orderByDesc('created_at')->get();
+    public function showKelolaPegawaiPage(Request $request){
+        $user = Auth::user();
+
+        if ($user->hasRole('kepala sekolah')) {
+            // Hanya tenaga pendidik di tempat kerja yang sama
+            $pegawai = User::whereHas('roles', function ($query) {
+                    $query->where('name', 'tenaga pendidik');
+                })
+                ->whereHas('profilePekerjaan', function ($query) use ($user) {
+                    $query->where('id_tempat_kerja', $user->profilePekerjaan->id_tempat_kerja);
+                })
+                ->with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at')
+                ->get();
+
+            // Role yang boleh ditampilkan
+            $roles = Role::where('name', 'tenaga pendidik')->get();
+
+        } elseif ($user->hasRole('kepala departemen')) {
+            // Hanya tenaga pendidik dan kepala sekolah
+            $pegawai = User::whereHas('roles', function ($query) {
+                    $query->whereIn('name', ['tenaga pendidik', 'kepala sekolah']);
+                })
+                ->whereHas('profilePekerjaan', function ($query) use ($user) {
+                    $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
+                })
+                ->with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at')
+                ->get();
+
+            $roles = Role::whereIn('name', ['tenaga pendidik', 'kepala sekolah'])->get();
+
+        } elseif (!$user->hasRole('superadmin')) {
+            // Semua kecuali superadmin dan kepala yayasan
+            $pegawai = User::whereDoesntHave('roles', function ($query) {
+                    $query->whereIn('name', ['superadmin', 'kepala yayasan']);
+                })
+                ->with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at')
+                ->get();
+
+            $roles = Role::where('name', '!=', 'superadmin')->get();
+
+        } else {
+            // Superadmin bisa melihat semua
+            $pegawai = User::with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at')
+                ->get();
+            $roles = Role::all();
+        }
+
 
         $jabatan = Jabatan::all();
 
@@ -30,18 +79,23 @@ class UserController extends Controller
 
         $tempatKerja = TempatKerja::all();
 
-        $roles = Role::all();
-
-        //jika role bukan superadmin,sembunyikan opsi superadmin
-        if (!Auth::user()->hasRole('superadmin')) {
-            $pegawai = User::whereDoesntHave('roles', function ($query) {
-                $query->whereIn('name', ['superadmin', 'kepala yayasan']);
-            })->with('profilePekerjaan')->orderByDesc('created_at')->get();
-
-            $roles = $roles->filter(fn($role) => $role->name !== 'superadmin');
-        }
-
         $chartStatus = $this->chartStatusPegawai();
+
+        $jsonKecamatan = File::get(resource_path('json/kecamatan-indonesia.json'));
+        $dataKecamatanJson = json_decode($jsonKecamatan, true);
+
+        // Urutkan berdasarkan key 'name'
+        usort($dataKecamatanJson, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        //Deteksi apakah user mengaktifkan filter
+        $isFiltering = $request->hasAny(['status', 'kecamatan', 'golongan_darah', 'usia']);
+
+        // ⛳ Jika ya, panggil fungsi filter
+        if ($isFiltering) {
+            $pegawai = $this->filterPegawai($request);
+        }
 
         return view('admin.kelola-pegawai',[
             'dataPegawai' => $pegawai,
@@ -50,8 +104,88 @@ class UserController extends Controller
             'dataTempatKerja' => $tempatKerja,
             'dataRoles' => $roles,
             'jumlahPegawaiPerTahun' => $this->chartJumlahPegawai(),
+            'dataKecamatan' =>$dataKecamatanJson,
         ]+ $chartStatus);
     }
+
+    private function filterPegawai(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->hasRole('kepala sekolah')) {
+            // Hanya tenaga pendidik di tempat kerja yang sama
+            $query = User::whereHas('roles', function ($query) {
+                    $query->where('name', 'tenaga pendidik');
+                })
+                ->whereHas('profilePekerjaan', function ($query) use ($user) {
+                    $query->where('id_tempat_kerja', $user->profilePekerjaan->id_tempat_kerja);
+                })
+                ->with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at');
+
+
+        } elseif ($user->hasRole('kepala departemen')) {
+            // Hanya tenaga pendidik dan kepala sekolah
+            $query = User::whereHas('roles', function ($query) {
+                    $query->whereIn('name', ['tenaga pendidik', 'kepala sekolah']);
+                })
+                ->whereHas('profilePekerjaan', function ($query) use ($user) {
+                    $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
+                })
+                ->with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at');
+
+        } elseif (!$user->hasRole('superadmin')) {
+            // Semua kecuali superadmin dan kepala yayasan
+            $query = User::whereDoesntHave('roles', function ($query) {
+                    $query->whereIn('name', ['superadmin', 'kepala yayasan']);
+                })
+                ->with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at');
+
+        } else {
+            // Superadmin bisa melihat semua
+            $query = User::with('profilePribadi', 'profilePekerjaan')
+                ->orderByDesc('created_at');
+        }
+
+
+        // Filter Kecamatan
+        if ($request->filled('kecamatan')) {
+            $query->whereHas('profilePribadi', function ($q) use ($request) {
+                $q->whereIn('kecamatan', $request->kecamatan);
+            });
+        }
+
+        // Filter Golongan Darah
+        if ($request->filled('golongan_darah')) {
+            $query->whereHas('profilePribadi', function ($q) use ($request) {
+                $q->whereIn('golongan_darah', $request->golongan_darah);
+            });
+        }
+
+        //filter usia
+        if ($request->filled('usia')) {
+            $query->whereHas('profilePribadi', function ($q) use ($request) {
+                $q->where(function ($subQuery) use ($request) {
+                    foreach ($request->usia as $range) {
+                        if ($range == '56+') {
+                            $date = Carbon::now()->subYears(56)->format('Y-m-d');
+                            $subQuery->orWhere('tanggal_lahir', '<=', $date);
+                        } else {
+                            [$min, $max] = explode('-', $range);
+                            $maxDate = Carbon::now()->subYears($min)->format('Y-m-d');
+                            $minDate = Carbon::now()->subYears($max)->addDay()->format('Y-m-d'); // +1 agar rentang tidak tumpang tindih
+                            $subQuery->orWhereBetween('tanggal_lahir', [$minDate, $maxDate]);
+                        }
+                    }
+                });
+            });
+        }
+
+        return $query->get();
+    }
+
 
     private function chartJumlahPegawai(){
         $pegawai = User::with('profilePekerjaan')->orderByDesc('created_at')->get();
@@ -128,36 +262,6 @@ class UserController extends Controller
             'chartStatusLabels' => $tahunList,
             'chartStatusDatasets' => $chartDatasets,
         ];
-    }
-
-    public function showKelolaPegawaiKepsekPage(){
-        $user = Auth::user();
-
-        $pegawai = User::whereHas('roles', function ($query) {
-                        $query->where('name', 'tenaga pendidik');
-                    })
-                    ->whereHas('profilePekerjaan', function ($query) use ($user) {
-                        $query->where('id_departemen', $user->profilePekerjaan->id_departemen);
-                    })
-        ->orderByDesc('created_at')
-        ->get();
-
-
-        $jabatan = Jabatan::all();
-
-        $departemen = Departemen::all();
-
-        $tempatKerja = TempatKerja::all();
-
-        $roles = Role::all();
-
-        return view('admin.kelola-pegawai',[
-            'dataPegawai' => $pegawai,
-            'dataJabatan' => $jabatan,
-            'dataTempatKerja' => $tempatKerja,
-            'dataDepartemen' => $departemen,
-            'dataRoles' => $roles,
-        ]);
     }
 
     public function showKelolaPegawaiKadepPage(){

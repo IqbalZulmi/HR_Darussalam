@@ -68,47 +68,52 @@
     });
 
     </script>
-    {{-- chart jumlah pegawai --}}
-    <script>
-        const golongan = document.getElementById('rekapTahunanSDM');
 
-        new Chart(golongan, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($jumlahPegawaiPerTahun->keys()) !!},
-                datasets: [{
-                    label: 'Jumlah Pegawai Masuk',
-                    data: {!! json_encode($jumlahPegawaiPerTahun->values()) !!},
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                aspectRatio: 2, // 1 artinya tinggi = lebar
-            }
-        });
-    </script>
+    {{-- chart jumlah pegawai --}}
+    @if (isset($jumlahPegawaiPerTahun)) {{--jika data yang dibutuhkan ada maka tampilkan--}}
+        <script>
+            const golongan = document.getElementById('rekapTahunanSDM');
+
+            new Chart(golongan, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($jumlahPegawaiPerTahun->keys()) !!},
+                    datasets: [{
+                        label: 'Jumlah Pegawai Masuk',
+                        data: {!! json_encode($jumlahPegawaiPerTahun->values()) !!},
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    aspectRatio: 2, // 1 artinya tinggi = lebar
+                }
+            });
+        </script>
+    @endif
 
     {{-- chart status --}}
-    <script>
-        const statusLabels = @json($chartStatusLabels);
-        const statusDatasets = @json($chartStatusDatasets);
-        const statusChart = document.getElementById('rekapStatusTahunan');
+    @if (isset($chartStatusDatasets, $chartStatusLabels))
+        <script>
+            const statusLabels = @json($chartStatusLabels);
+            const statusDatasets = @json($chartStatusDatasets);
+            const statusChart = document.getElementById('rekapStatusTahunan');
 
-        new Chart(statusChart, {
-            type: 'line',
-            data: {
-                labels: statusLabels,
-                datasets: statusDatasets
-            },
-            options: {
-                responsive: true,
-                aspectRatio: 2, // 1 artinya tinggi = lebar
-            }
-        });
-    </script>
+            new Chart(statusChart, {
+                type: 'line',
+                data: {
+                    labels: statusLabels,
+                    datasets: statusDatasets
+                },
+                options: {
+                    responsive: true,
+                    aspectRatio: 2, // 1 artinya tinggi = lebar
+                }
+            });
+        </script>
+    @endif
 @endpush
 
 
@@ -248,20 +253,22 @@
                         </div>
                     </div>
                 </div>
-                @can('manajemen_user.read')
-                    <div class="col-12">
-                        <div class="card p-3">
-                            <h5 class="card-title">Rekap Tahunan SDM</h5>
-                            <canvas id="rekapTahunanSDM"></canvas>
+                @if (isset($jumlahPegawaiPerTahun, $chartStatusDatasets, $chartStatusLabels))
+                    @can('manajemen_user.read')
+                        <div class="col-12">
+                            <div class="card p-3">
+                                <h5 class="card-title">Rekap Tahunan SDM</h5>
+                                <canvas id="rekapTahunanSDM"></canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card p-3">
-                            <h5 class="card-title">Rekap Status Tahunan</h5>
-                            <canvas id="rekapStatusTahunan"></canvas>
+                        <div class="col-12">
+                            <div class="card p-3">
+                                <h5 class="card-title">Rekap Status Tahunan</h5>
+                                <canvas id="rekapStatusTahunan"></canvas>
+                            </div>
                         </div>
-                    </div>
-                @endcan
+                    @endcan
+                @endif
             </div>
         </section>
 
@@ -274,89 +281,108 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <div class="d-flex justify-content-start align-items-start flex-wrap gap-3">
-                <div class="collapse-group">
-                    <a class="text-dark" data-bs-toggle="collapse" href="#kecamatan" role="button">
-                        Kecamatan <i class="bi bi-chevron-compact-down"></i>
-                    </a>
-                    <div class="collapse" id="kecamatan">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkDefault">
-                                Default checkbox
-                            </label>
+            <form method="get" action="{{ route('kelola.pegawai.page') }}">
+                @csrf @method('get')
+                <div class="row">
+                    <div class="col-9">
+                        <div class="d-flex justify-content-start align-items-start flex-wrap gap-3">
+                            <div class="collapse-group">
+                                <a class="text-dark" data-bs-toggle="collapse" href="#kecamatan" role="button">
+                                    Kecamatan <i class="bi bi-chevron-compact-down"></i>
+                                </a>
+                                <div class="collapse {{ count(request('kecamatan', [])) ? 'show' : '' }}" id="kecamatan">
+                                    @forelse ($dataKecamatan as $kecamatan )
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="kecamatan[]" value="{{ $kecamatan['name'] }}" {{ in_array($kecamatan['name'], request('kecamatan', [])) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="checkDefault">
+                                                {{ $kecamatan['name'] }}
+                                            </label>
+                                        </div>
+                                    @empty
+                                        Tidak Ada data
+                                    @endforelse
+                                </div>
+                            </div>
+                            <div class="collapse-group">
+                                <a class="text-dark" data-bs-toggle="collapse" href="#golonganDarah" role="button">
+                                    Golongan Darah <i class="bi bi-chevron-compact-down"></i>
+                                </a>
+                                <div class="collapse {{ count(request('golongan_darah', [])) ? 'show' : '' }}" id="golonganDarah">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="golongan_darah[]" value="a" {{ in_array('a', request('golongan_darah', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="checkDefault">
+                                            A
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="golongan_darah[]" value="b" {{ in_array('b', request('golongan_darah', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="checkDefault">
+                                            B
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="golongan_darah[]" value="ab"  {{ in_array('ab', request('golongan_darah', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="checkDefault">
+                                            AB
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="golongan_darah[]" value="o"  {{ in_array('o', request('golongan_darah', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="checkDefault">
+                                            O
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="collapse-group">
+                                <a class="text-dark" data-bs-toggle="collapse" href="#rentangUsia" role="button">
+                                    Rentang Usia <i class="bi bi-chevron-compact-down"></i>
+                                </a>
+                                <div class="collapse {{ count(request('usia', [])) ? 'show' : '' }}" id="rentangUsia">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="usia[]" value="18-25" id="usia1" {{ in_array('18-25', request('usia', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="usia1">
+                                            18 - 25 tahun
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="usia[]" value="26-35" id="usia2" {{ in_array('26-35', request('usia', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="usia2">
+                                            26 - 35 tahun
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="usia[]" value="36-45" id="usia3" {{ in_array('36-45', request('usia', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="usia3">
+                                            36 - 45 tahun
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="usia[]" value="46-55" id="usia4" {{ in_array('46-55', request('usia', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="usia4">
+                                            46 - 55 tahun
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="usia[]" value="56+" id="usia5" {{ in_array('56+', request('usia', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="usia5">
+                                            56 tahun ke atas
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkChecked">
-                                Checked checkbox
-                            </label>
+                    </div>
+                    <div class="col-3">
+                        <div class="d-flex justify-content-center">
+                            <button class="btn btn-sm btn-main w-100 d-flex justify-content-center gap-1 fs-6">
+                                <span class="d-none d-lg-block">Telusuri</span>
+                                <i class="bi bi-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="collapse-group">
-                    <a class="text-dark" data-bs-toggle="collapse" href="#golonganDarah" role="button">
-                        Golongan Darah <i class="bi bi-chevron-compact-down"></i>
-                    </a>
-                    <div class="collapse" id="golonganDarah">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkDefault">
-                                Default checkbox
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkChecked">
-                                Checked checkbox
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse-group">
-                    <a class="text-dark" data-bs-toggle="collapse" href="#rentangUsia" role="button">
-                        Rentang Usia <i class="bi bi-chevron-compact-down"></i>
-                    </a>
-                    <div class="collapse" id="rentangUsia">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkDefault">
-                                Default checkbox
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkChecked">
-                                Checked checkbox
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse-group">
-                    <a class="text-dark" data-bs-toggle="collapse" href="#golonganPegawai" role="button">
-                        Golongan Pegawai <i class="bi bi-chevron-compact-down"></i>
-                    </a>
-                    <div class="collapse" id="golonganPegawai">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkDefault">
-                                Default checkbox
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label" for="checkChecked">
-                                Checked checkbox
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-end">
-                <button class="btn btn-main">
-                    Telusuri <i class="bi bi-caret-right"></i>
-                </button>
-            </div>
+            </form>
         </div>
     </div>
 

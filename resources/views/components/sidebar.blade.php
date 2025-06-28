@@ -161,7 +161,7 @@
 
         @can('manajemen_tenaga_pendidik_all.read')
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('kelola.pegawai.kadep.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.kadep.page') }}">
+                <a class="nav-link {{ request()->routeIs('kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.page') }}">
                     <i class="bi bi-people"></i>
                     <span>Tenaga Pendidik</span>
                 </a>
@@ -177,7 +177,7 @@
 
         @can('manajemen_tenaga_pendidik_kepsek.read')
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('kelola.pegawai.kepsek.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.kepsek.page') }}">
+                <a class="nav-link {{ request()->routeIs('kelola.pegawai.page') ? '' : ' collapsed' }}" href="{{ route('kelola.pegawai.page') }}">
                     <i class="bi bi-people"></i>
                     <span>Tenaga Pendidik</span>
                 </a>

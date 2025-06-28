@@ -93,17 +93,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Kelola Pegawai routes
     Route::prefix('kelola/pegawai')->name('kelola.pegawai.')->group(function(){
-        //halaman hrd
-        Route::get('/',[UserController::class,'showKelolaPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_user.read')
+        Route::get('/',[UserController::class,'showKelolaPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_user.read|manajemen_tenaga_pendidik_kepsek.read|manajemen_tenaga_pendidik_all.read')
         ->name('page');
-
-        //halaman kepala sekolah
-        Route::get('/kepsek',[UserController::class,'showKelolaPegawaiKepsekPage'])->middleware('Check_Roles_or_Permissions:manajemen_tenaga_pendidik_kepsek.read')
-        ->name('kepsek.page');
-
-        //halaman kepala departemen
-        Route::get('/kadep',[UserController::class,'showKelolaPegawaiKadepPage'])->middleware('Check_Roles_or_Permissions:manajemen_tenaga_pendidik_all.read')
-        ->name('kadep.page');
 
         //crud pegawai
         Route::get('/{id_pegawai}/profile',[UserController::class,'showEditPegawaiPage'])->middleware('Check_Roles_or_Permissions:manajemen_user.read|manajemen_tenaga_pendidik_kepsek.read|manajemen_tenaga_pendidik_all.read')
