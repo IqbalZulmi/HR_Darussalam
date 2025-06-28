@@ -89,7 +89,7 @@
                                     @forelse ($users as $index => $user)
                                         <tr>
                                             <td class="text-capitalize">{{ $index+1 }}</td>
-                                            <td class="text-capitalize">{{ $user->name }}</td>
+                                            <td class="text-capitalize">{{ $user->profilePribadi->nama_lengkap }}</td>
                                             <td>{{ $user->permissions->count() }}</td>
                                             <td>{{ $user->getPermissionsViaRoles()->count() }}</td>
                                             <td>

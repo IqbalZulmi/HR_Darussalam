@@ -27,7 +27,7 @@
             <h1 class="text-capitalize">Verifikasi Cuti</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('hrd.dashboard.page') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="">Home</a></li>
                     <li class="breadcrumb-item active text-capitalize">
                         {{ ucwords(str_replace('/', ' / ', Request::path())) }}
                     </li>
@@ -77,9 +77,11 @@
                                                     <span class="badge text-bg-warning text-wrap">{{ $verifikasiProses->status_pengajuan }}</span>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-primary text-nowrap"  data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $verifikasiProses->id }}">
-                                                        Konfirmasi <i class="bi bi-caret-right"></i>
-                                                    </button>
+                                                    @can('verifikasi_cuti_kepala_hrd.update')
+                                                        <button class="btn btn-sm btn-primary text-nowrap"  data-bs-toggle="modal" data-bs-target="#konfirmasiModal{{ $verifikasiProses->id }}">
+                                                            Konfirmasi <i class="bi bi-caret-right"></i>
+                                                        </button>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @empty

@@ -107,8 +107,18 @@ class PermissionSeeder extends Seeder
                 'manajemen_rekap_absensi.read',
                 'manajemen_rekap_absensi_today.read',
                 'manajemen_rekap_cuti_pegawai.read',
+                'manajemen_rekap_evaluasi.read',
                 'verifikasi_cuti_kepala_hrd',
                 'pengajuan_cuti_kepala_hrd',
+
+                //other
+                'manajemen_jabatan',
+                'manajemen_jam_kerja',
+                'manajemen_departemen',
+                'manajemen_sosial_media',
+                'manajemen_tempat_kerja',
+                'manajemen_tahun_ajaran',
+                'manajemen_kategori_evaluasi',
             ],
             'staff hrd' => [
                 'manajemen_profil',
@@ -116,10 +126,21 @@ class PermissionSeeder extends Seeder
                 'rekap_evaluasi_pribadi',
                 'manajemen_user',
                 'manajemen_rekap_absensi',
-                'manajemen_rekap_absensi_today.read',
+                'manajemen_rekap_absensi_today',
                 'manajemen_rekap_cuti_pegawai',
+                'manajemen_rekap_evaluasi',
+                'manajemen_evaluasi',
                 'verifikasi_cuti_staff_hrd',
                 'pengajuan_cuti_staff_hrd',
+
+                //other
+                'manajemen_jabatan',
+                'manajemen_jam_kerja',
+                'manajemen_departemen',
+                'manajemen_sosial_media',
+                'manajemen_tempat_kerja',
+                'manajemen_tahun_ajaran',
+                'manajemen_kategori_evaluasi',
             ],
             'kepala departemen' => [
                 'manajemen_profil',
