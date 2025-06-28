@@ -234,7 +234,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     //HRD pages
-    Route::prefix('hrd')->name('hrd.')->middleware('Check_Roles_or_Permissions:superadmin|kepala yayasan|dirpen|kepala hrd|staff hrd')->group(function () {
+    Route::prefix('hrd')->name('hrd.')->middleware('Check_Roles_or_Permissions:superadmin|kepala yayasan|direktur pendidikan|kepala hrd|staff hrd')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'showAdminDashboard'])
         ->name('dashboard.page');
     });

@@ -11,7 +11,7 @@
         @endcanany
 
         {{-- dashboard hrd --}}
-        @hasanyrole(['staff hrd','kepala hrd','dirpen','kepala yayasan','superadmin'])
+        @hasanyrole(['staff hrd','kepala hrd','direktur pendidikan','kepala yayasan','superadmin'])
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('hrd.dashboard.page') ? '' : ' collapsed' }}" href="{{ route('hrd.dashboard.page') }}">
                 <i class="bi bi-grid"></i>

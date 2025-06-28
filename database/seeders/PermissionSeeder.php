@@ -88,6 +88,7 @@ class PermissionSeeder extends Seeder
             'kepala yayasan' => [
                 'manajemen_profil',
                 'manajemen_user.read',
+                'manajemen_rekap_evaluasi.read',
             ],
             'direktur pendidikan' => [
                 'manajemen_profil',
@@ -98,6 +99,7 @@ class PermissionSeeder extends Seeder
                 'manajemen_rekap_absensi.read',
                 'manajemen_rekap_absensi_today.read',
                 'manajemen_rekap_cuti_pegawai.read',
+                'manajemen_rekap_evaluasi.read',
             ],
             'kepala hrd' => [
                 'manajemen_profil',
