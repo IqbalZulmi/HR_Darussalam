@@ -25,14 +25,7 @@
 
         <div class="pagetitle">
             <h1 class="text-capitalize">Verifikasi Cuti</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('pegawai.dashboard.page') }}">Home</a></li>
-                    <li class="breadcrumb-item active text-capitalize">
-                        {{ ucwords(str_replace('/', ' / ', Request::path())) }}
-                    </li>
-                </ol>
-            </nav>
+            @include('components.breadcrumb')
         </div><!-- End Page Title -->
 
         <section class="section dashboard">

@@ -180,14 +180,7 @@
     <main id="main" class="main">
         <div class="pagetitle">
             <h1>Profile</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('hrd.dashboard.page') }}">Home</a></li>
-                    <li class="breadcrumb-item active text-capitalize">
-                        {{ ucwords(str_replace('/', ' / ', Request::path())) }}
-                    </li>
-                </ol>
-            </nav>
+            @include('components.breadcrumb')
         </div>
 
         <section class="section profile">

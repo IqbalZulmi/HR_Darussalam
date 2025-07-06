@@ -257,31 +257,6 @@ class UserController extends Controller
         ];
     }
 
-    public function showKelolaPegawaiKadepPage(){
-        $pegawai = User::whereHas('roles', function ($query) {
-                        $query->where('name', 'tenaga pendidik');
-                    })
-        ->orderByDesc('created_at')
-        ->get();
-
-
-        $jabatan = Jabatan::all();
-
-        $departemen = Departemen::all();
-
-        $tempatKerja = TempatKerja::all();
-
-        $roles = Role::all();
-
-        return view('admin.kelola-pegawai',[
-            'dataPegawai' => $pegawai,
-            'dataJabatan' => $jabatan,
-            'dataDepartemen' => $departemen,
-            'dataTempatKerja' => $tempatKerja,
-            'dataRoles' => $roles,
-        ]);
-    }
-
     public function showRekapCutiPegawaiPage($id_pegawai){
         $user = User::findOrFail($id_pegawai);
 
