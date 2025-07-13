@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Auth;
 class VerifikasiCutiController extends Controller
 {
     public function showVerifikasiKepsekPage(){
-        $departemenId = Auth::user()->profilePekerjaan->id_departemen;
+        $departemenId = Auth::user()->profilePekerjaan->id_tempat_kerja;
 
         $verifikasiSedangDiproses = PengajuanCuti::whereHas('user.profilePekerjaan', function ($query) use ($departemenId) {
-            $query->where('id_departemen', $departemenId);
+            $query->where('id_tempat_kerja', $departemenId);
         })->where('status_pengajuan','ditinjau kepala sekolah')->with(['user.profilePekerjaan'])->latest()->get();
 
         $verifikasiSelesai = PengajuanCuti::whereHas('user.profilePekerjaan', function ($query) use ($departemenId) {
-            $query->where('id_departemen', $departemenId);
+            $query->where('id_tempat_kerja', $departemenId);
         })->whereIn('status_pengajuan',[
             'disetujui kepala sekolah menunggu tinjauan dirpen',
             'disetujui kepala sekolah',
