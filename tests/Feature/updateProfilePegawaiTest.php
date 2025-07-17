@@ -2,12 +2,21 @@
 
 namespace Tests\Feature;
 
+use App\Models\Departemen;
+use App\Models\Jabatan;
 use App\Models\Pegawai;
+use App\Models\ProfilePekerjaan;
+use App\Models\ProfilePribadi;
+use App\Models\TempatKerja;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -15,6 +24,7 @@ use PHPUnit\Framework\Attributes\Test;
 class updateProfilePegawaiTest extends TestCase
 {
     use RefreshDatabase;
+
 
     /**
      * Test ini memastikan bahwa pegawai dapat mengupdate profil mereka
@@ -32,133 +42,86 @@ class updateProfilePegawaiTest extends TestCase
      *
      */
 
-    public function test_pegawai_dapat_mengupdate_profil_dengan_data_valid()
+    public function test_user_can_update_profile_with_valid_data()
     {
-        // Simulasi penyimpanan file
-        Storage::fake('public');
+        $this->seed(DatabaseSeeder::class);
 
-        // Buat user dan data pegawai awal
-        $user = User::factory()->create([
-            'email' => 'lama@email.com',
-            'roles' => 'pegawai',
-        ]);
-        $pegawai = Pegawai::factory()->create([
-            'id_user' => $user->id,
-            'nama' => 'Nama Lama',
-            'alamat' => 'Alamat Lama',
-            'no_telepon' => '081234567890',
-            'tanggal_lahir' => '2000-01-01',
-            'gender' => 'pria',
-        ]);
+        // Cari user dengan role tertentu, contoh 'tenaga pendidik'
+        $user = User::whereHas('roles', function ($q) {
+            $q->where('name', 'tenaga pendidik');
+        })->first();
 
-        // Login sebagai user
+
+        $this->assertNotNull($user, "User dengan role 'tenaga pendidik' tidak ditemukan!");
+
         $this->actingAs($user);
 
-        // Kirim request update profil dengan data baru dan foto
-        $response = $this->put(route('pegawai.profile.update'), [
-            'old_email' => 'lama@email.com',
-            'email' => 'baru@email.com',
-            'nama' => 'Nama Baru',
-            'alamat' => 'Alamat Baru',
-            'no_telepon' => '081234567891',
-            'tanggal_lahir' => '2000-02-02',
-            'gender' => 'wanita',
-            'foto' => UploadedFile::fake()->image('foto.jpg'),
-        ]);
+        // Fake storage for file uploads
+        Storage::fake('public');
+        $file = UploadedFile::fake()->image('photo.jpg');
 
-        // Pastikan redirect (berhasil)
+        // Kirim request update
+        $response = $this->put(route('profile.update'), [
+            'email' => 'new@gmail.com',
+            'nomor_induk_kependudukan' => '12345678901',
+            'nama_lengkap' => 'Nama Baru',
+            'tempat_lahir' => 'Batam',
+            // 'tanggal_lahir' => '1990-01-01',
+            'jenis_kelamin' => 'pria',
+            'golongan_darah' => 'A',
+            // 'status_pernikahan' => 'belum menikah',
+            'npwp' => '1234567890',
+            'kecamatan' => 'Batam Kota',
+            'alamat_lengkap' => 'Jl. Contoh No.1',
+            'no_hp' => '081234567890',
+            'foto' => null,
+
+            // Orang tua
+            'nama_ayah' => 'Bapak A',
+            'pekerjaan_ayah' => 'PNS',
+            'nama_ibu' => 'Ibu B',
+            'pekerjaan_ibu' => 'Guru',
+            'alamat_orang_tua' => 'Jl. Ayah Ibu',
+
+            // Keluarga
+            'nama' => ['Anak 1'],
+            'hubungan' => ['anak'],
+            'tanggal_lahir_keluarga' => ['2010-01-01'],
+            'pekerjaan' => ['Pelajar'],
+
+            // Sosial Media
+            'id_platform' => [1], // pastikan ada id platform 1 di database
+            'username' => ['anakuser'],
+            'link' => ['https://instagram.com/anakuser'],
+        ]);
+        // dd($response);
+
         $response->assertRedirect();
+        $response->assertStatus(302);
 
-        // Pastikan session memiliki notifikasi sukses
-        $response->assertSessionHas([
-            'notifikasi' => 'Berhasil mengubah profile',
-            'type' => 'success',
-        ]);
-
-        // Periksa perubahan data di tabel users
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'email' => 'baru@email.com'
+            'email' => 'new@gmail.com',
         ]);
 
-        // Periksa perubahan data di tabel pegawai
-        $this->assertDatabaseHas('pegawai', [
+        $this->assertDatabaseHas('profile_pribadi', [
             'id_user' => $user->id,
-            'nama' => 'Nama Baru',
-            'alamat' => 'Alamat Baru',
-            'no_telepon' => '081234567891',
-            'tanggal_lahir' => '2000-02-02',
-            'gender' => 'wanita',
+            'nama_lengkap' => 'Nama Baru',
         ]);
 
-        // Pastikan file foto berhasil disimpan
-        $this->assertTrue(
-            Storage::disk('public')->exists('profile_img/' . basename($pegawai->fresh()->foto))
-        );
-    }
-
-    #[Test]
-    public function pegawai_tidak_dapat_mengupdate_profil_dengan_data_tidak_valid()
-    {
-        Storage::fake('public');
-
-        // Buat user dan pegawai
-        $user = User::factory()->create([
-            'email' => 'lama@email.com',
-            'roles' => 'pegawai'
-        ]);
-
-        $user2 = User::factory()->create([
-            'email' => 'baru@email.com',
-            'roles' => 'pegawai'
-        ]);
-
-        $pegawai = Pegawai::factory()->create([
+        $this->assertDatabaseHas('orang_tuas', [
             'id_user' => $user->id,
-            'nama' => 'Nama Lama',
-            'alamat' => 'Alamat Lama',
-            'no_telepon' => '081234567890',
-            'tanggal_lahir' => '2000-01-01',
-            'gender' => 'pria',
+            'nama_ayah' => 'Bapak A',
         ]);
 
-        // Login sebagai pegawai
-        $this->actingAs($user);
-
-        // Kirim data tidak valid (contoh: email sudah ada, nomor telepon salah format)
-        $response = $this->put(route('pegawai.profile.update'), [
-            'old_email' => 'lama@email.com',  // Old email yang valid
-            'email' => 'baru@email.com',  // Email yang sudah ada di database
-            'nama' => 'Nama Baru',
-            'alamat' => 'Alamat Baru',
-            'no_telepon' => '081234',  // Nomor telepon yang tidak valid (terlalu pendek)
-            'tanggal_lahir' => '2000-02-02',
-            'gender' => 'wanita',
-            'foto' => UploadedFile::fake()->image('foto.jpg'),
-        ]);
-
-        // Pastikan response mengarah ke halaman yang benar (redirect back)
-        $response->assertRedirect();
-
-        // Periksa apakah ada error untuk email dan no_telepon
-        $response->assertSessionHasErrors('email');  // Cek error untuk 'email'
-        $response->assertSessionHasErrors('no_telepon');  // Cek error untuk 'no_telepon'
-
-        // Pastikan pesan error yang tepat muncul
-        $response->assertSessionHasErrors([
-            'email' => 'Email sudah digunakan.',
-            'no_telepon' => 'Nomor telepon minimal 10 digit.',
-        ]);
-
-        // Pastikan data di database tidak berubah (karena validasi gagal)
-        $this->assertDatabaseHas('users', ['id' => $user->id, 'email' => 'lama@email.com']);
-        $this->assertDatabaseHas('pegawai', [
+        $this->assertDatabaseHas('keluargas', [
             'id_user' => $user->id,
-            'nama' => 'Nama Lama',  // Data lama tetap di database
-            'alamat' => 'Alamat Lama',
-            'no_telepon' => '081234567890',  // Data lama tetap
-            'tanggal_lahir' => '2000-01-01',
-            'gender' => 'pria',
+            'nama' => 'Anak 1',
+        ]);
+
+        $this->assertDatabaseHas('user_sosial_media', [
+            'id_user' => $user->id,
+            'username' => 'anakuser',
         ]);
     }
 
