@@ -16,7 +16,7 @@ class DepartemenController extends Controller
         $Departemen = Departemen::latest()->get();
         $user = User::all();
 
-        return view('admin.kelola-Departemen',[
+        return view('admin.kelola-departemen',[
             'dataDepartemen' => $Departemen,
             'dataUser' => $user,
         ]);

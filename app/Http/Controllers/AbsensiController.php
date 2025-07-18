@@ -20,7 +20,7 @@ class AbsensiController extends Controller
 
         $user = User::all();
 
-        $absensi = absensi::withTrashed()->where('tanggal',$today)->latest()->get();
+        $absensi = Absensi::withTrashed()->where('tanggal',$today)->latest()->get();
 
         return view('admin.kelola-absensi-today',[
             'dataAbsensi' => $absensi,
@@ -110,7 +110,7 @@ class AbsensiController extends Controller
 
     public function showRekapPribadiPage(){
         $user = Auth::user();
-        $absensi = absensi::withTrashed()->where('id_user',$user->id)->orderByDesc('tanggal')->get();
+        $absensi = Absensi::withTrashed()->where('id_user',$user->id)->orderByDesc('tanggal')->get();
 
         return view('pegawai.rekap-absensi-pribadi',[
             'dataAbsensi' => $absensi,
@@ -405,7 +405,7 @@ class AbsensiController extends Controller
 
     public function showRekapPegawaiPage($id_pegawai)
     {
-        $absensi = absensi::withTrashed()->where('id_user',$id_pegawai)->orderByDesc('tanggal')->get();
+        $absensi = Absensi::withTrashed()->where('id_user',$id_pegawai)->orderByDesc('tanggal')->get();
         $user = User::where('id',$id_pegawai)->firstOrFail();
 
         // Group by status dan hitung jumlah masing-masing
@@ -553,7 +553,7 @@ class AbsensiController extends Controller
         'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
     ]);
 
-        $absensi = absensi::findOrFail($id_absensi);
+        $absensi = Absensi::findOrFail($id_absensi);
 
         if ($request->hasFile('file_pendukung')) {
             $old_file= $absensi->file_pendukung ?? null;
@@ -593,7 +593,7 @@ class AbsensiController extends Controller
     }
 
     public function rekapDestroy($id_absensi){
-        $absensi = absensi::findOrFail($id_absensi);
+        $absensi = Absensi::findOrFail($id_absensi);
 
         if (!$absensi) {
             return redirect()->back()->with([
