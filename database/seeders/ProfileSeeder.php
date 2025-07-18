@@ -51,7 +51,7 @@ class ProfileSeeder extends Seeder
             ProfilePekerjaan::create([
                 'id_user' => $user->id,
                 'id_departemen' => $departemens->random()->id,
-                'id_tempat_kerja' => $departemens->random()->id,
+                'id_tempat_kerja' => $tempatKerja->random()->id,
                 'id_jabatan' => $jabatans->random()->id,
                 'nomor_induk_karyawan' => strtoupper(Str::random(6)),
                 'tanggal_masuk' => now()->subYears(rand(22, 40))->subDays(rand(1, 365)),
