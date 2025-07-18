@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\absensi;
+use App\Models\Absensi;
 use App\Models\JamKerja;
 use App\Models\LogAktivitasAbsensi;
 use App\Models\User;
