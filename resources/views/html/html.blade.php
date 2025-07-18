@@ -76,6 +76,20 @@
     <script src="{{ asset('assets/vendor/chart.js/chart.umd.js') }}"></script>
     <script src="{{ asset('assets/vendor/quill/quill.min.js') }}"></script>
 
+    @if(Auth::check())
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QMFN76Y8V4"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QMFN76Y8V4', {
+                'user_id': '{{ Auth::user()->id }}',
+                'user_email': '{{ Auth::user()->email }}'
+            });
+        </script>
+    @endif
+
     <!-- Template Main JS File -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
