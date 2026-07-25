@@ -811,4 +811,15 @@ Built with **Laravel 11** & **MySQL**
 
 `Employee Management` · `Attendance` · `Leave Management` · `Performance Evaluation`
 
+## Collaborators
+
+**Project Manager:** Siskha Handayani, M.Si
+
+**Team Members:**
+* 4342201039 - Muhammad Farhan Lubis
+* 4342201041 - Bryan Aditya Dachi
+* 4342201050 - A. Iqbal Zulmi
+* 4342201056 - Raja Putra Muhammad A.
+* 4342211022 - Marsandra Fadilla C.
+
 </div>
